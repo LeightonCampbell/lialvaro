@@ -1,65 +1,56 @@
 ---
 ---
-<header class="glass-nav">
-  <div class="container header-container">
-    <a href="/" class="logo" aria-label="Lialvaro Home">
-      <img src="/brand/logo.png" alt="Lialvaro" class="logo-image" />
+<header class="site-nav">
+  <div class="container nav-inner">
+    <a href="/" class="nav-logo" aria-label="LiAlvaro Home">
+      <img src="/brand/logo.png" alt="LiAlvaro" class="logo-image" />
     </a>
-    
-    <button class="menu-toggle" aria-label="Toggle Menu" id="menu-toggle">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="3" y1="12" x2="21" y2="12"></line>
-        <line x1="3" y1="6" x2="21" y2="6"></line>
-        <line x1="3" y1="18" x2="21" y2="18"></line>
-      </svg>
-    </button>
 
-    <nav class="nav-links" id="nav-links">
+    <nav class="nav-links">
       <a href="/design-your-apparel">Design Your Apparel</a>
-      <a href="/articles">Articles</a>
       <a href="/about">About Us</a>
-      <a href="/contact" class="button primary">Get a Quote</a>
+      <a href="/#faq">FAQ</a>
+      <a href="/articles">Articles</a>
     </nav>
+
+    <div class="nav-actions">
+      <a href="tel:3109042655" class="btn-phone">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3.7 1C3.3 1 2.5 1.3 1.9 2L1 3c-.7.7-1 2 .3 4 .7 1.2 1.7 2.6 3.1 4s2.8 2.4 4 3.1c2 1.3 3.3 1 4 .3l1-1c.7-.7 1-1.5 1-1.9 0-.2-.2-.5-.5-.7L12 9.5c-.3-.2-.6-.3-.8-.2l-1.3.4c-.3.1-.6 0-.8-.2L7.5 8l-1.5-1.6c-.2-.2-.3-.5-.2-.8L6.2 4.4c.1-.2 0-.5-.2-.8L4.4 1.5C4.2 1.2 3.9 1 3.7 1z"/></svg>
+        (310) 904-2655
+      </a>
+      <a href="/contact" class="btn-cta-sm">Get a Quote</a>
+    </div>
   </div>
 </header>
 
-<script>
-  const toggle = document.getElementById('menu-toggle');
-  const nav = document.getElementById('nav-links');
-  
-  if (toggle && nav) {
-    toggle.addEventListener('click', () => {
-      nav.classList.toggle('active');
-    });
-  }
-</script>
-
 <style>
-  .glass-nav {
-    background: rgba(255, 255, 255, 0.85);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  }
-
-  .header-container {
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 500;
+    background: rgba(250,250,250,0.82);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid #f0f0f5;
+    height: 52px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    height: 70px;
-    position: relative;
   }
 
-  .logo {
+  .nav-inner {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
     display: inline-flex;
     align-items: center;
-    line-height: 0;
-  }
-
-  .logo:hover {
-    opacity: 0.8;
   }
 
   .logo-image {
-    height: 40px;
+    height: 34px;
     width: auto;
     display: block;
   }
@@ -70,63 +61,62 @@
     align-items: center;
   }
 
-  .nav-links a:not(.button) {
-    font-size: 0.95rem;
+  .nav-links a {
+    font-size: 13.5px;
     font-weight: 500;
-    color: #000000;
-    transition: color 0.3s ease;
+    color: #6e6e73;
+    text-decoration: none;
+    transition: color 0.18s;
   }
 
-  .nav-links a:not(.button):hover {
-    color: #000000;
-    opacity: 0.8;
+  .nav-links a:hover {
+    color: #1d1d1f;
   }
 
-  .nav-links .button.primary {
-    background-color: #CF4C1B;
-    color: #000000;
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 
-  .nav-links .button.primary:hover {
-    background-color: #b94317;
+  .btn-phone {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6e6e73;
+    text-decoration: none;
+    transition: color 0.18s;
   }
 
-  .menu-toggle {
-    display: none;
-    background: none;
-    border: none;
-    color: var(--text-primary);
-    cursor: pointer;
-    padding: 0.5rem;
+  .btn-phone:hover {
+    color: #1d1d1f;
   }
 
-  @media (max-width: 768px) {
-    .logo-image {
-      height: 34px;
-    }
+  .btn-phone svg {
+    width: 13px;
+    height: 13px;
+  }
 
-    .menu-toggle {
-      display: block;
-    }
+  .btn-cta-sm {
+    background: #ff6b2b;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+  }
 
-    .nav-links {
+  .btn-cta-sm:hover {
+    background: #e8521a;
+  }
+
+  @media (max-width: 900px) {
+    .nav-links,
+    .btn-phone {
       display: none;
-      flex-direction: column;
-      position: absolute;
-      top: 70px;
-      left: 0;
-      right: 0;
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      padding: 2rem;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-      gap: 1.5rem;
     }
-    
-    .nav-links.active {
-      display: flex;
-    }
-
   }
 </style>

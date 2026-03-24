@@ -1,132 +1,168 @@
 ---
-import Layout from '../layouts/Layout.astro';
 ---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Articles | LiAlvaro Apparel</title>
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --orange: #FF6B2B;
+      --orange-deep: #E8521A;
+      --bg: #FAFAFA;
+      --surface: #FFFFFF;
+      --border: #E5E5EA;
+      --text-primary: #1D1D1F;
+      --text-secondary: #6E6E73;
+      --radius-lg: 24px;
+      --shadow-md: 0 10px 28px rgba(0,0,0,0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--text-primary); }
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 40px; }
 
-<Layout title="Articles & Guides | Custom Printing Insights">
-  <section class="page-header text-center animate-up">
+    .topbar { background: var(--text-primary); text-align: center; padding: 9px 0; }
+    .topbar p { font-size: 12.5px; color: rgba(255,255,255,0.72); }
+    .topbar a { color: var(--orange); text-decoration: none; font-weight: 700; }
+
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(16px); background: rgba(250,250,250,0.85);
+      border-bottom: 1px solid #F0F0F5; height: 56px;
+    }
+    .nav-inner {
+      max-width: 1080px; margin: 0 auto; padding: 0 40px; height: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo img { height: 34px; display: block; width: auto; }
+    .nav-links { display: flex; list-style: none; gap: 26px; }
+    .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 13.5px; font-weight: 600; }
+    .nav-links a:hover { color: var(--text-primary); }
+    .nav-actions { display: flex; align-items: center; gap: 10px; }
+    .btn-phone {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 600; color: var(--text-secondary); text-decoration: none;
+    }
+    .btn-phone svg { width: 13px; height: 13px; }
+    .btn-phone:hover { color: var(--text-primary); }
+    .nav-cta {
+      background: var(--orange); color: #fff; text-decoration: none; font-weight: 700;
+      font-size: 13px; padding: 8px 16px; border-radius: 999px;
+    }
+    .nav-cta:hover { background: var(--orange-deep); }
+
+    .hero {
+      padding: 110px 0 70px; text-align: center; background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .hero h1 { font-size: clamp(40px, 6vw, 70px); line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 14px; }
+    .hero p { max-width: 760px; margin: 0 auto; color: var(--text-secondary); font-size: 19px; line-height: 1.65; }
+
+    .section { padding: 80px 0 90px; }
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+    }
+    .article-card {
+      background: #101012;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+      box-shadow: var(--shadow-md);
+    }
+    .article-card:hover { transform: translateY(-4px); }
+    .article-media {
+      aspect-ratio: 16/9;
+      background-size: cover;
+      background-position: center;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .article-media.one { background-image: linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)), url('/images/screenprinting.jpg'); }
+    .article-media.two { background-image: linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)), url('/images/dtf.jpg'); }
+    .article-content { padding: 22px; }
+    .meta {
+      color: #FF6B2B; font-size: 12px; text-transform: uppercase; letter-spacing: .08em;
+      font-weight: 700; margin-bottom: 10px;
+    }
+    .article-content h2 {
+      color: #ffffff;
+      font-size: clamp(20px, 2.2vw, 28px);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+    .article-content p { color: rgba(255,255,255,0.78); line-height: 1.65; margin-bottom: 16px; }
+    .read-more { color: #ffffff; font-weight: 700; }
+
+    @media (max-width: 900px) {
+      .container, .nav-inner { padding: 0 22px; }
+      .nav-links, .btn-phone { display: none; }
+      .articles-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <p>Same-day service available in Los Angeles · Call <a href="tel:3109042655">(310) 904-2655</a></p>
+  </div>
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="nav-logo" aria-label="LiAlvaro Home"><img src="/brand/logo.png" alt="LiAlvaro" /></a>
+      <ul class="nav-links">
+        <li><a href="/design-your-apparel">Design Your Apparel</a></li>
+        <li><a href="/about">About Us</a></li>
+        <li><a href="/#faq">FAQ</a></li>
+        <li><a href="/articles">Articles</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="tel:3109042655" class="btn-phone">
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M3.7 1C3.3 1 2.5 1.3 1.9 2L1 3c-.7.7-1 2 .3 4 .7 1.2 1.7 2.6 3.1 4s2.8 2.4 4 3.1c2 1.3 3.3 1 4 .3l1-1c.7-.7 1-1.5 1-1.9 0-.2-.2-.5-.5-.7L12 9.5c-.3-.2-.6-.3-.8-.2l-1.3.4c-.3.1-.6 0-.8-.2L7.5 8l-1.5-1.6c-.2-.2-.3-.5-.2-.8L6.2 4.4c.1-.2 0-.5-.2-.8L4.4 1.5C4.2 1.2 3.9 1 3.7 1z"/></svg>
+          (310) 904-2655
+        </a>
+        <a href="/contact" class="nav-cta">Get a Quote</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
     <div class="container">
       <h1>Insights. Guides. Inspiration.</h1>
-      <p class="mt-2 text-secondary" style="max-width: 700px; margin-left: auto; margin-right: auto; font-size: 1.25rem;">Everything you need to know about the world of custom apparel, right from the experts in Los Angeles.</p>
+      <p>Everything you need to know about custom apparel from the experts in Los Angeles.</p>
     </div>
   </section>
 
-  <section class="articles-section mt-4 pb-4">
-    <div class="container animate-up delay-1">
+  <section class="section">
+    <div class="container">
       <div class="articles-grid">
-        
         <a href="/best-affordable-custom-t-shirt-printing-in-los-angeles-2026-local-guide" class="article-card">
-          <div class="article-img placeholder-1"></div>
+          <div class="article-media one"></div>
           <div class="article-content">
             <div class="meta">Local Guide • 5 Min Read</div>
-            <h3>Best Affordable Custom T-Shirt Printing in Los Angeles (2026 Local Guide)</h3>
-            <p>Discover how to navigate the LA market to find the highest quality prints without breaking the bank.</p>
+            <h2>Best Affordable Custom T-Shirt Printing in Los Angeles (2026 Local Guide)</h2>
+            <p>Discover how to navigate the LA market to find high-quality prints without overspending.</p>
             <span class="read-more">Read Article →</span>
           </div>
         </a>
 
         <a href="/the-ultimate-guide-to-finding-the-perfect-place-for-your-bulk-custom-t-shirt-event-needs" class="article-card">
-          <div class="article-img placeholder-2"></div>
+          <div class="article-media two"></div>
           <div class="article-content">
             <div class="meta">Event Planning • 8 Min Read</div>
-            <h3>The Ultimate Guide to Finding the Perfect Place for Your Bulk Custom T-Shirt Event Needs</h3>
-            <p>Organizing a large event? Learn exactly what to look for when choosing a print partner for bulk orders.</p>
+            <h2>The Ultimate Guide to Finding the Perfect Place for Your Bulk Custom T-Shirt Event Needs</h2>
+            <p>Learn exactly what to look for when choosing a print partner for high-volume event orders.</p>
             <span class="read-more">Read Article →</span>
           </div>
         </a>
-
       </div>
     </div>
   </section>
-</Layout>
-
-<style>
-  .page-header { padding: 120px 0 60px; border-bottom: 1px solid var(--border-color); }
-  
-  .articles-section { padding-top: 6rem; padding-bottom: 8rem; }
-  
-  .articles-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 2rem;
-  }
-
-  .article-card {
-    display: flex;
-    flex-direction: column;
-    background: var(--bg-secondary);
-    border-radius: 28px;
-    border: 1px solid var(--border-color);
-    overflow: hidden;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .article-card:hover {
-    transform: translateY(-10px);
-    border-color: rgba(255,255,255,0.2);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-  }
-
-  .article-img {
-    width: 100%;
-    aspect-ratio: 16/10;
-    background-size: cover;
-    background-position: center;
-    border-bottom: 1px solid var(--border-color);
-  }
-
-  .placeholder-1 { background: linear-gradient(135deg, #151518 0%, #2997ff 100%); opacity: 0.9; }
-  .placeholder-2 { background: linear-gradient(135deg, #2a2a35 0%, #151515 100%); }
-
-  .article-content {
-    padding: 3rem 2.5rem;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .meta {
-    font-size: 0.9rem;
-    color: var(--accent);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 1rem;
-  }
-
-  .article-content h3 {
-    font-size: 1.3rem;
-    margin-bottom: 1rem;
-    color: #ffffff;
-    line-height: 1.3;
-  }
-
-  .article-content p {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    line-height: 1.6;
-    margin-bottom: 2.5rem;
-    flex: 1;
-  }
-
-  .read-more {
-    font-weight: 600;
-    font-size: 1.05rem;
-    color: var(--text-primary);
-    transition: color 0.3s ease;
-  }
-
-  .article-card:hover .read-more {
-    color: var(--accent);
-  }
-
-  @media (max-width: 1200px) {
-    .articles-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
-
-  @media (max-width: 992px) {
-    .articles-grid { grid-template-columns: 1fr; gap: 2rem; }
-    .page-header { padding: 100px 0 40px; }
-  }
-</style>
+</body>
+</html>

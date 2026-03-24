@@ -288,12 +288,34 @@
     background-position: center;
     background-repeat: no-repeat;
   }
+  .service-card-dtf-bg {
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+      url('/images/dtf.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .service-card-embroidery-bg {
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+      url('/images/embroidery.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
   .service-card-silkscreen-bg .service-name,
   .service-card-dtg-bg .service-name,
+  .service-card-dtf-bg .service-name,
+  .service-card-embroidery-bg .service-name,
   .service-card-silkscreen-bg .service-desc,
   .service-card-dtg-bg .service-desc,
+  .service-card-dtf-bg .service-desc,
+  .service-card-embroidery-bg .service-desc,
   .service-card-silkscreen-bg .service-link,
-  .service-card-dtg-bg .service-link {
+  .service-card-dtg-bg .service-link,
+  .service-card-dtf-bg .service-link,
+  .service-card-embroidery-bg .service-link {
     color: #ffffff;
   }
 
@@ -909,10 +931,10 @@
     </a>
 
     <ul class="nav-links">
-      <li><a href="#services">Services</a></li>
-      <li><a href="#about">About Us</a></li>
+      <li><a href="/design-your-apparel">Design Your Apparel</a></li>
+      <li><a href="/about">About Us</a></li>
       <li><a href="#faq">FAQ</a></li>
-      <li><a href="#articles">Articles</a></li>
+      <li><a href="/articles">Articles</a></li>
     </ul>
 
     <div class="nav-actions">
@@ -985,14 +1007,14 @@
         <button class="service-link" onclick="openModal('Direct to Garment')">Print with DTG →</button>
       </div>
 
-      <div class="service-card reveal" style="transition-delay:0.08s">
+      <div class="service-card service-card-dtf-bg reveal" style="transition-delay:0.08s">
         <div class="service-tag">Best Durability</div>
         <div class="service-name">Direct To Film</div>
         <div class="service-desc">Our DTF service produces top-quality prints that bond to virtually any fabric. Exceptional durability and color vibrancy that holds up wash after wash.</div>
         <button class="service-link" onclick="openModal('Direct to Film')">Start DTF printing →</button>
       </div>
 
-      <div class="service-card reveal" style="transition-delay:0.16s">
+      <div class="service-card service-card-embroidery-bg reveal" style="transition-delay:0.16s">
         <div class="service-tag">Premium Finish</div>
         <div class="service-name">Custom Embroidery</div>
         <div class="service-desc">Elevate your brand with professional, tactile stitching. Our skilled artisans bring your vision to life on hats, polos, jackets, and premium outerwear.</div>
@@ -1249,7 +1271,7 @@
   </div>
 </footer>
 
-<script>
+<script is:inline>
   const overlay   = document.getElementById('modalOverlay');
   const formView  = document.getElementById('modalForm');
   const successView = document.getElementById('modalSuccess');
@@ -1271,6 +1293,9 @@
     overlay.classList.remove('active');
     document.body.style.overflow = '';
   }
+
+  window.openModal = openModal;
+  window.closeModal = closeModal;
 
   document.querySelectorAll('[data-quote-trigger]').forEach((el) => {
     el.addEventListener('click', (event) => {
