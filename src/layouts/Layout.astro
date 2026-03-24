@@ -1,0 +1,103 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+	title: string;
+	description?: string;
+}
+
+const { title, description = "Premium custom t-shirt printing and embroidery in Los Angeles. No minimums, same-day printing available." } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content={description} />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title} | Lialvaro Custom Apparel</title>
+	</head>
+	<body>
+		<div class="top-bar">
+			<div class="container top-bar-content">
+				<span class="top-item">
+					<svg viewBox="0 0 24 24" aria-hidden="true">
+						<circle cx="12" cy="12" r="9"></circle>
+						<path d="M12 7v5l3 2"></path>
+					</svg>
+					24/7 support
+				</span>
+				<span class="top-item">
+					<svg viewBox="0 0 24 24" aria-hidden="true">
+						<path d="M3 7.5 12 3l9 4.5-9 4.5-9-4.5Z"></path>
+						<path d="M3 7.5V16.5L12 21l9-4.5V7.5"></path>
+						<path d="M12 12v9"></path>
+					</svg>
+					Free delivery on local orders
+				</span>
+				<a href="tel:+13109042655" class="top-item">
+					<svg viewBox="0 0 24 24" aria-hidden="true">
+						<path d="M22 16.92V20a2 2 0 0 1-2.18 2A19.86 19.86 0 0 1 11.16 18.84 19.5 19.5 0 0 1 5.16 12.84 19.86 19.86 0 0 1 2 4.17 2 2 0 0 1 3.99 2h3.09a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.62a2 2 0 0 1-.45 2.11L7.91 9.79a16 16 0 0 0 6.3 6.3l1.34-1.34a2 2 0 0 1 2.11-.45c.84.29 1.72.5 2.62.62A2 2 0 0 1 22 16.92Z"></path>
+					</svg>
+					310-904-2655
+				</a>
+			</div>
+		</div>
+		<Header />
+		<main class="pt-nav">
+			<slot />
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.top-bar {
+		background: #000;
+		color: #fff;
+		font-size: 0.85rem;
+	}
+
+	.top-bar-content {
+		min-height: 34px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.top-bar a {
+		color: #fff;
+	}
+
+	.top-item {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		font-weight: 500;
+		white-space: nowrap;
+	}
+
+	.top-item svg {
+		width: 14px;
+		height: 14px;
+		stroke: currentColor;
+		stroke-width: 2;
+		fill: none;
+		flex-shrink: 0;
+	}
+
+	@media (max-width: 768px) {
+		.top-bar-content {
+			justify-content: space-between;
+		}
+
+		.top-bar-content span:first-child {
+			display: none;
+		}
+	}
+</style>

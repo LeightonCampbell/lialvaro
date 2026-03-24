@@ -1,0 +1,156 @@
+---
+---
+<footer class="footer">
+  <div class="container border-top">
+    <div class="footer-grid">
+      <div class="brand-col">
+        <a href="/" class="logo-link" aria-label="Lialvaro Home">
+          <img src="/brand/logo.png" alt="Lialvaro" class="logo" />
+        </a>
+        <p class="brand-tagline">
+          Grant us the pleasure of helping you start and grow your brand or perfect your lasting memories.
+        </p>
+        <p>Los Angeles' premier custom apparel printer. Premium quality, no minimums, same-day service.</p>
+        <p class="contact-info">Call us for a free quote: <br/><strong class="phone-number">(310) 904-2655</strong></p>
+      </div>
+      <div class="link-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="/design-your-apparel">Screen Printing</a></li>
+          <li><a href="/design-your-apparel">Direct to Garment (DTG)</a></li>
+          <li><a href="/design-your-apparel">Custom Embroidery</a></li>
+          <li><a href="/design-your-apparel">Same-Day Printing</a></li>
+        </ul>
+      </div>
+      <div class="link-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/contact">Contact & Location</a></li>
+          <li><a href="/articles">Articles & Guides</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 LiAlvaro T-Shirt Printing. All Rights Reserved. Los Angeles, CA.</p>
+      <div class="legal-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background-color: var(--bg-primary);
+    padding: 0 0 2rem;
+    margin-top: 6rem;
+  }
+
+  .border-top {
+    border-top: 1px solid var(--border-color);
+    padding-top: 4rem;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 4rem;
+    margin-bottom: 4rem;
+  }
+
+  .logo-link {
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+
+  .logo {
+    height: 44px;
+    width: auto;
+    display: block;
+  }
+
+  .brand-tagline {
+    color: var(--text-primary);
+    font-size: 1rem;
+    line-height: 1.55;
+    max-width: 22rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .brand-col p {
+    margin-bottom: 1.5rem;
+    max-width: 85%;
+    font-size: 1rem;
+  }
+
+  .phone-number {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    display: inline-block;
+    margin-top: 0.5rem;
+  }
+
+  .link-col h4 {
+    color: #000000;
+    margin-bottom: 1.2rem;
+    font-size: 1.1rem;
+  }
+
+  .link-col ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .link-col li {
+    margin-bottom: 0.8rem;
+  }
+
+  .link-col a {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  .link-col a:hover {
+    color: var(--text-primary);
+  }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .legal-links {
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .legal-links a {
+    color: var(--text-muted);
+  }
+
+  .legal-links a:hover {
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 768px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+    .brand-col p {
+      max-width: 100%;
+    }
+    .footer-bottom {
+      flex-direction: column;
+      text-align: center;
+      gap: 1rem;
+    }
+  }
+</style>

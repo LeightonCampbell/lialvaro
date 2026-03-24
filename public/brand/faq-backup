@@ -1,0 +1,141 @@
+FAQ SECTION MARKUP BACKUP
+=========================
+
+<section class="faq-section pb-4">
+  <div class="container">
+    <h2 class="faq-title">Frequently Asked Questions</h2>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>What type of shirt can I choose?<span class="faq-icon" aria-hidden="true"></span></summary>
+        <div class="faq-answer">
+          <p>You have many brand and material options (cotton, polyester, polyester blend, etc.), weight, size, and gender preference when choosing t-shirts. You may also bring your own shirts.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>How can I get a price quote?<span class="faq-icon" aria-hidden="true"></span></summary>
+        <div class="faq-answer">
+          <p>Click any Quote button on the site and complete the quick form. You can also call us at (310) 904-2655 for a fast estimate.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>How do I order a custom shirt?<span class="faq-icon" aria-hidden="true"></span></summary>
+        <div class="faq-answer">
+          <p>Ordering custom shirts starts with selecting your preferred garment or product, creating your custom design, and deciding where you want the design to be on your t-shirt.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>What's the minimum order quantity?<span class="faq-icon" aria-hidden="true"></span></summary>
+        <div class="faq-answer">
+          <p>We have no minimum order quantity, but you will benefit greatly when you order 12 pieces or more.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>Do I need to create my own design?<span class="faq-icon" aria-hidden="true"></span></summary>
+        <div class="faq-answer">
+          <p>We will accept any high-resolution image in .ai, .png, .jpg, or .svg formats. We can also edit your current design or make a custom design for you for a small cost.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>How long does it take to get my shirts?<span class="faq-icon" aria-hidden="true"></span></summary>
+        <div class="faq-answer">
+          <p>Standard turnaround time is usually 5-7 business days after artwork approval and payment. Rush orders (4 business days) are available for an additional fee.</p>
+        </div>
+      </details>
+      <details class="faq-item">
+        <summary>How much is delivery?<span class="faq-icon" aria-hidden="true"></span></summary>
+        <div class="faq-answer">
+          <p>Local delivery options are available, and final delivery cost depends on order size and location. Contact us for an exact quote.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+
+FAQ STYLES BACKUP
+=================
+
+.faq-section {
+  padding-top: 3.5rem;
+  background: #ffffff;
+}
+.faq-title {
+  background: #000;
+  color: #fff;
+  text-align: center;
+  padding: 1.1rem 1rem;
+  margin: 0 0 0.8rem;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  font-size: clamp(1.45rem, 2.4vw, 1.95rem);
+}
+.faq-list {
+  background: #ffffff;
+  max-width: 620px;
+  margin: 0 auto;
+}
+.faq-item {
+  border-bottom: 1px solid #d7d7d9;
+  padding: 0;
+}
+.faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.18rem 0.35rem;
+  color: #161616;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+.faq-icon {
+  color: #cf4c1b;
+  width: 14px;
+  height: 14px;
+  position: relative;
+  flex-shrink: 0;
+}
+.faq-icon::before,
+.faq-icon::after {
+  content: "";
+  position: absolute;
+  background: currentColor;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.faq-icon::before {
+  width: 10px;
+  height: 1px;
+}
+.faq-icon::after {
+  width: 1px;
+  height: 10px;
+}
+.faq-item[open] .faq-icon::after {
+  opacity: 0;
+}
+.faq-item p {
+  margin: 0;
+  padding: 0 0.35rem 1.05rem;
+  color: #222;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  max-width: 100%;
+}
+.faq-answer {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 260ms ease;
+}
+.faq-answer p {
+  overflow: hidden;
+}
+.faq-item[open] .faq-answer {
+  grid-template-rows: 1fr;
+}

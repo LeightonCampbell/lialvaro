@@ -1,0 +1,96 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Contact Us | Lialvaro Custom Apparel">
+  <section class="page-header text-center animate-up">
+    <div class="container">
+      <h1>Let's talk project.</h1>
+      <p class="mt-2 text-secondary" style="max-width: 700px; margin-left: auto; margin-right: auto; font-size: 1.25rem;">Got an idea? Need a quote? Just want to say hi? We're available 24/7 to help you bring your vision to life.</p>
+    </div>
+  </section>
+
+  <section class="contact-section mt-4 pb-4">
+    <div class="container animate-up delay-1">
+      <div class="contact-grid">
+        <div class="contact-info-card">
+          <div class="icon">📞</div>
+          <h3>Call or Text Us</h3>
+          <p class="mt-2">The fastest way to get a quote. We're ready to answer your call.</p>
+          <a href="tel:3109042655" class="contact-link mt-2">(310) 904-2655</a>
+        </div>
+        
+        <div class="contact-info-card">
+          <div class="icon">📍</div>
+          <h3>Local to LA</h3>
+          <p class="mt-2">We proudly serve Los Angeles and the surrounding areas. Free delivery available for local bulk orders.</p>
+          <p class="contact-link mt-2">Los Angeles, CA</p>
+        </div>
+
+        <div class="contact-info-card">
+          <div class="icon">⏱️</div>
+          <h3>Need it Fast?</h3>
+          <p class="mt-2">Ask about our Same-Day Print Guarantee for urgent, last-minute projects.</p>
+          <a href="/design-your-apparel" class="contact-link mt-2">View Turnarounds</a>
+        </div>
+      </div>
+
+      <div class="form-wrapper mt-4 pt-4 text-center">
+        <h2>Prefer Email?</h2>
+        <p class="mt-2 text-secondary mb-2">Drop us a line and we'll get back to you immediately.</p>
+        <a href="mailto:info@lialvaro.com" class="button primary">Email info@lialvaro.com</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-header { padding: 120px 0 60px; border-bottom: 1px solid var(--border-color); }
+  
+  .contact-section { padding-top: 6rem; padding-bottom: 6rem; }
+  
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+  }
+
+  .contact-info-card {
+    background: var(--bg-secondary);
+    padding: 4rem 2rem;
+    border-radius: 28px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .contact-info-card:hover {  
+    transform: translateY(-8px); 
+    border-color: rgba(255,255,255,0.2); 
+    background-color: #151518;
+  }
+  
+  .contact-info-card .icon { font-size: 3.5rem; margin-bottom: 1.5rem; display: block; }
+  .contact-info-card p { line-height: 1.6; color: var(--text-secondary); }
+  
+  .contact-link {
+    display: inline-block;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    letter-spacing: -0.02em;
+  }
+
+  .contact-link:hover { color: var(--accent); }
+
+  .form-wrapper { border-top: 1px solid var(--border-color); margin-top: 6rem; padding-top: 6rem; }
+
+  @media (max-width: 992px) {
+    .page-header { padding: 100px 0 40px; }
+    .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .contact-info-card { padding: 3rem 1.5rem; }
+    .form-wrapper { margin-top: 4rem; padding-top: 4rem; }
+  }
+</style>

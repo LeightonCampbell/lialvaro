@@ -1,0 +1,132 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Articles & Guides | Custom Printing Insights">
+  <section class="page-header text-center animate-up">
+    <div class="container">
+      <h1>Insights. Guides. Inspiration.</h1>
+      <p class="mt-2 text-secondary" style="max-width: 700px; margin-left: auto; margin-right: auto; font-size: 1.25rem;">Everything you need to know about the world of custom apparel, right from the experts in Los Angeles.</p>
+    </div>
+  </section>
+
+  <section class="articles-section mt-4 pb-4">
+    <div class="container animate-up delay-1">
+      <div class="articles-grid">
+        
+        <a href="/best-affordable-custom-t-shirt-printing-in-los-angeles-2026-local-guide" class="article-card">
+          <div class="article-img placeholder-1"></div>
+          <div class="article-content">
+            <div class="meta">Local Guide • 5 Min Read</div>
+            <h3>Best Affordable Custom T-Shirt Printing in Los Angeles (2026 Local Guide)</h3>
+            <p>Discover how to navigate the LA market to find the highest quality prints without breaking the bank.</p>
+            <span class="read-more">Read Article →</span>
+          </div>
+        </a>
+
+        <a href="/the-ultimate-guide-to-finding-the-perfect-place-for-your-bulk-custom-t-shirt-event-needs" class="article-card">
+          <div class="article-img placeholder-2"></div>
+          <div class="article-content">
+            <div class="meta">Event Planning • 8 Min Read</div>
+            <h3>The Ultimate Guide to Finding the Perfect Place for Your Bulk Custom T-Shirt Event Needs</h3>
+            <p>Organizing a large event? Learn exactly what to look for when choosing a print partner for bulk orders.</p>
+            <span class="read-more">Read Article →</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-header { padding: 120px 0 60px; border-bottom: 1px solid var(--border-color); }
+  
+  .articles-section { padding-top: 6rem; padding-bottom: 8rem; }
+  
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2rem;
+  }
+
+  .article-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-secondary);
+    border-radius: 28px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .article-card:hover {
+    transform: translateY(-10px);
+    border-color: rgba(255,255,255,0.2);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  }
+
+  .article-img {
+    width: 100%;
+    aspect-ratio: 16/10;
+    background-size: cover;
+    background-position: center;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .placeholder-1 { background: linear-gradient(135deg, #151518 0%, #2997ff 100%); opacity: 0.9; }
+  .placeholder-2 { background: linear-gradient(135deg, #2a2a35 0%, #151515 100%); }
+
+  .article-content {
+    padding: 3rem 2.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .meta {
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+  }
+
+  .article-content h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: #ffffff;
+    line-height: 1.3;
+  }
+
+  .article-content p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+    flex: 1;
+  }
+
+  .read-more {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
+  }
+
+  .article-card:hover .read-more {
+    color: var(--accent);
+  }
+
+  @media (max-width: 1200px) {
+    .articles-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 992px) {
+    .articles-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .page-header { padding: 100px 0 40px; }
+  }
+</style>

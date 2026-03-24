@@ -1,0 +1,158 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Design Your Apparel | Custom Printing Options">
+  <section class="page-header text-center animate-up">
+    <div class="container">
+      <h1>Bring your ideas to the fabric.</h1>
+      <p class="mt-2 text-secondary" style="max-width: 700px; margin-left: auto; margin-right: auto; font-size: 1.25rem;">Explore our premium printing techniques and find the perfect method for your project.</p>
+      <a href="/contact" class="button primary mt-2">Request a Quote</a>
+    </div>
+  </section>
+
+  <section class="techniques-section mt-4 pb-4">
+    <div class="container">
+      
+      <!-- Tech 1 -->
+      <div class="tech-row animate-up delay-1">
+        <div class="tech-content">
+          <h2>Direct to Garment (DTG)</h2>
+          <p class="mt-2 text-secondary">The ultimate solution for complex, highly detailed artwork. DTG operates like a high-tech inkjet printer, applying specialized, eco-friendly inks directly into the fibers of the garment.</p>
+          <ul class="tech-list mt-2">
+            <li><strong>Ideal for:</strong> Full-color photos, gradients, highly detailed designs.</li>
+            <li><strong>Minimum Order:</strong> 0 (Produce single items easily).</li>
+            <li><strong>Feel:</strong> Soft, breathable, embedded in the fabric.</li>
+          </ul>
+        </div>
+        <div class="tech-image">
+          <div class="placeholder-img dtg-bg"></div>
+        </div>
+      </div>
+
+      <!-- Tech 2 -->
+      <div class="tech-row reverse mt-4 pt-4 animate-up delay-2">
+        <div class="tech-content">
+          <h2>Premium Screen Printing</h2>
+          <p class="mt-2 text-secondary">The industry standard for vibrant, long-lasting prints on bulk orders. Each color is applied layer by layer through precision mesh screens, producing an incredibly durable finish.</p>
+          <ul class="tech-list mt-2">
+            <li><strong>Ideal for:</strong> Brand logos, event merch, uniforms, simple vector art.</li>
+            <li><strong>Minimum Order:</strong> Highly cost-effective at 12+ pieces.</li>
+            <li><strong>Feel:</strong> Vibrant, textured, extremely durable over hundreds of washes.</li>
+          </ul>
+        </div>
+        <div class="tech-image">
+          <div class="placeholder-img screen-bg"></div>
+        </div>
+      </div>
+
+      <!-- Tech 3 -->
+      <div class="tech-row mt-4 pt-4 animate-up delay-3">
+        <div class="tech-content">
+          <h2>Custom Embroidery</h2>
+          <p class="mt-2 text-secondary">Add a touch of premium professionalism. We digitize your artwork and stitch it directly into the garment for a classic, high-end look that never fades.</p>
+          <ul class="tech-list mt-2">
+            <li><strong>Ideal for:</strong> Hats, beanies, polo shirts, thick hoodies, jackets.</li>
+            <li><strong>Minimum Order:</strong> 0 (Single pieces welcome).</li>
+            <li><strong>Feel:</strong> Textured, luxurious, highly durable.</li>
+          </ul>
+        </div>
+        <div class="tech-image">
+          <div class="placeholder-img emb-bg"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="cta-banner mt-4 pb-4 text-center">
+    <div class="container animate-up">
+      <h2>Not sure which to choose?</h2>
+      <p class="mt-2 text-secondary mb-2">That's what we're here for. Give us a call and we'll recommend the perfect technique for your design and budget.</p>
+      <a href="tel:3109042655" class="button primary">Call (310) 904-2655</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-header { padding: 120px 0 80px; border-bottom: 1px solid var(--border-color); }
+  
+  .techniques-section { padding-top: 6rem; }
+  
+  .tech-row {
+    display: flex;
+    align-items: center;
+    gap: 8rem;
+    margin-bottom: 8rem;
+  }
+
+  .tech-row.reverse {
+    flex-direction: row-reverse;
+  }
+
+  .tech-content {
+    flex: 1;
+  }
+
+  .tech-content h2 { font-size: 3rem; margin-bottom: 1.5rem; letter-spacing: -0.03em; }
+  .tech-content p { font-size: 1.25rem; line-height: 1.6; }
+  
+  .tech-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 2rem;
+  }
+
+  .tech-list li {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.2rem;
+    padding-left: 2rem;
+    position: relative;
+  }
+
+  .tech-list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--text-primary);
+  }
+
+  .tech-list li strong {
+    color: var(--text-primary);
+  }
+
+  .tech-image {
+    flex: 1.2;
+    width: 100%;
+  }
+
+  .placeholder-img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    border-radius: 28px;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  }
+
+  /* Simulating images with gradients for the premium feel since we don't have assets yet */
+  .dtg-bg { background: linear-gradient(135deg, #181822 0%, #101014 100%); }
+  .screen-bg { background: linear-gradient(135deg, #101014 0%, #1a1a24 100%); }
+  .emb-bg { background: linear-gradient(135deg, #1c1c20 0%, #08080a 100%); }
+
+  .cta-banner { padding: 8rem 0; background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%); border-top: 1px solid var(--border-color); }
+
+  @media (max-width: 992px) {
+    .tech-row, .tech-row.reverse {
+      flex-direction: column;
+      gap: 4rem;
+      margin-bottom: 6rem;
+    }
+    .tech-image { width: 100%; flex: 1; }
+    .page-header { padding: 100px 0 50px; }
+    .tech-content h2 { font-size: 2.25rem; }
+  }
+</style>

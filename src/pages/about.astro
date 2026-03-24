@@ -1,0 +1,59 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="About Us | Lialvaro Custom Apparel Los Angeles">
+  <section class="page-header text-center animate-up">
+    <div class="container">
+      <h1>The story behind the print.</h1>
+      <p class="mt-2 text-secondary" style="max-width: 700px; margin-left: auto; margin-right: auto; font-size: 1.25rem;">Born in Los Angeles, Lialvaro Apparel was founded by artists who understand the power of a perfect garment.</p>
+    </div>
+  </section>
+
+  <section class="content-section mt-4 pb-4">
+    <div class="container text-center">
+      <div class="content-block animate-up delay-1">
+        <h2>Our Mission</h2>
+        <p class="mt-2">We believe custom apparel shouldn't be complicated. Whether you're an independent creator needing a single prototype or a business outfitting a team of hundreds, our mission is to provide uncompromising quality with zero minimums.</p>
+      </div>
+
+      <div class="content-block mt-4 animate-up delay-2">
+        <h2>Why LA Chose Us</h2>
+        <p class="mt-2">We aren't a faceless factory. We're a local team deeply embedded in the Los Angeles creative community. We work with local organizations, support sustainable practices, and offer same-day turnarounds because we know this city never sleeps.</p>
+      </div>
+      
+      <div class="content-block mt-4 animate-up delay-3">
+        <h2>Ethical & Sustainable</h2>
+        <p class="mt-2">Looking good shouldn't cost the earth. We're committed to sourcing eco-friendly garments and utilizing water-based, non-toxic inks whenever possible. Our process is designed to minimize waste without compromising on vibrancy or durability.</p>
+      </div>
+
+      <div class="mt-4 pt-4 animate-up" style="border-top: 1px solid var(--border-color);">
+        <h2>Start a new design project</h2>
+        <a href="/contact" class="button family-quote-btn mt-2">Get a Free Quote</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-header { padding: 120px 0 60px; border-bottom: 1px solid var(--border-color); }
+  .content-section { padding-top: 6rem; padding-bottom: 4rem;}
+  .content-block { max-width: 800px; margin: 0 auto; margin-bottom: 5rem; }
+  .content-block h2 { font-size: 2.75rem; margin-bottom: 1.5rem; letter-spacing: -0.02em; }
+  .content-block p { font-size: 1.25rem; line-height: 1.8; color: var(--text-secondary); }
+  .family-quote-btn {
+    background: #22856C !important;
+    color: #fff !important;
+  }
+  .family-quote-btn:hover {
+    background: #1b6f5a !important;
+    color: #fff !important;
+  }
+
+  @media (max-width: 768px) {
+    .page-header { padding: 100px 0 40px; }
+    .content-block h2 { font-size: 2rem; }
+    .content-block p { font-size: 1.1rem; }
+    .content-block { margin-bottom: 3rem; }
+  }
+</style>

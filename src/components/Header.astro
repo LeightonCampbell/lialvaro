@@ -1,0 +1,132 @@
+---
+---
+<header class="glass-nav">
+  <div class="container header-container">
+    <a href="/" class="logo" aria-label="Lialvaro Home">
+      <img src="/brand/logo.png" alt="Lialvaro" class="logo-image" />
+    </a>
+    
+    <button class="menu-toggle" aria-label="Toggle Menu" id="menu-toggle">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
+
+    <nav class="nav-links" id="nav-links">
+      <a href="/design-your-apparel">Design Your Apparel</a>
+      <a href="/articles">Articles</a>
+      <a href="/about">About Us</a>
+      <a href="/contact" class="button primary">Get a Quote</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const nav = document.getElementById('nav-links');
+  
+  if (toggle && nav) {
+    toggle.addEventListener('click', () => {
+      nav.classList.toggle('active');
+    });
+  }
+</script>
+
+<style>
+  .glass-nav {
+    background: rgba(255, 255, 255, 0.85);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+    position: relative;
+  }
+
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    line-height: 0;
+  }
+
+  .logo:hover {
+    opacity: 0.8;
+  }
+
+  .logo-image {
+    height: 40px;
+    width: auto;
+    display: block;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .nav-links a:not(.button) {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #000000;
+    transition: color 0.3s ease;
+  }
+
+  .nav-links a:not(.button):hover {
+    color: #000000;
+    opacity: 0.8;
+  }
+
+  .nav-links .button.primary {
+    background-color: #CF4C1B;
+    color: #000000;
+  }
+
+  .nav-links .button.primary:hover {
+    background-color: #b94317;
+  }
+
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 0.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .logo-image {
+      height: 34px;
+    }
+
+    .menu-toggle {
+      display: block;
+    }
+
+    .nav-links {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 70px;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 2rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      gap: 1.5rem;
+    }
+    
+    .nav-links.active {
+      display: flex;
+    }
+
+  }
+</style>
