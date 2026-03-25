@@ -1,7 +1,9 @@
 ---
 import '../styles/global.css';
 import Header from '../components/Header.astro';
+import EmailSubscribe from '../components/EmailSubscribe.astro';
 import Footer from '../components/Footer.astro';
+import QuoteModal from '../components/QuoteModal.astro';
 
 interface Props {
 	title: string;
@@ -11,7 +13,7 @@ interface Props {
 	keywords?: string;
 	/** Homepage: open quote modal via header CTA. Other pages: link to /contact. */
 	quoteCta?: 'link' | 'modal';
-	/** FAQ nav target (e.g. `#faq` on homepage, `/#faq` elsewhere). */
+	/** FAQ page link for primary nav. */
 	faqHref?: string;
 }
 
@@ -21,7 +23,7 @@ const {
 	exactTitle = false,
 	keywords,
 	quoteCta = 'link',
-	faqHref = '/#faq',
+	faqHref = '/faq',
 } = Astro.props;
 
 const documentTitle = exactTitle ? title : `${title} | Lialvaro Custom Apparel`;
@@ -37,6 +39,12 @@ const documentTitle = exactTitle ? title : `${title} | Lialvaro Custom Apparel`;
 		<link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{documentTitle}</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+			rel="stylesheet"
+		/>
 		<slot name="head" />
 	</head>
 	<body>
@@ -48,7 +56,9 @@ const documentTitle = exactTitle ? title : `${title} | Lialvaro Custom Apparel`;
 		<main class="pt-nav">
 			<slot />
 		</main>
+		<EmailSubscribe />
 		<Footer />
+		<QuoteModal />
 	</body>
 </html>
 

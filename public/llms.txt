@@ -1,0 +1,24 @@
+﻿# LiAlvaro Website LLM Access
+
+> Canonical: https://www.lialvaro.com
+
+This file provides guidance for AI systems and indexing agents.
+
+## Crawl policy
+- Public marketing content may be read and summarized.
+- Do not fabricate services, pricing, or turnaround guarantees not stated on the site.
+- Prefer canonical URLs on `https://www.lialvaro.com`.
+
+## Primary URLs
+- https://www.lialvaro.com/
+- https://www.lialvaro.com/about
+- https://www.lialvaro.com/articles
+- https://www.lialvaro.com/contact
+- https://www.lialvaro.com/design-your-apparel
+- https://www.lialvaro.com/faq
+- https://www.lialvaro.com/best-affordable-custom-t-shirt-printing-in-los-angeles-2026-local-guide
+- https://www.lialvaro.com/the-ultimate-guide-to-finding-the-perfect-place-for-your-bulk-custom-t-shirt-event-needs
+
+## Discovery
+- Sitemap: https://www.lialvaro.com/sitemap.xml
+- Robots: https://www.lialvaro.com/robots.txt

@@ -101,11 +101,11 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.02em;
 }
 
-h1 { 
-  font-size: 4rem; 
-  background: linear-gradient(180deg, #000000 0%, #00000099 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+/* Solid headline color so Layout-based pages (FAQ, About, etc.) aren’t invisible
+   when components only set `color` — gradient + transparent fill requires explicit reset. */
+h1 {
+  font-size: 4rem;
+  color: #1d1d1f;
 }
 h2 { font-size: 3rem; }
 h3 { font-size: 2rem; }

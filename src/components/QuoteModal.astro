@@ -1,0 +1,500 @@
+---
+---
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal" id="modal">
+    <div id="modalForm">
+      <div class="modal-header">
+        <div class="modal-header-text">
+          <div class="modal-eyebrow">Free Quote</div>
+          <div class="modal-title" id="modalTitle">Let's get you a quote</div>
+          <div class="modal-sub">We'll respond within 1 business hour.</div>
+        </div>
+        <button type="button" class="modal-close" id="modalClose" aria-label="Close">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-label" style="margin-bottom:10px;">Select a service</div>
+        <div class="service-picker" id="servicePicker">
+          <div class="service-opt selected" data-service="Screen Printing">
+            <span class="service-opt-icon">🖨️</span>
+            <span class="service-opt-name">Screen Printing</span>
+          </div>
+          <div class="service-opt" data-service="Direct to Garment">
+            <span class="service-opt-icon">🎨</span>
+            <span class="service-opt-name">DTG Printing</span>
+          </div>
+          <div class="service-opt" data-service="Direct to Film">
+            <span class="service-opt-icon">🎞️</span>
+            <span class="service-opt-name">Direct to Film</span>
+          </div>
+          <div class="service-opt" data-service="Embroidery">
+            <span class="service-opt-icon">🪡</span>
+            <span class="service-opt-name">Embroidery</span>
+          </div>
+        </div>
+
+        <div class="form-divider">Your details</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="quote-fname">First name</label>
+            <input type="text" id="quote-fname" class="form-input" placeholder="Alex" autocomplete="given-name" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="quote-lname">Last name</label>
+            <input type="text" id="quote-lname" class="form-input" placeholder="Johnson" autocomplete="family-name" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="quote-email">Email address</label>
+          <input type="email" id="quote-email" class="form-input" placeholder="alex@example.com" autocomplete="email" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="quote-phone">Phone (optional)</label>
+            <input type="tel" id="quote-phone" class="form-input" placeholder="(310) 000-0000" autocomplete="tel" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="quote-qty">Quantity</label>
+            <select id="quote-qty" class="form-select">
+              <option>1–11 pieces</option>
+              <option selected>12–24 pieces</option>
+              <option>25–49 pieces</option>
+              <option>50–99 pieces</option>
+              <option>100+ pieces</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="quote-details">Design details / notes</label>
+          <textarea id="quote-details" class="form-textarea" placeholder="Describe your design, garment type, colors, or any special requirements…"></textarea>
+        </div>
+
+        <button type="button" class="modal-submit" id="modalSubmit">Send My Quote Request →</button>
+        <div class="modal-guarantee">🔒 &nbsp;No spam. No hidden fees. Just a fast, honest quote.</div>
+      </div>
+    </div>
+
+    <div class="modal-success" id="modalSuccess">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">Quote request received!</div>
+      <div class="success-sub">
+        We'll have a personalized quote in your inbox within 1 business hour. For urgent orders, call us at
+        <a href="tel:3109042655" class="success-phone">(310) 904-2655</a>.
+      </div>
+      <button type="button" class="btn-success-close" id="successClose">Done</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    const overlay = document.getElementById('modalOverlay');
+    const formView = document.getElementById('modalForm');
+    const successView = document.getElementById('modalSuccess');
+    const fnameInput = document.getElementById('quote-fname');
+    const emailInput = document.getElementById('quote-email');
+    const modalClose = document.getElementById('modalClose');
+    const successClose = document.getElementById('successClose');
+    const servicePicker = document.getElementById('servicePicker');
+    const modalSubmit = document.getElementById('modalSubmit');
+
+    if (!overlay || !formView || !successView || !fnameInput) return;
+
+    function openModal(service) {
+      if (service) {
+        document.querySelectorAll('.service-opt').forEach(function (o) {
+          o.classList.toggle('selected', o.dataset.service === service);
+        });
+      }
+      formView.style.display = '';
+      successView.style.display = 'none';
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      setTimeout(function () {
+        fnameInput.focus();
+      }, 320);
+    }
+
+    function closeModal() {
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    window.openModal = openModal;
+    window.closeModal = closeModal;
+
+    document.querySelectorAll('[data-quote-trigger]').forEach(function (el) {
+      el.addEventListener('click', function (event) {
+        if (el.tagName === 'A') event.preventDefault();
+        openModal();
+      });
+    });
+
+    modalClose?.addEventListener('click', closeModal);
+    successClose?.addEventListener('click', closeModal);
+
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) closeModal();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && overlay.classList.contains('active')) closeModal();
+    });
+
+    servicePicker?.addEventListener('click', function (e) {
+      var opt = e.target.closest('.service-opt');
+      if (!opt) return;
+      document.querySelectorAll('.service-opt').forEach(function (o) {
+        o.classList.remove('selected');
+      });
+      opt.classList.add('selected');
+    });
+
+    modalSubmit?.addEventListener('click', function () {
+      var email = emailInput ? emailInput.value : '';
+      var fname = fnameInput ? fnameInput.value : '';
+      if (!fname.trim()) {
+        fnameInput.focus();
+        if (fnameInput) fnameInput.style.borderColor = '#ff6b2b';
+        return;
+      }
+      if (!email.includes('@')) {
+        if (emailInput) {
+          emailInput.focus();
+          emailInput.style.borderColor = '#ff6b2b';
+        }
+        return;
+      }
+      formView.style.display = 'none';
+      successView.style.display = 'block';
+    });
+  })();
+</script>
+
+<style is:global>
+  :root {
+    --orange: #ff6b2b;
+    --orange-deep: #e8521a;
+    --orange-soft: #fff0e8;
+    --orange-mid: #ffd9c4;
+    --surface: #f5f5f7;
+    --border: #e5e5ea;
+    --text-primary: #1d1d1f;
+    --text-secondary: #6e6e73;
+    --text-tertiary: #8e8e93;
+    --shadow-xl: 0 32px 80px rgba(0, 0, 0, 0.14), 0 8px 24px rgba(0, 0, 0, 0.07);
+    --radius-sm: 10px;
+    --radius-xl: 32px;
+  }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+
+  .modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: white;
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-xl);
+    transform: translateY(20px) scale(0.97);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .modal-overlay.active .modal {
+    transform: translateY(0) scale(1);
+  }
+
+  .modal-header {
+    padding: 32px 36px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .modal-eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 6px;
+  }
+
+  .modal-title {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+  }
+
+  .modal-sub {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 18px;
+    line-height: 1;
+    transition: background 0.18s, color 0.18s;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .modal-close:hover {
+    background: var(--border);
+    color: var(--text-primary);
+  }
+
+  .modal-body {
+    padding: 28px 36px 36px;
+  }
+
+  .service-picker {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .service-opt {
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: border-color 0.18s, background 0.18s;
+    background: white;
+  }
+
+  .service-opt:hover {
+    border-color: var(--orange-mid);
+    background: var(--orange-soft);
+  }
+
+  .service-opt.selected {
+    border-color: var(--orange);
+    background: var(--orange-soft);
+  }
+
+  .service-opt-icon {
+    font-size: 20px;
+  }
+
+  .service-opt-name {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+  }
+
+  .form-label {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+    display: block;
+    text-transform: uppercase;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 14.5px;
+    outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s;
+    appearance: none;
+  }
+
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    border-color: var(--orange);
+    box-shadow: 0 0 0 3px rgba(255, 107, 43, 0.12);
+    background: white;
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 88px;
+  }
+
+  .form-divider {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-tertiary);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: center;
+    margin: 20px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .form-divider::before,
+  .form-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .modal-submit {
+    width: 100%;
+    background: var(--orange);
+    color: white;
+    border: none;
+    padding: 15px;
+    font-family: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    letter-spacing: -0.01em;
+    transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
+    box-shadow: 0 4px 18px rgba(255, 107, 43, 0.3);
+    margin-top: 8px;
+  }
+
+  .modal-submit:hover {
+    background: var(--orange-deep);
+    box-shadow: 0 6px 24px rgba(255, 107, 43, 0.4);
+    transform: translateY(-1px);
+  }
+
+  .modal-guarantee {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--text-tertiary);
+    margin-top: 14px;
+  }
+
+  .modal-success {
+    padding: 48px 36px;
+    text-align: center;
+    display: none;
+  }
+
+  .success-icon {
+    font-size: 52px;
+    margin-bottom: 16px;
+  }
+
+  .success-title {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  .success-sub {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .success-phone {
+    color: var(--orange);
+    font-weight: 700;
+  }
+
+  .btn-success-close {
+    background: var(--orange);
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 100px;
+    font-family: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.18s;
+  }
+
+  .btn-success-close:hover {
+    background: var(--orange-deep);
+  }
+
+  @media (max-width: 900px) {
+    .modal {
+      border-radius: 24px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .modal-header,
+    .modal-body {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
+    .modal-success {
+      padding: 40px 24px;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .service-picker {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

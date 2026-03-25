@@ -1,0 +1,129 @@
+---
+---
+<section class="email-strip" aria-label="Email signup">
+  <div class="email-strip-inner">
+    <h2 class="email-strip-title">Get daily deals &amp; printing tips.</h2>
+    <p class="email-strip-lead">Subscribe for exclusive discounts and custom printing updates.</p>
+    <div class="email-strip-form">
+      <input
+        type="email"
+        class="email-strip-input"
+        id="emailStripInput"
+        placeholder="your@email.com"
+        autocomplete="email"
+      />
+      <button type="button" class="email-strip-submit" id="emailStripSubmit">Subscribe</button>
+    </div>
+    <p class="email-strip-fine">🔒 &nbsp;No spam. Unsubscribe anytime.</p>
+  </div>
+</section>
+
+<script is:inline>
+  (() => {
+    const btn = document.getElementById('emailStripSubmit');
+    const inp = document.getElementById('emailStripInput');
+    if (!btn || !inp) return;
+    btn.addEventListener('click', function () {
+      if (inp.value.includes('@')) {
+        btn.textContent = '✓ Subscribed!';
+        btn.style.background = '#2a6e2a';
+        inp.disabled = true;
+      } else {
+        inp.style.boxShadow = '0 0 0 3px rgba(255,107,43,0.25)';
+        inp.focus();
+      }
+    });
+  })();
+</script>
+
+<style>
+  .email-strip {
+    background: #f5f5f7;
+    text-align: center;
+    padding: 80px 40px;
+    border-top: 1px solid #e5e5ea;
+    border-bottom: 1px solid #e5e5ea;
+  }
+
+  .email-strip-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .email-strip-title {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    margin: 0 0 8px;
+    color: #1d1d1f;
+    font-family: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .email-strip-lead {
+    font-size: 15px;
+    color: #6e6e73;
+    margin: 0 0 28px;
+    line-height: 1.55;
+    font-family: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .email-strip-form {
+    display: flex;
+    gap: 0;
+    max-width: 420px;
+    margin: 0 auto;
+    border-radius: 100px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    border: 1.5px solid #e5e5ea;
+    background: #fff;
+  }
+
+  .email-strip-input {
+    flex: 1;
+    padding: 14px 20px;
+    background: transparent;
+    color: #1d1d1f;
+    border: none;
+    font-family: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 14.5px;
+    outline: none;
+    min-width: 0;
+  }
+
+  .email-strip-input::placeholder {
+    color: #8e8e93;
+  }
+
+  .email-strip-submit {
+    background: #ff6b2b;
+    color: #fff;
+    border: none;
+    padding: 12px 22px;
+    font-family: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 700;
+    font-size: 13.5px;
+    cursor: pointer;
+    border-radius: 100px;
+    margin: 4px;
+    flex-shrink: 0;
+    transition: background 0.18s;
+  }
+
+  .email-strip-submit:hover {
+    background: #e8521a;
+  }
+
+  .email-strip-fine {
+    font-size: 12px;
+    color: #8e8e93;
+    margin: 12px 0 0;
+    font-family: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  @media (max-width: 900px) {
+    .email-strip {
+      padding: 64px 16px;
+    }
+  }
+</style>

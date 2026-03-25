@@ -1,0 +1,356 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+/** Merged from homepage FAQs + archived faq-backup (wording favors current site copy). */
+const categories = [
+  {
+    id: "orders",
+    title: "Orders & quotes",
+    description: "How to get pricing, place an order, and what to expect on quantity.",
+    items: [
+      {
+        q: "How can I get a price quote?",
+        a: 'Click any “Get a Quote” button on the site and complete the quick form. You can also call us at (310) 904-2655 for a fast estimate — we respond within 1 business hour.',
+      },
+      {
+        q: "How do I order a custom shirt?",
+        a: "Ordering starts with selecting your garment, creating or uploading your design, and choosing placement. Our team guides you through the entire process from start to finish.",
+      },
+      {
+        q: "What's the minimum order quantity?",
+        a: "We have no minimum order quantity. You can order a single shirt! That said, you benefit significantly at 12+ pieces due to bulk pricing on screen printing.",
+      },
+    ],
+  },
+  {
+    id: "garments",
+    title: "Garments & artwork",
+    description: "Shirt options, file formats, and help with your design.",
+    items: [
+      {
+        q: "What type of shirt can I choose?",
+        a: "You have many brand and material options — cotton, polyester, blends, and more — as well as weight, size, and gender preferences. You may also bring your own shirts to print on.",
+      },
+      {
+        q: "Do I need to create my own design?",
+        a: "Not at all. We accept high-resolution files in .ai, .png, .jpg, or .svg formats. We can also edit your existing design or create a custom design for you at a small cost.",
+      },
+    ],
+  },
+  {
+    id: "production",
+    title: "Production & methods",
+    description: "Turnaround times and choosing the right print process.",
+    items: [
+      {
+        q: "How long does it take to get my shirts?",
+        a: "Standard turnaround is 5–7 business days after artwork approval and payment. Rush orders (4 business days) are available for an additional fee. Same-day service is available locally in LA.",
+      },
+      {
+        q: "What printing method is right for me?",
+        a: "For bulk and simple designs: screen printing. For photo-quality or small batches: DTG. For versatility across fabrics: DTF. For premium branded items: embroidery. We'll help you choose.",
+      },
+    ],
+  },
+  {
+    id: "delivery",
+    title: "Delivery & logistics",
+    description: "Shipping, pickup, and delivery in the Los Angeles area.",
+    items: [
+      {
+        q: "How much is delivery?",
+        a: "Local delivery options are available in the Los Angeles area. Final delivery cost depends on order size and location. Contact us for an exact quote including delivery.",
+      },
+    ],
+  },
+];
+---
+
+<Layout
+  title="FAQ"
+  description="Answers about custom T-shirt printing, quotes, garments, turnaround, and delivery — LiAlvaro, Los Angeles."
+>
+  <section class="hero">
+    <div class="container">
+      <p class="eyebrow">Support</p>
+      <h1>Questions, answered.</h1>
+      <p class="hero-lead">
+        Everything you need to know about ordering custom apparel with LiAlvaro — organized by topic so you can find
+        answers fast.
+      </p>
+    </div>
+  </section>
+
+  <section class="faq-body">
+    <div class="container narrow">
+      {
+        categories.map((cat) => (
+          <article class="faq-category" id={cat.id}>
+            <header class="faq-category-head">
+              <h2>{cat.title}</h2>
+              <p>{cat.description}</p>
+            </header>
+            <div class="faq-accordions">
+              {cat.items.map((item) => (
+                <details class="faq-details">
+                  <summary>
+                    <span class="faq-q">{item.q}</span>
+                    <span class="faq-chevron" aria-hidden="true" />
+                  </summary>
+                  <div class="faq-panel">
+                    <p>{item.a}</p>
+                  </div>
+                </details>
+              ))}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="faq-bottom-cta">
+    <div class="container narrow">
+      <h2>Ready to start your high-quality print project?</h2>
+      <p>
+        Share the project details with us — get a no-obligation quote.
+      </p>
+      <button type="button" class="faq-cta-btn" data-quote-trigger>
+        Get a Fast, Free Quote
+      </button>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero {
+    padding: 110px 0 72px;
+    text-align: center;
+    background: #fff;
+    border-bottom: 1px solid #e5e5ea;
+  }
+
+  .eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #ff6b2b;
+    margin-bottom: 12px;
+  }
+
+  .hero h1 {
+    font-size: clamp(40px, 6vw, 64px);
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+    color: #1d1d1f;
+  }
+
+  .hero-lead {
+    max-width: 640px;
+    margin: 0 auto;
+    font-size: 19px;
+    line-height: 1.65;
+    color: #6e6e73;
+  }
+
+  .container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  .container.narrow {
+    max-width: 720px;
+  }
+
+  .faq-body {
+    padding: 72px 0 88px;
+    background: #fafafa;
+  }
+
+  .faq-category {
+    margin-bottom: 56px;
+  }
+
+  .faq-category:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .faq-category-head h2 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #1d1d1f;
+    margin-bottom: 8px;
+  }
+
+  .faq-category-head p {
+    font-size: 15px;
+    line-height: 1.55;
+    color: #6e6e73;
+    margin-bottom: 20px;
+  }
+
+  .faq-accordions {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-radius: 20px;
+    border: 1px solid #e5e5ea;
+    background: #fff;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  }
+
+  .faq-details {
+    border-bottom: 1px solid #f0f0f5;
+  }
+
+  .faq-details:last-child {
+    border-bottom: none;
+  }
+
+  .faq-details summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1d1d1f;
+    transition: background 0.15s;
+  }
+
+  .faq-details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-details summary:hover {
+    background: #fafafa;
+  }
+
+  .faq-q {
+    text-align: left;
+    line-height: 1.4;
+  }
+
+  .faq-chevron {
+    flex-shrink: 0;
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid #ff6b2b;
+    border-bottom: 2px solid #ff6b2b;
+    transform: rotate(45deg);
+    margin-top: -4px;
+    transition: transform 0.22s ease;
+  }
+
+  .faq-details[open] .faq-chevron {
+    transform: rotate(225deg);
+    margin-top: 4px;
+  }
+
+  .faq-panel {
+    padding: 0 22px 18px;
+  }
+
+  .faq-panel p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.65;
+    color: #6e6e73;
+  }
+
+  .faq-bottom-cta {
+    padding: 80px 40px;
+    text-align: center;
+    background: linear-gradient(180deg, #fff 0%, #f5f5f7 100%);
+    border-top: 1px solid #e5e5ea;
+  }
+
+  .faq-bottom-cta .container.narrow {
+    padding: 0;
+  }
+
+  .faq-bottom-cta h2 {
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: #1d1d1f;
+    margin-bottom: 14px;
+    line-height: 1.15;
+  }
+
+  .faq-bottom-cta p {
+    font-size: 17px;
+    line-height: 1.6;
+    color: #6e6e73;
+    max-width: 520px;
+    margin: 0 auto 28px;
+  }
+
+  .faq-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #ff6b2b;
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+    font-family: inherit;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.18s, transform 0.15s;
+    box-shadow: 0 4px 18px rgba(255, 107, 43, 0.35);
+  }
+
+  .faq-cta-btn:hover {
+    background: #e8521a;
+    transform: scale(1.02);
+  }
+
+  @media (max-width: 900px) {
+    .container {
+      padding: 0 22px;
+    }
+
+    .faq-bottom-cta {
+      padding: 64px 22px;
+    }
+
+    .faq-body {
+      padding: 56px 0 72px;
+    }
+
+    .faq-details summary {
+      padding: 16px 18px;
+      font-size: 14.5px;
+    }
+
+    .faq-panel {
+      padding: 0 18px 16px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .container {
+      padding: 0 16px;
+    }
+
+    .faq-bottom-cta {
+      padding: 56px 16px;
+    }
+
+    .hero {
+      padding: 88px 0 56px;
+    }
+  }
+</style>
