@@ -1,158 +1,371 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="Design Your Apparel | Custom Printing Options">
-  <section class="page-header text-center animate-up">
+<Layout title="Design Your Apparel | LiAlvaro Apparel">
+  <section class="hero">
     <div class="container">
-      <h1>Bring your ideas to the fabric.</h1>
-      <p class="mt-2 text-secondary" style="max-width: 700px; margin-left: auto; margin-right: auto; font-size: 1.25rem;">Explore our premium printing techniques and find the perfect method for your project.</p>
-      <a href="/contact" class="button primary mt-2">Request a Quote</a>
+      <h1>What would you like to design today?</h1>
+      <p>Tell us about your project and we will recommend the best print method, timeline, and pricing for your goals.</p>
     </div>
   </section>
 
-  <section class="techniques-section mt-4 pb-4">
-    <div class="container">
-      
-      <!-- Tech 1 -->
-      <div class="tech-row animate-up delay-1">
-        <div class="tech-content">
-          <h2>Direct to Garment (DTG)</h2>
-          <p class="mt-2 text-secondary">The ultimate solution for complex, highly detailed artwork. DTG operates like a high-tech inkjet printer, applying specialized, eco-friendly inks directly into the fibers of the garment.</p>
-          <ul class="tech-list mt-2">
-            <li><strong>Ideal for:</strong> Full-color photos, gradients, highly detailed designs.</li>
-            <li><strong>Minimum Order:</strong> 0 (Produce single items easily).</li>
-            <li><strong>Feel:</strong> Soft, breathable, embedded in the fabric.</li>
-          </ul>
-        </div>
-        <div class="tech-image">
-          <div class="placeholder-img dtg-bg"></div>
-        </div>
-      </div>
+  <section class="section">
+    <div class="container layout-grid">
+      <article class="form-card">
+        <h2>Project request</h2>
+        <p class="sub">Share your vision, quantities, and timeline. Our team will follow up with a tailored design and production plan.</p>
 
-      <!-- Tech 2 -->
-      <div class="tech-row reverse mt-4 pt-4 animate-up delay-2">
-        <div class="tech-content">
-          <h2>Premium Screen Printing</h2>
-          <p class="mt-2 text-secondary">The industry standard for vibrant, long-lasting prints on bulk orders. Each color is applied layer by layer through precision mesh screens, producing an incredibly durable finish.</p>
-          <ul class="tech-list mt-2">
-            <li><strong>Ideal for:</strong> Brand logos, event merch, uniforms, simple vector art.</li>
-            <li><strong>Minimum Order:</strong> Highly cost-effective at 12+ pieces.</li>
-            <li><strong>Feel:</strong> Vibrant, textured, extremely durable over hundreds of washes.</li>
-          </ul>
-        </div>
-        <div class="tech-image">
-          <div class="placeholder-img screen-bg"></div>
-        </div>
-      </div>
+        <form id="designRequestForm" action="#" method="post">
+          <div class="row">
+            <label>
+              Full Name
+              <input type="text" name="name" required />
+            </label>
+            <label>
+              Email Address
+              <input type="email" name="email" required />
+            </label>
+          </div>
 
-      <!-- Tech 3 -->
-      <div class="tech-row mt-4 pt-4 animate-up delay-3">
-        <div class="tech-content">
-          <h2>Custom Embroidery</h2>
-          <p class="mt-2 text-secondary">Add a touch of premium professionalism. We digitize your artwork and stitch it directly into the garment for a classic, high-end look that never fades.</p>
-          <ul class="tech-list mt-2">
-            <li><strong>Ideal for:</strong> Hats, beanies, polo shirts, thick hoodies, jackets.</li>
-            <li><strong>Minimum Order:</strong> 0 (Single pieces welcome).</li>
-            <li><strong>Feel:</strong> Textured, luxurious, highly durable.</li>
-          </ul>
-        </div>
-        <div class="tech-image">
-          <div class="placeholder-img emb-bg"></div>
-        </div>
-      </div>
+          <div class="row">
+            <label>
+              Phone Number
+              <input type="tel" name="phone" placeholder="(310) 000-0000" />
+            </label>
+            <label>
+              Business / Brand Name
+              <input type="text" name="brand" />
+            </label>
+          </div>
 
-    </div>
-  </section>
+          <fieldset class="checks-group">
+            <legend>What would you like to design?</legend>
+            <div class="checks">
+              <label><input type="checkbox" name="items" value="T-Shirts" />T-Shirts</label>
+              <label><input type="checkbox" name="items" value="Hoodies" />Hoodies</label>
+              <label><input type="checkbox" name="items" value="Hats" />Hats</label>
+              <label><input type="checkbox" name="items" value="Other" />Other</label>
+            </div>
+          </fieldset>
 
-  <section class="cta-banner mt-4 pb-4 text-center">
-    <div class="container animate-up">
-      <h2>Not sure which to choose?</h2>
-      <p class="mt-2 text-secondary mb-2">That's what we're here for. Give us a call and we'll recommend the perfect technique for your design and budget.</p>
-      <a href="tel:3109042655" class="button primary">Call (310) 904-2655</a>
+          <div class="row">
+            <label>
+              Preferred Print Method
+              <select name="method">
+                <option value="">Select one</option>
+                <option>Screen Printing</option>
+                <option>Direct To Garment (DTG)</option>
+                <option>Direct To Film (DTF)</option>
+                <option>Embroidery</option>
+                <option>Not sure yet</option>
+              </select>
+            </label>
+            <label>
+              Estimated Quantity
+              <select name="quantity">
+                <option value="">Select one</option>
+                <option>1-11 pieces</option>
+                <option>12-24 pieces</option>
+                <option>25-49 pieces</option>
+                <option>50-99 pieces</option>
+                <option>100+ pieces</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="row">
+            <label>
+              Number of print colors
+              <select name="colors">
+                <option value="">Select one</option>
+                <option>1 Color</option>
+                <option>2 Colors</option>
+                <option>3 Colors</option>
+                <option>4 Colors</option>
+                <option>5 Colors</option>
+                <option>More than 5 colors</option>
+              </select>
+            </label>
+            <label>
+              Needed By
+              <input type="date" name="deadline" />
+            </label>
+          </div>
+
+          <label>
+            Project details
+            <textarea name="details" placeholder="Tell us your design goals, garment preferences, sizing, placements, and any special notes." required></textarea>
+          </label>
+
+          <button type="submit" class="submit">Submit Design Request</button>
+          <p class="success" id="successMsg">Thanks! Your request has been submitted. Our team will contact you shortly.</p>
+        </form>
+      </article>
+
+      <aside class="help-card">
+        <h3>What happens next?</h3>
+        <p>We review your project details and respond with recommendations based on timeline, fabric, print complexity, and budget.</p>
+        <ul class="bullet-list">
+          <li>Method recommendation (Screen, DTG, DTF, or Embroidery)</li>
+          <li>Design support and artwork prep guidance</li>
+          <li>Timeline and production plan</li>
+          <li>Transparent quote with no hidden fees</li>
+        </ul>
+        <div class="callout">Need it fast? Ask about same-day and rush production options for Los Angeles projects.</div>
+      </aside>
     </div>
   </section>
 </Layout>
 
+<script>
+  const form = document.getElementById("designRequestForm");
+  const successMsg = document.getElementById("successMsg");
+  if (form) {
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      successMsg?.classList.add("show");
+      form.reset();
+    });
+  }
+</script>
+
 <style>
-  .page-header { padding: 120px 0 80px; border-bottom: 1px solid var(--border-color); }
-  
-  .techniques-section { padding-top: 6rem; }
-  
-  .tech-row {
+  .hero {
+    padding: 110px 0 72px;
+    text-align: center;
+    background: #fff;
+    border-bottom: 1px solid #e5e5ea;
+  }
+
+  .hero h1 {
+    font-size: clamp(36px, 6vw, 68px);
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    margin-bottom: 14px;
+  }
+
+  .hero p {
+    max-width: 760px;
+    margin: 0 auto;
+    color: #6e6e73;
+    font-size: 19px;
+    line-height: 1.65;
+  }
+
+  .section {
+    padding: 76px 0 94px;
+  }
+
+  .layout-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 0.75fr;
+    gap: 22px;
+    align-items: start;
+  }
+
+  .form-card,
+  .help-card {
+    background: #fff;
+    border: 1px solid #f0f0f5;
+    border-radius: 32px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+    padding: 30px;
+  }
+
+  .form-card h2 {
+    font-size: clamp(30px, 4vw, 42px);
+    letter-spacing: -0.025em;
+    margin-bottom: 10px;
+  }
+
+  .sub {
+    color: #6e6e73;
+    font-size: 15.5px;
+    line-height: 1.7;
+    margin-bottom: 22px;
+  }
+
+  form {
+    display: grid;
+    gap: 16px;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  label {
+    display: grid;
+    gap: 7px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #53535a;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    border: 1.5px solid #e5e5ea;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 14.5px;
+    color: #1d1d1f;
+    background: #f7f7f8;
+    outline: none;
+  }
+
+  textarea {
+    min-height: 108px;
+    resize: vertical;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    border-color: #ff6b2b;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(255, 107, 43, 0.14);
+  }
+
+  .checks {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 2px;
+  }
+
+  .checks-group {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 7px;
+  }
+
+  .checks-group legend {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #53535a;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    margin-bottom: 0;
+  }
+
+  .checks label {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d1d1f;
     display: flex;
     align-items: center;
-    gap: 8rem;
-    margin-bottom: 8rem;
+    gap: 8px;
+    border: 1.5px solid #e5e5ea;
+    background: #f7f7f8;
+    border-radius: 12px;
+    padding: 10px 12px;
   }
 
-  .tech-row.reverse {
-    flex-direction: row-reverse;
-  }
-
-  .tech-content {
-    flex: 1;
-  }
-
-  .tech-content h2 { font-size: 3rem; margin-bottom: 1.5rem; letter-spacing: -0.03em; }
-  .tech-content p { font-size: 1.25rem; line-height: 1.6; }
-  
-  .tech-list {
-    list-style: none;
+  .checks input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
     padding: 0;
-    margin-top: 2rem;
   }
 
-  .tech-list li {
-    font-size: 1.15rem;
-    color: var(--text-secondary);
-    margin-bottom: 1.2rem;
-    padding-left: 2rem;
+  .submit {
+    margin-top: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #22856c;
+    color: #fff;
+    border: 0;
+    border-radius: 999px;
+    padding: 13px 26px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    width: fit-content;
+  }
+
+  .submit:hover {
+    background: #1b6f5a;
+  }
+
+  .success {
+    margin-top: 14px;
+    color: #1f7a62;
+    font-weight: 700;
+    display: none;
+  }
+
+  .success.show {
+    display: block;
+  }
+
+  .help-card h3 {
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  .help-card p {
+    color: #6e6e73;
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  .bullet-list {
+    list-style: none;
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .bullet-list li {
+    color: #6e6e73;
+    line-height: 1.6;
+    padding-left: 20px;
     position: relative;
   }
 
-  .tech-list li::before {
-    content: '→';
+  .bullet-list li::before {
+    content: "•";
+    color: #ff6b2b;
     position: absolute;
     left: 0;
-    color: var(--text-primary);
+    top: 0;
+    font-weight: 800;
   }
 
-  .tech-list li strong {
-    color: var(--text-primary);
+  .callout {
+    margin-top: 18px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #fff3ec;
+    border: 1px solid #ffd7c2;
+    color: #7a3a22;
+    font-size: 14px;
+    font-weight: 600;
   }
 
-  .tech-image {
-    flex: 1.2;
-    width: 100%;
-  }
-
-  .placeholder-img {
-    width: 100%;
-    aspect-ratio: 4/3;
-    border-radius: 28px;
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    background-size: cover;
-    background-position: center;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-  }
-
-  /* Simulating images with gradients for the premium feel since we don't have assets yet */
-  .dtg-bg { background: linear-gradient(135deg, #181822 0%, #101014 100%); }
-  .screen-bg { background: linear-gradient(135deg, #101014 0%, #1a1a24 100%); }
-  .emb-bg { background: linear-gradient(135deg, #1c1c20 0%, #08080a 100%); }
-
-  .cta-banner { padding: 8rem 0; background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%); border-top: 1px solid var(--border-color); }
-
-  @media (max-width: 992px) {
-    .tech-row, .tech-row.reverse {
-      flex-direction: column;
-      gap: 4rem;
-      margin-bottom: 6rem;
+  @media (max-width: 980px) {
+    .layout-grid {
+      grid-template-columns: 1fr;
     }
-    .tech-image { width: 100%; flex: 1; }
-    .page-header { padding: 100px 0 50px; }
-    .tech-content h2 { font-size: 2.25rem; }
+    .row {
+      grid-template-columns: 1fr;
+    }
+    .checks {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
