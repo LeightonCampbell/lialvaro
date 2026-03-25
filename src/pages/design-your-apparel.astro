@@ -16,7 +16,9 @@ import Layout from "../layouts/Layout.astro";
         <h2>Project request</h2>
         <p class="sub">Share your vision, quantities, and timeline. Our team will follow up with a tailored design and production plan.</p>
 
-        <form id="designRequestForm" action="#" method="post">
+        <form id="designRequestForm" action="https://formspree.io/f/xnjoaoyw" method="POST">
+          <input type="hidden" name="_subject" value="New Project Request — LiAlvaro T-Shirt Printing" />
+          <input type="text" name="_gotcha" style="display:none" />
           <div class="row">
             <label>
               Full Name
@@ -100,6 +102,7 @@ import Layout from "../layouts/Layout.astro";
 
           <button type="submit" class="submit">Submit Design Request</button>
           <p class="success" id="successMsg">Thanks! Your request has been submitted. Our team will contact you shortly.</p>
+          <p class="error" id="errorMsg">Submission failed. Please try again.</p>
         </form>
       </article>
 
@@ -121,11 +124,38 @@ import Layout from "../layouts/Layout.astro";
 <script>
   const form = document.getElementById("designRequestForm");
   const successMsg = document.getElementById("successMsg");
+  const errorMsg = document.getElementById("errorMsg");
+  const submitBtn = form?.querySelector('button[type="submit"]');
   if (form) {
-    form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", async (event) => {
       event.preventDefault();
-      successMsg?.classList.add("show");
-      form.reset();
+      successMsg?.classList.remove("show");
+      errorMsg?.classList.remove("show");
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.dataset.originalText = submitBtn.dataset.originalText || submitBtn.textContent;
+        submitBtn.textContent = "Sending...";
+      }
+
+      try {
+        const formData = new FormData(form);
+        const response = await fetch(form.action, {
+          method: "POST",
+          body: formData
+        });
+
+        if (!response.ok) throw new Error("Request failed");
+        successMsg?.classList.add("show");
+        form.reset();
+      } catch (_error) {
+        errorMsg?.classList.add("show");
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = submitBtn.dataset.originalText || "Submit Design Request";
+        }
+      }
     });
   }
 </script>
@@ -307,6 +337,17 @@ import Layout from "../layouts/Layout.astro";
   }
 
   .success.show {
+    display: block;
+  }
+
+  .error {
+    margin-top: 14px;
+    color: #c34242;
+    font-weight: 700;
+    display: none;
+  }
+
+  .error.show {
     display: block;
   }
 

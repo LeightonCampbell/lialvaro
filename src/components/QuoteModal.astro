@@ -12,77 +12,238 @@
         <button type="button" class="modal-close" id="modalClose" aria-label="Close">✕</button>
       </div>
 
-      <div class="modal-body">
-        <div class="form-label" style="margin-bottom:10px;">Select a service</div>
-        <div class="service-picker" id="servicePicker">
-          <div class="service-opt selected" data-service="Screen Printing">
-            <span class="service-opt-icon">🖨️</span>
-            <span class="service-opt-name">Screen Printing</span>
+      <form
+        id="quoteForm"
+        class="modal-body"
+        action="https://formspree.io/f/xnjoaoyw"
+        method="POST"
+        novalidate
+      >
+        <input
+          type="hidden"
+          name="_subject"
+          value="New Quote Request — LiAlvaro T-Shirt Printing"
+        />
+        <input type="text" name="_gotcha" style="display:none" />
+        <input type="hidden" name="service" id="quoteServiceInput" value="" />
+
+        <div class="quote-error" id="quoteError" aria-live="polite" hidden></div>
+        <div class="quote-step" id="quoteStep1">
+          <div class="step-label">
+            Step 1: Select a service <span class="quote-optional">(optional)</span>
           </div>
-          <div class="service-opt" data-service="Direct to Garment">
-            <span class="service-opt-icon">🎨</span>
-            <span class="service-opt-name">DTG Printing</span>
+
+          <div class="service-picker" id="servicePicker">
+            <div class="service-opt" data-service="Screen Printing">
+              <span class="service-opt-icon">🖨️</span>
+              <span class="service-opt-name">Screen Printing</span>
+            </div>
+            <div class="service-opt" data-service="Direct to Garment">
+              <span class="service-opt-icon">🎨</span>
+              <span class="service-opt-name">DTG Printing</span>
+            </div>
+            <div class="service-opt" data-service="Direct to Film">
+              <span class="service-opt-icon">🎞️</span>
+              <span class="service-opt-name">Direct to Film</span>
+            </div>
+            <div class="service-opt" data-service="Embroidery">
+              <span class="service-opt-icon">🪡</span>
+              <span class="service-opt-name">Embroidery</span>
+            </div>
           </div>
-          <div class="service-opt" data-service="Direct to Film">
-            <span class="service-opt-icon">🎞️</span>
-            <span class="service-opt-name">Direct to Film</span>
-          </div>
-          <div class="service-opt" data-service="Embroidery">
-            <span class="service-opt-icon">🪡</span>
-            <span class="service-opt-name">Embroidery</span>
+
+          <div class="modal-nav modal-nav-single">
+            <button type="button" class="modal-submit modal-nav-btn" id="step1Next">Next →</button>
           </div>
         </div>
 
-        <div class="form-divider">Your details</div>
+        <div class="quote-step" id="quoteStep2" hidden>
+          <div class="step-label">Step 2: What would you like to design?* </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="quote-fname">First name</label>
-            <input type="text" id="quote-fname" class="form-input" placeholder="Alex" autocomplete="given-name" />
+          <div class="choice-grid" role="group" aria-label="What would you like to design?">
+            <label class="choice">
+              <input type="checkbox" name="quote-design-type" value="Tops" />
+              <span class="choice-radio" aria-hidden="true"></span>
+              <span class="choice-text">Tops (t-shirts, tanks, etc.)</span>
+            </label>
+            <label class="choice">
+              <input type="checkbox" name="quote-design-type" value="Bottoms" />
+              <span class="choice-radio" aria-hidden="true"></span>
+              <span class="choice-text">Bottoms (pants, shorts, etc.)</span>
+            </label>
+            <label class="choice">
+              <input type="checkbox" name="quote-design-type" value="Hats" />
+              <span class="choice-radio" aria-hidden="true"></span>
+              <span class="choice-text">Hats</span>
+            </label>
+            <label class="choice">
+              <input type="checkbox" name="quote-design-type" value="Bags" />
+              <span class="choice-radio" aria-hidden="true"></span>
+              <span class="choice-text">Bags</span>
+            </label>
+            <label class="choice choice-span-2">
+              <input type="checkbox" name="quote-design-type" value="Something Else" />
+              <span class="choice-radio" aria-hidden="true"></span>
+              <span class="choice-text">Something Else</span>
+            </label>
           </div>
-          <div class="form-group">
-            <label class="form-label" for="quote-lname">Last name</label>
-            <input type="text" id="quote-lname" class="form-input" placeholder="Johnson" autocomplete="family-name" />
-          </div>
-        </div>
 
-        <div class="form-group">
-          <label class="form-label" for="quote-email">Email address</label>
-          <input type="email" id="quote-email" class="form-input" placeholder="alex@example.com" autocomplete="email" />
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="quote-phone">Phone (optional)</label>
-            <input type="tel" id="quote-phone" class="form-input" placeholder="(310) 000-0000" autocomplete="tel" />
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="quote-qty">Quantity</label>
-            <select id="quote-qty" class="form-select">
-              <option>1–11 pieces</option>
-              <option selected>12–24 pieces</option>
-              <option>25–49 pieces</option>
-              <option>50–99 pieces</option>
-              <option>100+ pieces</option>
+          <div class="form-group" id="quoteColorsWrap" hidden>
+            <label class="form-label" for="quote-colors">How many colors are in your design?*</label>
+            <select id="quote-colors" name="colors" class="form-select">
+              <option value="" disabled selected>Please Select</option>
+              <option value="1">1 Color</option>
+              <option value="2">2 Colors</option>
+              <option value="3">3 Colors</option>
+              <option value="4">4 Colors</option>
+              <option value="5">5 Colors</option>
+              <option value="6+">More than 5 colors</option>
             </select>
           </div>
+
+          <div class="form-group">
+            <label class="form-label" for="quote-pieces">How many pieces do you need?*</label>
+            <input
+              type="number"
+              id="quote-pieces"
+              name="pieces"
+              class="form-input"
+              placeholder="e.g. 50"
+              min="1"
+              step="1"
+            />
+          </div>
+
+          <div class="modal-nav">
+            <button type="button" class="modal-back modal-nav-btn" id="step2Back">Back</button>
+            <button type="button" class="modal-submit modal-nav-btn" id="step2Next">Next →</button>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label" for="quote-details">Design details / notes</label>
-          <textarea id="quote-details" class="form-textarea" placeholder="Describe your design, garment type, colors, or any special requirements…"></textarea>
+        <div class="quote-step" id="quoteStep3" hidden>
+          <div class="step-label">Step 3: Blanks &amp; design upload</div>
+
+          <div class="form-group" style="margin-bottom:22px;">
+            <div class="form-label" style="margin-bottom:10px; text-transform:none;">Will you be providing the blank(s)?*</div>
+            <div class="choice-grid">
+              <label class="choice">
+                <input type="radio" name="quote-providing-blanks" value="yes" />
+                <span class="choice-radio" aria-hidden="true"></span>
+                <span class="choice-text">Yes</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="quote-providing-blanks" value="no" />
+                <span class="choice-radio" aria-hidden="true"></span>
+                <span class="choice-text">No</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" id="blankMaterialWrap" hidden>
+            <label class="form-label" for="quote-blank-material">What type of material is your blanks?*</label>
+            <input
+              type="text"
+              id="quote-blank-material"
+              name="blank_material"
+              class="form-input"
+              placeholder="eg. 100% cotton, polyester, etc."
+            />
+          </div>
+
+          <div class="form-divider">Upload your design(s) (optional)</div>
+
+          <div class="upload-dropzone" id="uploadDropzone" role="button" tabindex="0" aria-label="Upload your design files (optional)">
+            <input type="file" id="quote-files" name="design_files" multiple hidden />
+            <div class="upload-icon" aria-hidden="true">⬆️</div>
+            <div class="upload-title">Upload File(s)</div>
+            <div class="upload-sub">Drag and drop files here</div>
+            <button type="button" class="upload-browse" id="uploadBrowse">Browse</button>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="quote-notes">More design details / notes (optional)</label>
+            <textarea
+              id="quote-notes"
+              class="form-textarea"
+              name="design_notes"
+              placeholder="Describe your design, garment type, colors, or any special requirements in detail"
+            ></textarea>
+          </div>
+
+          <div class="modal-nav">
+            <button type="button" class="modal-back modal-nav-btn" id="step3Back">Back</button>
+            <button type="button" class="modal-submit modal-nav-btn" id="step3Next">Next →</button>
+          </div>
         </div>
 
-        <button type="button" class="modal-submit" id="modalSubmit">Send My Quote Request →</button>
-        <div class="modal-guarantee">🔒 &nbsp;No spam. No hidden fees. Just a fast, honest quote.</div>
-      </div>
+        <div class="quote-step" id="quoteStep4" hidden>
+          <div class="step-label">Step 4: Your details</div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="quote-fname">First name*</label>
+              <input
+                type="text"
+                id="quote-fname"
+                name="first_name"
+                class="form-input"
+                placeholder="Alex"
+                autocomplete="given-name"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="quote-lname">Last name*</label>
+              <input
+                type="text"
+                id="quote-lname"
+                name="last_name"
+                class="form-input"
+                placeholder="Johnson"
+                autocomplete="family-name"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="quote-phone">Phone number*</label>
+              <input
+                type="tel"
+                id="quote-phone"
+                name="phone"
+                class="form-input"
+                placeholder="(310) 000-0000"
+                autocomplete="tel"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="quote-email">Your Email*</label>
+              <input
+                type="email"
+                id="quote-email"
+                name="email"
+                class="form-input"
+                placeholder="alex@example.com"
+                autocomplete="email"
+              />
+            </div>
+          </div>
+
+          <div class="modal-nav">
+            <button type="button" class="modal-back modal-nav-btn" id="step4Back">Back</button>
+            <button type="submit" class="modal-submit modal-nav-btn" id="step4Submit">Get My Free Quote →</button>
+          </div>
+
+          <div class="modal-guarantee">🔒 &nbsp;No spam. No hidden fees. Just a fast, honest quote.</div>
+        </div>
+      </form>
     </div>
 
     <div class="modal-success" id="modalSuccess">
       <div class="success-icon">🎉</div>
       <div class="success-title">Quote request received!</div>
       <div class="success-sub">
-        We'll have a personalized quote in your inbox within 1 business hour. For urgent orders, call us at
+        We'll reach out within 1 business hour. For urgent orders, call us at
         <a href="tel:3109042655" class="success-phone">(310) 904-2655</a>.
       </div>
       <button type="button" class="btn-success-close" id="successClose">Done</button>
@@ -95,28 +256,124 @@
     const overlay = document.getElementById('modalOverlay');
     const formView = document.getElementById('modalForm');
     const successView = document.getElementById('modalSuccess');
-    const fnameInput = document.getElementById('quote-fname');
-    const emailInput = document.getElementById('quote-email');
+    const step1 = document.getElementById('quoteStep1');
+    const step2 = document.getElementById('quoteStep2');
+    const step3 = document.getElementById('quoteStep3');
+    const step4 = document.getElementById('quoteStep4');
+    const errorEl = document.getElementById('quoteError');
     const modalClose = document.getElementById('modalClose');
     const successClose = document.getElementById('successClose');
     const servicePicker = document.getElementById('servicePicker');
-    const modalSubmit = document.getElementById('modalSubmit');
+    const blankMaterialWrap = document.getElementById('blankMaterialWrap');
 
-    if (!overlay || !formView || !successView || !fnameInput) return;
+    const step1Next = document.getElementById('step1Next');
+    const step2Back = document.getElementById('step2Back');
+    const step2Next = document.getElementById('step2Next');
+    const step3Back = document.getElementById('step3Back');
+    const step3Next = document.getElementById('step3Next');
+    const step4Back = document.getElementById('step4Back');
+    const step4Submit = document.getElementById('step4Submit');
+
+    const quoteForm = document.getElementById('quoteForm');
+    const quoteServiceInput = document.getElementById('quoteServiceInput');
+    const submitBtn = step4Submit;
+
+    const designTypeInputs = document.querySelectorAll('input[name="quote-design-type"]');
+    const colorsSelect = document.getElementById('quote-colors');
+    const quoteColorsWrap = document.getElementById('quoteColorsWrap');
+    const piecesInput = document.getElementById('quote-pieces');
+    const blanksProvidingInputs = document.querySelectorAll('input[name="quote-providing-blanks"]');
+    const blankMaterialInput = document.getElementById('quote-blank-material');
+    const filesInput = document.getElementById('quote-files');
+    const notesInput = document.getElementById('quote-notes');
+
+    const fnameInput = document.getElementById('quote-fname');
+    const lnameInput = document.getElementById('quote-lname');
+    const phoneInput = document.getElementById('quote-phone');
+    const emailInput = document.getElementById('quote-email');
+
+    const uploadDropzone = document.getElementById('uploadDropzone');
+    const uploadBrowse = document.getElementById('uploadBrowse');
+
+    if (!overlay || !formView || !successView || !quoteForm) return;
+
+    let currentStep = 1;
+
+    function updateColorsVisibility() {
+      if (!quoteColorsWrap || !colorsSelect) return;
+      const selectedServices = Array.from(document.querySelectorAll('.service-opt.selected')).map((o) => o.dataset.service);
+      const wantsColors = selectedServices.includes('Screen Printing') || selectedServices.includes('Embroidery');
+      quoteColorsWrap.hidden = !wantsColors;
+      if (!wantsColors) colorsSelect.value = '';
+    }
+
+    function setError(text) {
+      if (!errorEl) return;
+      if (text) {
+        errorEl.textContent = text;
+        errorEl.hidden = false;
+      } else {
+        errorEl.textContent = '';
+        errorEl.hidden = true;
+      }
+    }
+
+    function setStep(step) {
+      currentStep = step;
+      [step1, step2, step3, step4].forEach((el, idx) => {
+        if (!el) return;
+        el.hidden = idx !== (step - 1);
+      });
+      setError('');
+      if (step === 2) updateColorsVisibility();
+    }
+
+    function resetForm() {
+      setError('');
+
+      // Service selection is optional.
+      document.querySelectorAll('.service-opt').forEach((o) => o.classList.remove('selected'));
+      if (quoteServiceInput) quoteServiceInput.value = '';
+
+      designTypeInputs.forEach((i) => (i.checked = false));
+      if (colorsSelect) colorsSelect.value = '';
+      if (quoteColorsWrap) quoteColorsWrap.hidden = true;
+      if (piecesInput) piecesInput.value = '';
+
+      blanksProvidingInputs.forEach((i) => (i.checked = false));
+      if (blankMaterialInput) blankMaterialInput.value = '';
+      if (blankMaterialWrap) blankMaterialWrap.hidden = true;
+
+      if (filesInput) filesInput.value = '';
+      if (notesInput) notesInput.value = '';
+
+      if (fnameInput) fnameInput.value = '';
+      if (lnameInput) lnameInput.value = '';
+      if (phoneInput) phoneInput.value = '';
+      if (emailInput) emailInput.value = '';
+    }
 
     function openModal(service) {
+      resetForm();
+
       if (service) {
         document.querySelectorAll('.service-opt').forEach(function (o) {
           o.classList.toggle('selected', o.dataset.service === service);
         });
       }
+      const selectedService = document.querySelector('.service-opt.selected');
+      if (quoteServiceInput) quoteServiceInput.value = selectedService ? selectedService.dataset.service : '';
+
       formView.style.display = '';
       successView.style.display = 'none';
       overlay.classList.add('active');
       document.body.style.overflow = 'hidden';
+
+      setStep(1);
+
       setTimeout(function () {
-        fnameInput.focus();
-      }, 320);
+        step1Next?.focus?.();
+      }, 200);
     }
 
     function closeModal() {
@@ -152,26 +409,188 @@
         o.classList.remove('selected');
       });
       opt.classList.add('selected');
+      if (currentStep === 2) updateColorsVisibility();
+
+      const selectedService = document.querySelector('.service-opt.selected');
+      if (quoteServiceInput) quoteServiceInput.value = selectedService ? selectedService.dataset.service : '';
     });
 
-    modalSubmit?.addEventListener('click', function () {
-      var email = emailInput ? emailInput.value : '';
-      var fname = fnameInput ? fnameInput.value : '';
-      if (!fname.trim()) {
-        fnameInput.focus();
-        if (fnameInput) fnameInput.style.borderColor = '#ff6b2b';
-        return;
-      }
-      if (!email.includes('@')) {
-        if (emailInput) {
-          emailInput.focus();
-          emailInput.style.borderColor = '#ff6b2b';
-        }
-        return;
-      }
-      formView.style.display = 'none';
-      successView.style.display = 'block';
+    step1Next?.addEventListener('click', function () {
+      setStep(2);
     });
+
+    step2Back?.addEventListener('click', function () {
+      setStep(1);
+    });
+
+    step2Next?.addEventListener('click', function () {
+      var designSelected = Array.from(designTypeInputs).some((i) => i.checked);
+      var colorsSelected = colorsSelect && colorsSelect.value;
+      var pieces = piecesInput ? piecesInput.value : '';
+
+      if (!designSelected) {
+        setError('Please select what you would like to design.');
+        designTypeInputs[0]?.focus?.();
+        return;
+      }
+      if (quoteColorsWrap && !quoteColorsWrap.hidden) {
+        if (!colorsSelected) {
+          setError('Please select how many colors are in your design.');
+          colorsSelect?.focus?.();
+          return;
+        }
+      }
+      if (!pieces || Number(pieces) < 1) {
+        setError('Please enter how many pieces you need.');
+        piecesInput?.focus?.();
+        return;
+      }
+
+      setStep(3);
+    });
+
+    step3Back?.addEventListener('click', function () {
+      setStep(2);
+    });
+
+    step3Next?.addEventListener('click', function () {
+      var blanksSelected = Array.from(blanksProvidingInputs).find((i) => i.checked);
+      if (!blanksSelected) {
+        setError('Please select whether you will provide the blanks.');
+        return;
+      }
+
+      if (blanksSelected.value === 'yes') {
+        var mat = blankMaterialInput ? blankMaterialInput.value.trim() : '';
+        if (!mat) {
+          setError('Please enter the type of material for your blanks.');
+          blankMaterialInput?.focus?.();
+          return;
+        }
+      }
+
+      setStep(4);
+    });
+
+    step4Back?.addEventListener('click', function () {
+      setStep(3);
+    });
+
+    quoteForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      if (currentStep !== 4) return;
+
+      var fname = fnameInput ? fnameInput.value.trim() : '';
+      var lname = lnameInput ? lnameInput.value.trim() : '';
+      var phone = phoneInput ? phoneInput.value.trim() : '';
+      var email = emailInput ? emailInput.value.trim() : '';
+
+      if (!fname) {
+        setError('Please enter your first name.');
+        fnameInput?.focus?.();
+        return;
+      }
+      if (!lname) {
+        setError('Please enter your last name.');
+        lnameInput?.focus?.();
+        return;
+      }
+      if (!phone) {
+        setError('Please enter your phone number.');
+        phoneInput?.focus?.();
+        return;
+      }
+      if (!email || !email.includes('@')) {
+        setError('Please enter your email address.');
+        emailInput?.focus?.();
+        return;
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        var originalText = submitBtn.dataset.originalText || submitBtn.textContent;
+        submitBtn.dataset.originalText = originalText;
+        submitBtn.textContent = 'Sending...';
+      }
+
+      try {
+        var formData = new FormData(quoteForm);
+        var endpoint = quoteForm.getAttribute('action') || 'https://formspree.io/f/xnjoaoyw';
+        var res = await fetch(endpoint, { method: 'POST', body: formData });
+
+        if (res && res.ok) {
+          formView.style.display = 'none';
+          successView.style.display = 'block';
+          setError('');
+          return;
+        }
+
+        setError('Submission failed. Please try again.');
+      } catch (_err) {
+        setError('Network error. Please check your connection and try again.');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          var originalText = submitBtn.dataset.originalText || 'Get My Free Quote →';
+          submitBtn.textContent = originalText;
+        }
+      }
+    });
+
+    blanksProvidingInputs.forEach(function (input) {
+      input.addEventListener('change', function () {
+        var wantsBlanks = this.value === 'yes';
+        if (blankMaterialWrap) blankMaterialWrap.hidden = !wantsBlanks;
+      });
+    });
+
+    // Upload (optional): clicking anywhere in the upload section opens the file picker.
+    uploadDropzone?.addEventListener('click', function () {
+      filesInput?.click?.();
+    });
+
+    // Support drop + keyboard open.
+    if (uploadDropzone) {
+      uploadBrowse?.addEventListener('click', function (e) {
+        e.stopPropagation();
+        filesInput?.click?.();
+      });
+
+      uploadDropzone.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          filesInput?.click?.();
+        }
+      });
+
+      ['dragenter', 'dragover'].forEach((evt) => {
+        uploadDropzone.addEventListener(evt, function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          uploadDropzone.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach((evt) => {
+        uploadDropzone.addEventListener(evt, function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          uploadDropzone.classList.remove('dragover');
+        });
+      });
+
+      uploadDropzone.addEventListener('drop', function (e) {
+        const dt = e.dataTransfer;
+        if (!dt || !dt.files || !dt.files.length) return;
+        if (filesInput) {
+          try {
+            filesInput.files = dt.files;
+          } catch (_err) {
+            // Some browsers may not allow assignment to input.files.
+          }
+        }
+      });
+    }
   })();
 </script>
 
@@ -281,6 +700,205 @@
 
   .modal-body {
     padding: 28px 36px 36px;
+  }
+
+  .quote-step {
+    width: 100%;
+  }
+
+  .step-label {
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .quote-optional {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    margin-left: 6px;
+    text-transform: uppercase;
+  }
+
+  .quote-error {
+    margin: 10px 0 16px;
+    padding: 12px 14px;
+    border: 1.5px solid rgba(255, 107, 43, 0.35);
+    background: rgba(255, 107, 43, 0.08);
+    color: var(--orange);
+    font-size: 13.5px;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+  }
+
+  .modal-nav {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+  }
+
+  .modal-nav-single {
+    justify-content: stretch;
+  }
+
+  .modal-nav-btn {
+    flex: 1;
+    width: auto;
+    margin-top: 0;
+  }
+
+  .modal-nav .modal-submit {
+    width: auto;
+    margin-top: 0;
+  }
+
+  .modal-back {
+    flex: 1;
+    width: auto;
+    background: var(--surface);
+    color: var(--text-primary);
+    border: 1.5px solid var(--border);
+    padding: 15px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-family: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    transition: background 0.18s, border-color 0.18s;
+    box-shadow: none;
+    margin-top: 0;
+  }
+
+  .modal-back:hover {
+    background: white;
+    border-color: var(--orange-mid);
+  }
+
+  .choice-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+
+  .choice {
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: border-color 0.18s, background 0.18s;
+    background: white;
+    user-select: none;
+  }
+
+  .choice:hover {
+    border-color: var(--orange-mid);
+    background: var(--orange-soft);
+  }
+
+  .choice input {
+    display: none;
+  }
+
+  .choice-radio {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: transparent;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .choice input:checked + .choice-radio {
+    border-color: var(--orange);
+    background: var(--orange-soft);
+  }
+
+  .choice input:checked + .choice-radio::after {
+    content: "";
+    width: 9px;
+    height: 9px;
+    background: var(--orange);
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .choice-text {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .choice-span-2 {
+    grid-column: 1 / -1;
+  }
+
+  .upload-dropzone {
+    border: 1.5px dashed rgba(229, 229, 234, 1);
+    border-radius: 18px;
+    padding: 22px 16px;
+    text-align: center;
+    background: var(--surface);
+    transition: border-color 0.18s, background 0.18s;
+    margin-bottom: 16px;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .upload-dropzone.dragover {
+    border-color: rgba(255, 107, 43, 1);
+    background: white;
+  }
+
+  .upload-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: var(--orange);
+  }
+
+  .upload-title {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+    color: var(--text-primary);
+  }
+
+  .upload-sub {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+  }
+
+  .upload-browse {
+    background: white;
+    border: 1.5px solid var(--border);
+    color: var(--text-primary);
+    padding: 10px 16px;
+    border-radius: 100px;
+    cursor: pointer;
+    font-family: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 13.5px;
+    font-weight: 700;
+    transition: background 0.18s, border-color 0.18s, transform 0.15s;
+  }
+
+  .upload-browse:hover {
+    background: var(--orange-soft);
+    border-color: var(--orange-mid);
+    transform: translateY(-1px);
   }
 
   .service-picker {

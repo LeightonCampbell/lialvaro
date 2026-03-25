@@ -1,0 +1,97 @@
+---
+interface Props {
+  href: string;
+  meta: string;
+  title: string;
+  excerpt: string;
+  imageUrl: string;
+}
+
+const { href, meta, title, excerpt, imageUrl } = Astro.props;
+---
+
+<a href={href} class="article-card">
+  <div
+    class="article-media"
+    style={`background-image: linear-gradient(rgba(0,0,0,0.38), rgba(0,0,0,0.38)), url("${imageUrl}")`}
+    aria-hidden="true"
+  ></div>
+
+  <div class="article-content">
+    <div class="article-meta">{meta}</div>
+    <h2 class="article-title">{title}</h2>
+    <p class="article-excerpt">{excerpt}</p>
+    <div class="article-read-more">
+      Read Article <span aria-hidden="true">→</span>
+    </div>
+  </div>
+</a>
+
+<style>
+  .article-card {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border: 1.5px solid var(--border-soft);
+    border-radius: 24px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    min-height: 100%;
+  }
+
+  .article-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--orange-mid);
+    box-shadow: var(--shadow-md);
+  }
+
+  .article-media {
+    aspect-ratio: 16/9;
+    background-size: cover;
+    background-position: center;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .article-content {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .article-meta {
+    color: var(--orange);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 800;
+  }
+
+  .article-title {
+    font-size: clamp(18px, 2.1vw, 24px);
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--text-primary);
+    font-weight: 800;
+  }
+
+  .article-excerpt {
+    margin: 0;
+    color: var(--text-muted);
+    line-height: 1.65;
+    font-size: 15px;
+  }
+
+  .article-read-more {
+    margin-top: auto;
+    color: var(--orange);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    font-size: 14px;
+  }
+</style>
+

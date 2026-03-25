@@ -1,10 +1,9 @@
 ---
 interface Props {
-	quoteCta?: 'link' | 'modal';
 	faqHref?: string;
 }
 
-const { quoteCta = 'link', faqHref = '/faq' } = Astro.props;
+const { faqHref = '/faq' } = Astro.props;
 ---
 <nav class="site-header-nav" id="site-header-nav" aria-label="Primary">
   <div class="nav-inner">
@@ -21,11 +20,7 @@ const { quoteCta = 'link', faqHref = '/faq' } = Astro.props;
     </ul>
     <span class="nav-rail-spacer" aria-hidden="true"></span>
     <div class="nav-actions">
-      {quoteCta === 'modal' ? (
-        <button type="button" class="btn-cta-sm" data-quote-trigger>Get a Quote</button>
-      ) : (
-        <a href="/contact" class="btn-cta-sm">Get a Quote</a>
-      )}
+      <button type="button" class="btn-cta-sm" data-quote-trigger>Get a Quote</button>
     </div>
 
     <button
@@ -55,11 +50,7 @@ const { quoteCta = 'link', faqHref = '/faq' } = Astro.props;
       <li><a href="/articles">Articles</a></li>
     </ul>
     <div class="nav-mobile-actions">
-      {quoteCta === 'modal' ? (
-        <button type="button" class="btn-cta-sm btn-cta-mobile" data-quote-trigger>Get a Quote</button>
-      ) : (
-        <a href="/contact" class="btn-cta-sm btn-cta-mobile">Get a Quote</a>
-      )}
+      <button type="button" class="btn-cta-sm btn-cta-mobile" data-quote-trigger>Get a Quote</button>
     </div>
   </div>
 </nav>
