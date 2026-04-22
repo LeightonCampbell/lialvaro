@@ -24,6 +24,14 @@ const {
 } = Astro.props;
 
 const documentTitle = exactTitle ? title : `${title} | Lialvaro Custom Apparel`;
+const canonicalOrigin = 'https://www.lialvaro.com';
+const normalizedPathname =
+	Astro.url.pathname === '/'
+		? '/'
+		: Astro.url.pathname.endsWith('/')
+			? Astro.url.pathname
+			: `${Astro.url.pathname}/`;
+const canonicalUrl = new URL(normalizedPathname, canonicalOrigin).toString();
 ---
 
 <!doctype html>
@@ -36,6 +44,7 @@ const documentTitle = exactTitle ? title : `${title} | Lialvaro Custom Apparel`;
 		<link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{documentTitle}</title>
+		<link rel="canonical" href={canonicalUrl} />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link

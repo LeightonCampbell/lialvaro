@@ -62,32 +62,32 @@ import Layout from "../layouts/Layout.astro";
     </div>
 
     <div class="services-grid">
-      <div class="service-card service-card-silkscreen-bg reveal">
+      <div class="service-card service-card-silkscreen-bg reveal" onclick="openModal('Screen Printing')">
         <div class="service-tag">Most Popular</div>
         <div class="service-name">Silkscreen Printing</div>
         <div class="service-desc">The gold standard for bulk apparel. Crisp, durable ink applied through a mesh screen delivers vivid, long-lasting colors at the best price-per-piece for larger quantities.</div>
-        <button class="service-link" onclick="openModal('Screen Printing')">Get screen printing →</button>
+        <button class="service-link">Get screen printing →</button>
       </div>
 
-      <div class="service-card service-card-dtg-bg reveal">
+      <div class="service-card service-card-dtg-bg reveal" onclick="openModal('Direct to Garment')">
         <div class="service-tag">No Minimums</div>
         <div class="service-name">Direct To Garment</div>
         <div class="service-desc">Vibrant, photo-realistic graphics printed directly onto your garment. Perfect for complex, full-color designs with no setup fees and no minimums.</div>
-        <button class="service-link" onclick="openModal('Direct to Garment')">Print with DTG →</button>
+        <button class="service-link">Print with DTG →</button>
       </div>
 
-      <div class="service-card service-card-dtf-bg reveal" style="transition-delay:0.08s">
+      <div class="service-card service-card-dtf-bg reveal" style="transition-delay:0.08s" onclick="openModal('Direct to Film')">
         <div class="service-tag">Best Durability</div>
         <div class="service-name">Direct To Film</div>
         <div class="service-desc">Our DTF service produces top-quality prints that bond to virtually any fabric. Exceptional durability and color vibrancy that holds up wash after wash.</div>
-        <button class="service-link" onclick="openModal('Direct to Film')">Start DTF printing →</button>
+        <button class="service-link">Start DTF printing →</button>
       </div>
 
-      <div class="service-card service-card-embroidery-bg reveal" style="transition-delay:0.16s">
+      <div class="service-card service-card-embroidery-bg reveal" style="transition-delay:0.16s" onclick="openModal('Embroidery')">
         <div class="service-tag">Premium Finish</div>
         <div class="service-name">Custom Embroidery</div>
         <div class="service-desc">Elevate your brand with professional, tactile stitching. Our skilled artisans bring your vision to life on hats, polos, jackets, and premium outerwear.</div>
-        <button class="service-link" onclick="openModal('Embroidery')">Get embroidery →</button>
+        <button class="service-link">Get embroidery →</button>
       </div>
     </div>
   </div>
@@ -158,24 +158,34 @@ import Layout from "../layouts/Layout.astro";
 <section class="cap-section">
   <div class="container">
     <div class="reveal">
-      <div class="eyebrow">Our Capabilities</div>
-      <h2 class="section-title">Built for every project,<br>every scale.</h2>
+      <div class="eyebrow">Real Google Reviews (all 5-stars)</div>
+      <h2 class="section-title">What our customers<br>are saying.</h2>
     </div>
     <div class="cap-grid">
       <div class="cap-card reveal">
-        <span class="cap-icon">🎨</span>
-        <div class="cap-name">Direct to Garment (DTG)</div>
-        <div class="cap-body">Perfect for highly detailed, multi-colored designs on small batches. The ink binds directly to the fabric for a soft, premium feel with unlimited color options.</div>
+        <img class="cap-stars" src="/images/review-stars.png" alt="5-star review" loading="lazy" />
+        <div class="cap-body">I gad my logo designed and my t-shirts and polos printed here several years ago. Since then, I've had banners, posters, hats, and, many other products done by LTP (even ugly sweaters for Christmas of 2024). Li is so friendly and patient. I recommend LiAlvaro T-shirt Printing to everyone.</div>
+        <div class="cap-author">Leighton C.</div>
       </div>
       <div class="cap-card reveal" style="transition-delay:0.08s">
-        <span class="cap-icon">🖨️</span>
-        <div class="cap-name">Screen Printing</div>
-        <div class="cap-body">The gold standard for bulk orders. Durable, vibrant, and incredibly cost-effective for larger quantities starting at just 12 pieces.</div>
+        <img class="cap-stars" src="/images/review-stars.png" alt="5-star review" loading="lazy" />
+        <div class="cap-body">I will never use another company for my Custom Printing needs. These guys do a wonderful job.</div>
+        <div class="cap-author">Mark L.</div>
       </div>
       <div class="cap-card reveal" style="transition-delay:0.16s">
-        <span class="cap-icon">🪡</span>
-        <div class="cap-name">Custom Embroidery</div>
-        <div class="cap-body">Elevate your brand with professional, tactile embroidery. Ideal for hats, polos, and premium outerwear that makes a lasting impression.</div>
+        <img class="cap-stars" src="/images/review-stars.png" alt="5-star review" loading="lazy" />
+        <div class="cap-body">Truly 5 stars - This was so easy, even for my large, complicated order. Li at LiAlvaro T-shirt Printing guided me through the process and was super responsive to my questions. The shirts are comfortable, the design is perfect. We all love them. This was a great experience!</div>
+        <div class="cap-author">Richard L.</div>
+      </div>
+      <div class="cap-card reveal" style="transition-delay:0.24s">
+        <img class="cap-stars" src="/images/review-stars.png" alt="5-star review" loading="lazy" />
+        <div class="cap-body">Responded quickly and delivered beautifully!</div>
+        <div class="cap-author">Melinda M.</div>
+      </div>
+      <div class="cap-card reveal" style="transition-delay:0.32s">
+        <img class="cap-stars" src="/images/review-stars.png" alt="5-star review" loading="lazy" />
+        <div class="cap-body">Excellent service all the time. Thanks Li.</div>
+        <div class="cap-author">Calvary Chapel Crenshaw</div>
       </div>
     </div>
   </div>
@@ -408,11 +418,11 @@ import Layout from "../layouts/Layout.astro";
     line-height: 1;
     margin-bottom: 5px;
   }
-  .stat-val span { color: var(--orange); }
+  .stat-val span { color: rgba(255,255,255,0.98); }
   .hero .stat-label {
     font-size: 13px;
-    color: rgba(255,255,255,0.72);
-    font-weight: 500;
+    color: #ff6b2b;
+    font-weight: 700;
   }
 
   .services-section {
@@ -450,6 +460,10 @@ import Layout from "../layouts/Layout.astro";
     position: relative; overflow: hidden;
     cursor: pointer;
   }
+  .service-card > * {
+    position: relative;
+    z-index: 1;
+  }
   .service-card::before {
     content: '';
     position: absolute; top: 0; left: 0; right: 0; height: 3px;
@@ -457,41 +471,70 @@ import Layout from "../layouts/Layout.astro";
     transform: scaleX(0); transform-origin: left;
     transition: transform 0.3s ease;
     border-radius: 3px 3px 0 0;
+    z-index: 2;
   }
   .service-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
   .service-card:hover::before { transform: scaleX(1); }
 
   .service-card-silkscreen-bg {
+    background: white;
+    border: 1px solid var(--border-soft);
+    box-shadow: none;
+  }
+  .service-card-silkscreen-bg::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: calc(var(--radius-lg) - 1px);
     background-image:
       linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
       url('/images/screenprinting.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    z-index: 0;
   }
   .service-card-dtg-bg {
+    background: white;
+    border: 1px solid var(--border-soft);
+    box-shadow: none;
+  }
+  .service-card-dtf-bg {
+    background: white;
+    border: 1px solid var(--border-soft);
+    box-shadow: none;
+  }
+  .service-card-embroidery-bg {
+    background: white;
+    border: 1px solid var(--border-soft);
+    box-shadow: none;
+  }
+  .service-card-dtg-bg::after,
+  .service-card-dtf-bg::after,
+  .service-card-embroidery-bg::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: calc(var(--radius-lg) - 1px);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 0;
+  }
+  .service-card-dtg-bg::after {
     background-image:
       linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
       url('/images/dtg.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
   }
-  .service-card-dtf-bg {
+  .service-card-dtf-bg::after {
     background-image:
       linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
       url('/images/dtf.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
   }
-  .service-card-embroidery-bg {
+  .service-card-embroidery-bg::after {
     background-image:
       linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
       url('/images/embroidery.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
   }
   .service-card-silkscreen-bg .service-name,
   .service-card-dtg-bg .service-name,
@@ -538,6 +581,8 @@ import Layout from "../layouts/Layout.astro";
     background: #22856c;
     padding: 10px 16px;
     border-radius: 100px;
+    border: none;
+    cursor: pointer;
   }
   .service-link:hover { gap: 9px; background: #1b6f5a; }
 
@@ -636,13 +681,21 @@ import Layout from "../layouts/Layout.astro";
   .cap-icon {
     font-size: 36px; margin-bottom: 20px; display: block;
   }
-  .cap-name {
-    font-size: 18px; font-weight: 800; letter-spacing: -0.02em;
-    margin-bottom: 10px;
+  .cap-stars {
+    display: block;
+    width: 130px;
+    height: auto;
+    margin-bottom: 12px;
   }
   .cap-body {
     font-size: 14.5px; color: var(--text-secondary);
     line-height: 1.65; font-weight: 400;
+  }
+  .cap-author {
+    font-size: 15px;
+    font-weight: 700;
+    color: #22856c;
+    margin-top: 14px;
   }
 
   .cta-band {
