@@ -6,6 +6,7 @@ export const CATALOG = {
 		photo: "/images/dtg.jpg",
 		photoAlt: "Direct-to-garment printed t-shirt",
 		service: "Direct to Garment",
+		category: "apparel",
 	},
 	"cap-embroid": {
 		name: "Embroidered Cap",
@@ -14,6 +15,7 @@ export const CATALOG = {
 		photo: "/images/Embroidery.jpg",
 		photoAlt: "Custom embroidered cap",
 		service: "Embroidery",
+		category: "headwear",
 	},
 	"tee-5pack": {
 		name: "5-Pack Tees — Screen Print",
@@ -22,6 +24,7 @@ export const CATALOG = {
 		photo: "/images/screenprinting.jpg",
 		photoAlt: "Screen printed t-shirt stack",
 		service: "Screen Printing",
+		category: "apparel",
 	},
 	"hoodie-dtf": {
 		name: "Hoodie — DTF Print",
@@ -30,6 +33,7 @@ export const CATALOG = {
 		photo: "/images/DTF.jpg",
 		photoAlt: "DTF printed hoodie",
 		service: "Direct to Film",
+		category: "apparel",
 	},
 	"polo-embroid": {
 		name: "Polo — Embroidery",
@@ -38,6 +42,7 @@ export const CATALOG = {
 		photo: "/images/silkscreen.jpg",
 		photoAlt: "Embroidered polo shirt",
 		service: "Embroidery",
+		category: "apparel",
 	},
 	"tote-dtg": {
 		name: "Tote Bag — DTG Print",
@@ -46,6 +51,7 @@ export const CATALOG = {
 		photo: "/images/wolf.jpg",
 		photoAlt: "DTG printed tote bag",
 		service: "Direct to Garment",
+		category: "headwear",
 	},
 } as const;
 

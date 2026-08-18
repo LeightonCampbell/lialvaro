@@ -62,7 +62,7 @@ const reviews = [
   home
   description="LiAlvaro Apparel — Los Angeles' premier custom apparel printer. Screen printing, DTG, DTF, embroidery. No minimums. Same-day service. Call (310) 904-2655."
   keywords="custom t-shirts Los Angeles, screen printing LA, DTG printing, custom embroidery, custom hoodies, same day printing Los Angeles"
-  faqHref="/faq"
+  faqHref="/#faq"
 >
   <div class="home" id="top">
     <section class="hero">
@@ -75,8 +75,8 @@ const reviews = [
             complex orders.
           </p>
           <div class="hero-ctas">
-            <a class="btn btn-primary" href="#store">Shop Standard Prints →</a>
-            <button type="button" class="btn btn-ghost" data-quote-trigger>Get a Custom Quote</button>
+            <a class="btn btn-primary" href="/shop">Shop Standard Prints →</a>
+            <a class="btn btn-ghost" href="/custom-printing">Get a Custom Quote</a>
           </div>
           <div class="badges">
             <div class="badge"><span class="num">No Min.</span><span class="lbl">Order quantity</span></div>
@@ -145,9 +145,9 @@ const reviews = [
                 <span class="service-tag">{item.tag}</span>
                 <h3>{item.name}</h3>
                 <p>{item.desc}</p>
-                <button type="button" class="service-link" data-quote-trigger data-quote-service={item.service}>
+                <a class="service-link" href="/custom-printing">
                   {item.hrefLabel}
-                </button>
+                </a>
               </article>
             ))
           }
@@ -273,7 +273,7 @@ const reviews = [
           <h2>Ready to make something incredible?</h2>
           <p>Shop standard prints instantly, or call for a custom quote — we're available 24/7.</p>
           <div class="cta-actions">
-            <a class="btn btn-cta-light" href="#store">Shop Now →</a>
+            <a class="btn btn-cta-light" href="/shop">Shop Now →</a>
             <a class="btn btn-ghost" href="tel:3109042655">Call (310) 904-2655</a>
           </div>
         </div>

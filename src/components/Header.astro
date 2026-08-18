@@ -5,7 +5,10 @@ interface Props {
 	faqHref?: string;
 }
 
-const { faqHref = '/faq' } = Astro.props;
+const { faqHref = '/#faq' } = Astro.props;
+const path = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const shopActive = path === '/shop';
+const printActive = path === '/custom-printing';
 ---
 
 <header class="site-header">
@@ -19,9 +22,9 @@ const { faqHref = '/faq' } = Astro.props;
 		</a>
 		<nav class="nav-desktop" aria-label="Primary">
 			<ul>
-				<li><a href="/#store">Shop</a></li>
-				<li><a href="/#services">Custom Printing</a></li>
-				<li><a href="/about">About</a></li>
+				<li><a href="/shop" class:list={[{ 'active-link': shopActive }]}>Shop</a></li>
+				<li><a href="/custom-printing" class:list={[{ 'active-link': printActive }]}>Custom Printing</a></li>
+				<li><a href="/#about">About</a></li>
 				<li><a href={faqHref}>FAQ</a></li>
 			</ul>
 		</nav>
@@ -30,7 +33,7 @@ const { faqHref = '/faq' } = Astro.props;
 			<button type="button" class="btn btn-ghost btn-sm checkout-btn" data-checkout>
 				Checkout (<span data-cart-count>0</span>)
 			</button>
-			<a class="btn btn-primary btn-sm" href="/#store">Shop Now</a>
+			<a class="btn btn-primary btn-sm" href="/shop">Shop Now</a>
 			<button
 				type="button"
 				class="nav-menu-toggle"
@@ -53,19 +56,18 @@ const { faqHref = '/faq' } = Astro.props;
 		hidden
 	>
 		<ul class="nav-mobile-links">
-			<li><a href="/#store">Shop</a></li>
-			<li><a href="/#services">Custom Printing</a></li>
-			<li><a href="/about">About</a></li>
+			<li><a href="/shop" class:list={[{ 'active-link': shopActive }]}>Shop</a></li>
+			<li><a href="/custom-printing" class:list={[{ 'active-link': printActive }]}>Custom Printing</a></li>
+			<li><a href="/#about">About</a></li>
 			<li><a href={faqHref}>FAQ</a></li>
 			<li><a href="/articles">Articles</a></li>
-			<li><a href="/design-your-apparel">Design Your Apparel</a></li>
 		</ul>
 		<div class="nav-mobile-actions">
 			<button type="button" class="btn btn-primary" data-checkout>
 				Checkout (<span data-cart-count>0</span>)
 			</button>
-			<a class="btn btn-ghost" href="/#store">Shop Now</a>
-			<button type="button" class="btn btn-ghost" data-quote-trigger>Get a Custom Quote</button>
+			<a class="btn btn-ghost" href="/shop">Shop Now</a>
+			<a class="btn btn-ghost" href="/custom-printing">Get a Custom Quote</a>
 		</div>
 	</div>
 </header>
@@ -181,7 +183,8 @@ const { faqHref = '/faq' } = Astro.props;
 		text-decoration: none;
 	}
 
-	.nav-desktop a:hover {
+	.nav-desktop a:hover,
+	.nav-desktop a.active-link {
 		color: var(--brand-red);
 	}
 
@@ -314,7 +317,8 @@ const { faqHref = '/faq' } = Astro.props;
 		border-bottom: 1px solid rgba(27, 34, 51, 0.1);
 	}
 
-	.nav-mobile-links a:hover {
+	.nav-mobile-links a:hover,
+	.nav-mobile-links a.active-link {
 		color: var(--brand-red);
 	}
 

@@ -1,0 +1,286 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const methods = [
+	{
+		tag: "Most Popular",
+		name: "Silkscreen Printing",
+		desc: "The gold standard for bulk apparel. Crisp, durable ink at the best price-per-piece for larger quantities. Ideal for team shirts, event merch, and brand runs.",
+		photo: "/images/screenprinting.jpg",
+		photoAlt: "Screen printing in progress",
+		specs: [
+			{ k: "Best for", v: "12+ pieces" },
+			{ k: "Turnaround", v: "5–7 days" },
+			{ k: "Colors", v: "1–6 spot colors" },
+		],
+	},
+	{
+		tag: "No Minimums",
+		name: "Direct To Garment",
+		desc: "Vibrant, photo-realistic graphics printed directly onto your garment. No setup fees — great for detailed art, gradients, and one-off pieces.",
+		photo: "/images/dtg.jpg",
+		photoAlt: "Direct-to-garment printer close-up",
+		specs: [
+			{ k: "Best for", v: "1+ pieces, detailed art" },
+			{ k: "Turnaround", v: "3–5 days" },
+			{ k: "Colors", v: "Full color" },
+		],
+	},
+	{
+		tag: "Best Durability",
+		name: "Direct To Film",
+		desc: "Prints that bond to virtually any fabric — cotton, poly, blends. Exceptional durability and color, wash after wash.",
+		photo: "/images/DTF.jpg",
+		photoAlt: "DTF transfer press",
+		specs: [
+			{ k: "Best for", v: "Mixed fabrics, small runs" },
+			{ k: "Turnaround", v: "4–6 days" },
+			{ k: "Colors", v: "Full color" },
+		],
+	},
+	{
+		tag: "Premium Finish",
+		name: "Custom Embroidery",
+		desc: "Professional, tactile stitching for hats, polos, jackets, and premium outerwear. The most durable option for logos.",
+		photo: "/images/Embroidery.jpg",
+		photoAlt: "Embroidery machine detail",
+		specs: [
+			{ k: "Best for", v: "Logos, hats, polos" },
+			{ k: "Turnaround", v: "5–8 days" },
+			{ k: "Colors", v: "Up to 15 thread colors" },
+		],
+	},
+];
+---
+
+<Layout
+	title="Custom Printing & Bulk Orders — LiAlvaro Apparel"
+	exactTitle
+	home
+	description="Custom screen printing, DTG, DTF, and embroidery in Los Angeles. Request a quote for bulk or custom apparel orders."
+>
+	<div class="home" id="top">
+		<section class="page-hero">
+			<div class="wrap">
+				<div class="breadcrumb"><a href="/">Home</a> / Custom Printing</div>
+				<h1>Custom Printing &amp; Bulk Orders</h1>
+				<p>
+					Every print method under one roof — screen printing, DTG, DTF, and embroidery. Tell us what you need below
+					and we'll follow up with pricing, usually within a few hours. Need just one item right now?
+					<a class="inline-link" href="/shop">Shop standard prints instantly →</a>
+				</p>
+			</div>
+		</section>
+
+		<section>
+			<div class="wrap">
+				<div class="section-head">
+					<span class="eyebrow">Print Methods</span>
+					<h2>Pick the right method for the job.</h2>
+				</div>
+
+				{
+					methods.map((method) => (
+						<div class="service-detail">
+							<div class="swatch-photo">
+								<img src={method.photo} alt={method.photoAlt} />
+							</div>
+							<div class="service-detail-body">
+								<span class="service-tag">{method.tag}</span>
+								<h3>{method.name}</h3>
+								<p>{method.desc}</p>
+								<div class="spec-row">
+									{method.specs.map((spec) => (
+										<div class="spec">
+											<span class="k">{spec.k}</span>
+											<span class="v">{spec.v}</span>
+										</div>
+									))}
+								</div>
+							</div>
+						</div>
+					))
+				}
+			</div>
+		</section>
+
+		<section class="quote-band">
+			<div class="wrap quote-wrap">
+				<div>
+					<span class="eyebrow">How It Works</span>
+					<h2 class="quote-title">From quote to delivery.</h2>
+					<div class="process-steps">
+						<div class="process-step">
+							<div class="process-num">1</div>
+							<div>
+								<h4>Submit the form</h4>
+								<p>Tell us what you need — garment, quantity, design.</p>
+							</div>
+						</div>
+						<div class="process-step">
+							<div class="process-num">2</div>
+							<div>
+								<h4>Get pricing fast</h4>
+								<p>We reply with a quote, usually within a few hours.</p>
+							</div>
+						</div>
+						<div class="process-step">
+							<div class="process-num">3</div>
+							<div>
+								<h4>Approve your mockup</h4>
+								<p>We send a digital proof before anything goes to print.</p>
+							</div>
+						</div>
+						<div class="process-step">
+							<div class="process-num">4</div>
+							<div>
+								<h4>We print &amp; deliver</h4>
+								<p>5–7 days standard, rush and same-day options available.</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<form class="quote-form" id="quote-form">
+					<div class="form-row">
+						<div class="field">
+							<label for="name">Name</label>
+							<input type="text" id="name" name="name" required />
+						</div>
+						<div class="field">
+							<label for="email">Email</label>
+							<input type="email" id="email" name="email" required />
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="field">
+							<label for="phone">Phone</label>
+							<input type="tel" id="phone" name="phone" />
+						</div>
+						<div class="field">
+							<label for="quantity">Quantity</label>
+							<input type="number" id="quantity" name="quantity" min="1" required />
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="field">
+							<label for="garment">Garment Type</label>
+							<select id="garment" name="garment">
+								<option>T-Shirts</option>
+								<option>Hoodies</option>
+								<option>Polos</option>
+								<option>Hats</option>
+								<option>Other</option>
+							</select>
+						</div>
+						<div class="field">
+							<label for="method">Print Method</label>
+							<select id="method" name="method">
+								<option>Not sure — advise me</option>
+								<option>Screen Printing</option>
+								<option>DTG</option>
+								<option>DTF</option>
+								<option>Embroidery</option>
+							</select>
+						</div>
+					</div>
+					<div class="field">
+						<label for="notes">Project Details</label>
+						<textarea
+							id="notes"
+							name="notes"
+							placeholder="Design details, deadline, event date, anything else we should know..."
+						></textarea>
+					</div>
+					<div class="field">
+						<label for="design-file">Design File</label>
+						<div class="file-drop" id="file-drop" role="button" tabindex="0">
+							<span id="file-drop-label">📎 Drag &amp; drop your design here, or click to upload</span>
+							<input
+								type="file"
+								id="design-file"
+								name="design-file"
+								accept=".ai,.png,.jpg,.jpeg,.svg,.pdf,.eps,image/*"
+								hidden
+							/>
+						</div>
+						<p class="file-note">
+							File stays on this page for now — quote emails are sent as text. Call us if you need to send artwork
+							separately.
+						</p>
+					</div>
+					<button type="submit" class="btn btn-primary quote-submit">Request My Quote →</button>
+				</form>
+			</div>
+		</section>
+	</div>
+</Layout>
+
+<script>
+	const form = document.getElementById("quote-form") as HTMLFormElement | null;
+	const drop = document.getElementById("file-drop");
+	const fileInput = document.getElementById("design-file") as HTMLInputElement | null;
+	const dropLabel = document.getElementById("file-drop-label");
+
+	function setFileLabel(name?: string) {
+		if (!dropLabel) return;
+		dropLabel.textContent = name
+			? `📎 ${name}`
+			: "📎 Drag & drop your design here, or click to upload";
+	}
+
+	drop?.addEventListener("click", () => fileInput?.click());
+	drop?.addEventListener("keydown", (event) => {
+		if (event.key === "Enter" || event.key === " ") {
+			event.preventDefault();
+			fileInput?.click();
+		}
+	});
+	drop?.addEventListener("dragover", (event) => {
+		event.preventDefault();
+		drop.classList.add("is-over");
+	});
+	drop?.addEventListener("dragleave", () => drop.classList.remove("is-over"));
+	drop?.addEventListener("drop", (event) => {
+		event.preventDefault();
+		drop.classList.remove("is-over");
+		const file = event.dataTransfer?.files?.[0];
+		if (!file || !fileInput) return;
+		const transfer = new DataTransfer();
+		transfer.items.add(file);
+		fileInput.files = transfer.files;
+		setFileLabel(file.name);
+	});
+	fileInput?.addEventListener("change", () => {
+		setFileLabel(fileInput.files?.[0]?.name);
+	});
+
+	form?.addEventListener("submit", async (event) => {
+		event.preventDefault();
+		const data = new FormData(form);
+		const payload = {
+			name: String(data.get("name") || ""),
+			email: String(data.get("email") || ""),
+			phone: String(data.get("phone") || ""),
+			quantity: String(data.get("quantity") || ""),
+			garment: String(data.get("garment") || ""),
+			method: String(data.get("method") || ""),
+			notes: String(data.get("notes") || ""),
+		};
+		try {
+			const res = await fetch("/api/quote-request", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(payload),
+			});
+			if (res.ok) {
+				form.innerHTML =
+					'<p class="quote-success">Thanks — your quote request is in! We\'ll follow up by email shortly.</p>';
+			} else {
+				alert("Something went wrong submitting your request. Please call us instead.");
+			}
+		} catch {
+			alert("Something went wrong submitting your request. Please call us instead.");
+		}
+	});
+</script>

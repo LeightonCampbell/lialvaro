@@ -61,7 +61,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 			mode: "payment",
 			line_items: lineItems,
 			success_url: `${url.origin}/order-confirmed?session_id={CHECKOUT_SESSION_ID}`,
-			cancel_url: `${url.origin}/#store`,
+			cancel_url: `${url.origin}/shop`,
 			shipping_address_collection: { allowed_countries: ["US"] },
 		});
 
