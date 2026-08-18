@@ -5,8 +5,9 @@ const CANONICAL_HOST = 'www.lialvaro.com';
 export const onRequest = defineMiddleware(async (context, next) => {
 	const { url } = context;
 
-	const shouldRedirectHost = url.hostname === 'lialvaro.com';
-	const shouldRedirectSlash = url.pathname !== '/' && !url.pathname.endsWith('/');
+	const isApi = url.pathname === '/api' || url.pathname.startsWith('/api/');
+	const shouldRedirectHost = !isApi && url.hostname === 'lialvaro.com';
+	const shouldRedirectSlash = !isApi && url.pathname !== '/' && !url.pathname.endsWith('/');
 
 	if (shouldRedirectHost || shouldRedirectSlash) {
 		const redirectUrl = new URL(url);

@@ -1,57 +1,13 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import RegMark from "../components/RegMark.astro";
+import { CATALOG, formatUsd } from "../lib/catalog";
 
-const products = [
-  {
-    name: "Single Tee — DTG Print",
-    meta: "Your design · 1 piece",
-    price: "$24",
-    photo: "/images/dtg.jpg",
-    photoAlt: "Direct-to-garment printed t-shirt",
-    service: "Direct to Garment",
-  },
-  {
-    name: "Embroidered Cap",
-    meta: "Up to 5,000 stitches",
-    price: "$28",
-    photo: "/images/Embroidery.jpg",
-    photoAlt: "Custom embroidered cap",
-    service: "Embroidery",
-  },
-  {
-    name: "5-Pack Tees — Screen Print",
-    meta: "1 design, 1 color",
-    price: "$95",
-    photo: "/images/screenprinting.jpg",
-    photoAlt: "Screen printed t-shirt stack",
-    service: "Screen Printing",
-  },
-  {
-    name: "Hoodie — DTF Print",
-    meta: "Your design · 1 piece",
-    price: "$42",
-    photo: "/images/DTF.jpg",
-    photoAlt: "DTF printed hoodie",
-    service: "Direct to Film",
-  },
-  {
-    name: "Polo — Embroidery",
-    meta: "Left chest logo",
-    price: "$35",
-    photo: "/images/silkscreen.jpg",
-    photoAlt: "Embroidered polo shirt",
-    service: "Embroidery",
-  },
-  {
-    name: "Tote Bag — DTG Print",
-    meta: "Your design · 1 piece",
-    price: "$18",
-    photo: "/images/wolf.jpg",
-    photoAlt: "DTG printed tote bag",
-    service: "Direct to Garment",
-  },
-];
+const products = Object.entries(CATALOG).map(([id, product]) => ({
+  id,
+  ...product,
+  price: formatUsd(product.amount),
+}));
 
 const services = [
   {
@@ -163,8 +119,7 @@ const reviews = [
                     <button
                       type="button"
                       class="btn btn-primary btn-sm"
-                      data-quote-trigger
-                      data-quote-service={product.service}
+                      data-product-id={product.id}
                     >
                       Add
                     </button>

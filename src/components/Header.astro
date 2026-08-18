@@ -27,6 +27,9 @@ const { faqHref = '/faq' } = Astro.props;
 		</nav>
 		<div class="navcta">
 			<a class="phone" href="tel:3109042655">(310) 904-2655</a>
+			<button type="button" class="btn btn-ghost btn-sm checkout-btn" data-checkout>
+				Checkout (<span data-cart-count>0</span>)
+			</button>
 			<a class="btn btn-primary btn-sm" href="/#store">Shop Now</a>
 			<button
 				type="button"
@@ -58,7 +61,10 @@ const { faqHref = '/faq' } = Astro.props;
 			<li><a href="/design-your-apparel">Design Your Apparel</a></li>
 		</ul>
 		<div class="nav-mobile-actions">
-			<a class="btn btn-primary" href="/#store">Shop Now</a>
+			<button type="button" class="btn btn-primary" data-checkout>
+				Checkout (<span data-cart-count>0</span>)
+			</button>
+			<a class="btn btn-ghost" href="/#store">Shop Now</a>
 			<button type="button" class="btn btn-ghost" data-quote-trigger>Get a Custom Quote</button>
 		</div>
 	</div>
@@ -90,7 +96,7 @@ const { faqHref = '/faq' } = Astro.props;
 			a.addEventListener('click', () => setOpen(false));
 		});
 
-		panel.querySelectorAll('[data-quote-trigger]').forEach((el) => {
+		panel.querySelectorAll('[data-quote-trigger], [data-checkout]').forEach((el) => {
 			el.addEventListener('click', () => setOpen(false));
 		});
 
@@ -244,6 +250,10 @@ const { faqHref = '/faq' } = Astro.props;
 		font-size: 12px;
 	}
 
+	.checkout-btn {
+		white-space: nowrap;
+	}
+
 	.nav-menu-toggle {
 		display: none;
 		align-items: center;
@@ -321,7 +331,8 @@ const { faqHref = '/faq' } = Astro.props;
 
 	@media (max-width: 900px) {
 		.nav-desktop,
-		.phone {
+		.phone,
+		.checkout-btn {
 			display: none;
 		}
 

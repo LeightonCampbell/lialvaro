@@ -11,5 +11,6 @@ export default defineConfig({
     port: 4321,
   },
 
+  output: "static",
   adapter: cloudflare(),
 });
