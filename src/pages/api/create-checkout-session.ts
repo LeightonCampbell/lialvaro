@@ -1,12 +1,13 @@
 import type { APIRoute } from "astro";
-import Stripe from "stripe";
 import { CATALOG, isProductId } from "../../lib/catalog";
 import { getCheckoutEnv } from "../../lib/checkout-env";
+import { getStripe } from "../../lib/stripe-client";
 
 export const prerender = false;
 
 type CartItem = {
 	id?: unknown;
+	qty?: unknown;
 	quantity?: unknown;
 };
 
@@ -18,69 +19,55 @@ function json(body: unknown, status = 200) {
 }
 
 export const POST: APIRoute = async ({ request, url }) => {
-	let payload: { items?: CartItem[] };
 	try {
-		payload = await request.json();
-	} catch {
-		return json({ error: "Invalid JSON body." }, 400);
-	}
-
-	const items = Array.isArray(payload.items) ? payload.items : [];
-	if (items.length === 0) {
-		return json({ error: "Your cart is empty." }, 400);
-	}
-
-	const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
-	for (const item of items) {
-		if (typeof item.id !== "string" || !isProductId(item.id)) {
-			return json({ error: "Unknown product in cart." }, 400);
+		const { stripeSecretKey } = await getCheckoutEnv();
+		if (!stripeSecretKey) {
+			return json({ error: "Stripe is not configured." }, 500);
 		}
-		const quantity = Number(item.quantity);
-		if (!Number.isInteger(quantity) || quantity < 1 || quantity > 99) {
-			return json({ error: "Invalid quantity." }, 400);
+
+		let payload: { items?: CartItem[] };
+		try {
+			payload = await request.json();
+		} catch {
+			return json({ error: "Invalid JSON body." }, 400);
 		}
-		const product = CATALOG[item.id];
-		lineItems.push({
-			quantity,
-			price_data: {
-				currency: "usd",
-				unit_amount: product.amount,
-				product_data: {
-					name: product.name,
-					description: product.meta,
+
+		const items = Array.isArray(payload.items) ? payload.items : [];
+		if (!items.length) {
+			return json({ error: "Cart is empty" }, 400);
+		}
+
+		const lineItems = items.map((item) => {
+			if (typeof item.id !== "string" || !isProductId(item.id)) {
+				throw new Error(`Unknown product: ${String(item.id)}`);
+			}
+			const qty = Number(item.qty ?? item.quantity);
+			if (!Number.isFinite(qty)) {
+				throw new Error("Invalid quantity.");
+			}
+			const product = CATALOG[item.id];
+			return {
+				price_data: {
+					currency: "usd" as const,
+					product_data: { name: product.name },
+					unit_amount: product.amount,
 				},
-			},
+				quantity: Math.max(1, Math.min(qty, 20)),
+			};
 		});
-	}
 
-	const { stripeSecretKey } = await getCheckoutEnv();
-	if (!stripeSecretKey) {
-		return json({ error: "Stripe is not configured." }, 500);
-	}
-
-	try {
-		const stripe = new Stripe(stripeSecretKey);
-		const origin = url.origin;
+		const stripe = getStripe(stripeSecretKey);
 		const session = await stripe.checkout.sessions.create({
 			mode: "payment",
 			line_items: lineItems,
-			success_url: `${origin}/order-confirmed/?session_id={CHECKOUT_SESSION_ID}`,
-			cancel_url: `${origin}/#store`,
-			shipping_address_collection: {
-				allowed_countries: ["US"],
-			},
-			metadata: {
-				source: "lialvaro-store",
-			},
+			success_url: `${url.origin}/order-confirmed?session_id={CHECKOUT_SESSION_ID}`,
+			cancel_url: `${url.origin}/#store`,
+			shipping_address_collection: { allowed_countries: ["US"] },
 		});
 
-		if (!session.url) {
-			return json({ error: "Could not start checkout." }, 500);
-		}
-
 		return json({ url: session.url });
-	} catch (error) {
-		const message = error instanceof Error ? error.message : "Could not start checkout.";
+	} catch (err: unknown) {
+		const message = err instanceof Error ? err.message : "Could not start checkout.";
 		return json({ error: message }, 500);
 	}
 };

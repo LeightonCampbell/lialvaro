@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
-import Stripe from "stripe";
-import { getCheckoutEnv, type CheckoutEnv } from "../../lib/checkout-env";
+import type Stripe from "stripe";
+import { getCheckoutEnv } from "../../lib/checkout-env";
+import { getStripe, webhookCryptoProvider } from "../../lib/stripe-client";
 
 export const prerender = false;
 
@@ -11,52 +12,12 @@ function json(body: unknown, status = 200) {
 	});
 }
 
-function lineSummary(session: Stripe.Checkout.Session) {
-	const items = session.line_items?.data ?? [];
-	if (items.length === 0) return "See Stripe Dashboard for line items.";
-	return items
-		.map((item) => {
-			const name = item.description || item.price?.product || "Item";
-			const qty = item.quantity ?? 1;
-			const amount = ((item.amount_total ?? 0) / 100).toFixed(2);
-			return `${qty}× ${name} — $${amount}`;
-		})
-		.join("<br>");
-}
-
-async function notifyOrder(env: CheckoutEnv, session: Stripe.Checkout.Session) {
-	if (!env.resendApiKey || !env.orderNotificationEmail) return;
-
-	const total = ((session.amount_total ?? 0) / 100).toFixed(2);
-	const email = session.customer_details?.email || "not provided";
-	const name = session.customer_details?.name || "not provided";
-	const address = session.customer_details?.address;
-	const addressLine = address
-		? [address.line1, address.line2, address.city, address.state, address.postal_code]
-				.filter(Boolean)
-				.join(", ")
-		: "not provided";
-
-	await fetch("https://api.resend.com/emails", {
-		method: "POST",
-		headers: {
-			Authorization: `Bearer ${env.resendApiKey}`,
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({
-			from: "LiAlvaro Orders <beth.t@example.com>",
-			to: [env.orderNotificationEmail],
-			subject: `New store order ${session.id}`,
-			html: `
-				<p>A store checkout just completed.</p>
-				<p><strong>Session:</strong> ${session.id}</p>
-				<p><strong>Customer:</strong> ${name} (${email})</p>
-				<p><strong>Ship to:</strong> ${addressLine}</p>
-				<p><strong>Total:</strong> $${total} ${session.currency?.toUpperCase() || "USD"}</p>
-				<p><strong>Items:</strong><br>${lineSummary(session)}</p>
-			`,
-		}),
-	});
+function shippingFrom(session: Stripe.Checkout.Session) {
+	return (
+		session.collected_information?.shipping_details ??
+		session.customer_details?.address ??
+		null
+	);
 }
 
 export const POST: APIRoute = async ({ request }) => {
@@ -65,28 +26,51 @@ export const POST: APIRoute = async ({ request }) => {
 		return json({ error: "Stripe webhook is not configured." }, 500);
 	}
 
+	const stripe = getStripe(env.stripeSecretKey);
 	const signature = request.headers.get("stripe-signature");
 	if (!signature) {
 		return json({ error: "Missing Stripe signature." }, 400);
 	}
 
-	const rawBody = await request.text();
-	const stripe = new Stripe(env.stripeSecretKey);
+	const body = await request.text();
 
 	let event: Stripe.Event;
 	try {
-		event = await stripe.webhooks.constructEventAsync(rawBody, signature, env.stripeWebhookSecret);
-	} catch (error) {
-		const message = error instanceof Error ? error.message : "Invalid signature.";
-		return json({ error: message }, 400);
+		event = await stripe.webhooks.constructEventAsync(
+			body,
+			signature,
+			env.stripeWebhookSecret,
+			undefined,
+			webhookCryptoProvider(),
+		);
+	} catch (err: unknown) {
+		const message = err instanceof Error ? err.message : "Invalid signature.";
+		return new Response(`Webhook signature verification failed: ${message}`, { status: 400 });
 	}
 
 	if (event.type === "checkout.session.completed") {
 		const session = event.data.object as Stripe.Checkout.Session;
-		const full = await stripe.checkout.sessions.retrieve(session.id, {
-			expand: ["line_items"],
-		});
-		await notifyOrder(env, full);
+		const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
+		const orderSummary = lineItems.data
+			.map((li) => `${li.quantity}x ${li.description} — $${((li.amount_total ?? 0) / 100).toFixed(2)}`)
+			.join("\n");
+		const customerEmail = session.customer_details?.email ?? "unknown";
+
+		if (env.resendApiKey && env.orderNotificationEmail) {
+			await fetch("https://api.resend.com/emails", {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${env.resendApiKey}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					from: "orders@lialvaro.com",
+					to: env.orderNotificationEmail,
+					subject: `New order — ${session.id}`,
+					text: `New paid order.\n\nCustomer: ${customerEmail}\nShipping: ${JSON.stringify(shippingFrom(session), null, 2)}\n\nItems:\n${orderSummary}\n\nTotal: $${((session.amount_total ?? 0) / 100).toFixed(2)}`,
+				}),
+			});
+		}
 	}
 
 	return json({ received: true });
