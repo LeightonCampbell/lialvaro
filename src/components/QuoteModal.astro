@@ -386,8 +386,8 @@
 
     document.querySelectorAll('[data-quote-trigger]').forEach(function (el) {
       el.addEventListener('click', function (event) {
-        if (el.tagName === 'A') event.preventDefault();
-        openModal();
+        if (el.tagName === 'A' || el.tagName === 'BUTTON') event.preventDefault();
+        openModal(el.getAttribute('data-quote-service') || undefined);
       });
     });
 

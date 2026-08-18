@@ -27,6 +27,19 @@
   --border-color: rgba(255, 255, 255, 0.1);
   --font-family: "Manrope", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --transition-speed: 0.4s;
+  --canvas: #efebe1;
+  --canvas-2: #e6e0d2;
+  --ink: #1b2233;
+  --ink-soft: #2a2a28;
+  --brand-red: #c8102e;
+  --gold: #b8912a;
+  --mesh: #8b8b85;
+  --paper: #fffdf9;
+  --print-radius: 2px;
+  --maxw: 1180px;
+  --font-display: "Anton", sans-serif;
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
 }
 
 * {
@@ -141,6 +154,28 @@ p { font-size: 1.125rem; color: var(--text-secondary); }
 .mb-2 { margin-bottom: 2rem; }
 .py-4 { padding-top: 4rem; padding-bottom: 4rem; }
 .pt-nav { padding-top: 0; }
+
+body.theme-home {
+  background: var(--canvas);
+  color: var(--ink-soft);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+body.theme-home a:hover {
+  color: inherit;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
 
 /* Animations */
 @keyframes fadeInUp {
