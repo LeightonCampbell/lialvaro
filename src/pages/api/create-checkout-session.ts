@@ -20,11 +20,6 @@ function json(body: unknown, status = 200) {
 
 export const POST: APIRoute = async ({ request, url }) => {
 	try {
-		const { stripeSecretKey } = await getCheckoutEnv();
-		if (!stripeSecretKey) {
-			return json({ error: "Stripe is not configured." }, 500);
-		}
-
 		let payload: { items?: CartItem[] };
 		try {
 			payload = await request.json();
@@ -55,6 +50,11 @@ export const POST: APIRoute = async ({ request, url }) => {
 				quantity: Math.max(1, Math.min(qty, 20)),
 			};
 		});
+
+		const { stripeSecretKey } = await getCheckoutEnv();
+		if (!stripeSecretKey) {
+			return json({ error: "Stripe is not configured." }, 500);
+		}
 
 		const stripe = getStripe(stripeSecretKey);
 		const session = await stripe.checkout.sessions.create({
