@@ -66,13 +66,13 @@
 
   .theme-home .home .btn-primary {
     background: var(--brand-red);
-    border-color: #a80d26;
+    border-color: var(--brand-red-hover);
     color: var(--paper);
   }
 
   .theme-home .home .btn-primary:hover {
-    background: #a80d26;
-    border-color: #a80d26;
+    background: var(--brand-red-hover);
+    border-color: var(--brand-red-hover);
     color: var(--paper);
     transform: translateY(-1px);
   }
