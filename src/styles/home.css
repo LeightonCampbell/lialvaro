@@ -66,7 +66,7 @@
 
   .theme-home .home .btn-primary {
     background: var(--brand-red);
-    border-color: var(--brand-red-hover);
+    border-color: var(--brand-red);
     color: var(--paper);
   }
 
@@ -553,7 +553,7 @@
 
   .theme-home .home .btn-cta-light {
     background: var(--paper);
-    border-color: var(--canvas);
+    border-color: var(--paper);
     color: var(--brand-red);
   }
 
