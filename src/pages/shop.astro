@@ -1,0 +1,79 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { CATALOG, formatUsd } from "../lib/catalog";
+
+const products = Object.entries(CATALOG).map(([id, product]) => ({
+	id,
+	...product,
+	price: formatUsd(product.amount),
+}));
+---
+
+<Layout
+	title="Shop Standard Prints — LiAlvaro Apparel"
+	exactTitle
+	home
+	description="Shop ready-to-order custom apparel with fixed pricing — tees, hoodies, caps, polos and more. Instant checkout, no minimums, Los Angeles."
+>
+	<div class="home" id="top">
+		<section class="page-hero">
+			<div class="wrap">
+				<div class="breadcrumb"><a href="/">Home</a> / Shop</div>
+				<h1>Shop Standard Prints</h1>
+				<p>
+					Ready-to-order items with fixed pricing — no quote needed. Checkout instantly, we print and ship or you pick
+					up locally in Los Angeles. Need something custom or bulk?
+					<a class="inline-link" href="/custom-printing">Get a custom quote →</a>
+				</p>
+			</div>
+		</section>
+
+		<section class="light-store">
+			<div class="wrap">
+				<div class="filter-tabs" role="tablist" aria-label="Product categories">
+					<button type="button" class="filter-tab active" data-filter="all">All</button>
+					<button type="button" class="filter-tab" data-filter="apparel">Apparel</button>
+					<button type="button" class="filter-tab" data-filter="headwear">Headwear &amp; Accessories</button>
+				</div>
+				<div class="store-grid" id="product-grid">
+					{
+						products.map((product) => (
+							<article class="tag-card" data-category={product.category}>
+								<div class="tag-photo">
+									<div class="tag-hole"></div>
+									<img src={product.photo} alt={product.photoAlt} />
+								</div>
+								<div class="tag-body">
+									<div>
+										<div class="tag-name">{product.name}</div>
+										<div class="tag-meta">{product.meta}</div>
+									</div>
+									<div class="tag-row">
+										<span class="tag-price">{product.price}</span>
+										<button type="button" class="btn btn-primary btn-sm" data-product-id={product.id}>
+											Add
+										</button>
+									</div>
+								</div>
+							</article>
+						))
+					}
+				</div>
+			</div>
+		</section>
+	</div>
+</Layout>
+
+<script>
+	document.querySelectorAll(".filter-tab").forEach((tab) => {
+		tab.addEventListener("click", () => {
+			document.querySelectorAll(".filter-tab").forEach((t) => t.classList.remove("active"));
+			tab.classList.add("active");
+			const filter = (tab as HTMLElement).dataset.filter;
+			document.querySelectorAll("#product-grid .tag-card").forEach((card) => {
+				const category = (card as HTMLElement).dataset.category;
+				(card as HTMLElement).style.display = filter === "all" || category === filter ? "" : "none";
+			});
+		});
+	});
+</script>

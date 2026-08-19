@@ -1,0 +1,47 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+	title="Order confirmed"
+	description="Thanks for your LiAlvaro Apparel order. We received your payment and will follow up shortly."
+>
+	<section class="confirm">
+		<div class="container">
+			<p class="eyebrow">Checkout</p>
+			<h1>Order confirmed.</h1>
+			<p>
+				Thanks — we received your payment. We’ll email production details shortly. For same-day
+				questions, call <a href="tel:3109042655">(310) 904-2655</a>.
+			</p>
+			<p>
+				<a class="button primary" href="/shop">Back to shop</a>
+			</p>
+		</div>
+	</section>
+</Layout>
+
+<style>
+	.confirm {
+		padding: 96px 0 120px;
+	}
+
+	.eyebrow {
+		font-size: 13px;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: #c8102e;
+		margin-bottom: 12px;
+	}
+
+	.confirm p {
+		max-width: 46ch;
+		margin: 16px 0 0;
+		color: #2a2a28;
+	}
+
+	.confirm a {
+		color: #c8102e;
+	}
+</style>
