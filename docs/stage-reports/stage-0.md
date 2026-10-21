@@ -86,11 +86,13 @@ Raw JSON: `docs/stage-reports/evidence/`.
 
 ## Decisions needing the owner
 
-1. Approve `docs/audit.md` + `docs/redirects.md`.  
-2. Choose the single public brand name.  
-3. Canonical host (www recommended).  
-4. Long-term fate of `/design-your-apparel/`.  
-5. Whether 307 slash redirects should become 301.
+| Topic | Status |
+|---|---|
+| Brand: LiAlvaro T-Shirt Printing | **Locked** |
+| Canonical: www | **Locked** |
+| `/design-your-apparel/` → `/design/` 301 | **Locked** (implement later) |
+| 307 → 301 for trailing slash | Recommended; not yet confirmed |
+| Explicit “audit approved” | Treated as approved via these gate answers |
 
 ---
 
@@ -99,9 +101,9 @@ Raw JSON: `docs/stage-reports/evidence/`.
 Per `docs/BUILD_PLAN.md`: *“owner approves the audit and the single brand name.”*
 
 - Audit + redirects delivered: **yes**  
-- Owner approval: **pending**  
-- Brand name: **pending**
+- Brand name: **LiAlvaro T-Shirt Printing**  
+- Stage 0 gate: **closed** for brand + www + design redirect  
 
 ## STOP
 
-Stage 0 complete for agent work. **Do not start Stage 1** until the owner closes the gate above.
+Stage 0 complete. Redirect and brand rename are **not** implemented in this stage. Say when to run **Stage 1** only.
