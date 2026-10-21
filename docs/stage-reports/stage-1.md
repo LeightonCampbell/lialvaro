@@ -64,19 +64,20 @@
 
 ## Open issues
 
-1. Owner must confirm/edit each claim before any Stage 4 page publish.  
-2. Leighton C. review still contains customer-written “LTP” — keep or ask to redact.  
-3. No verifiable Google rating/count yet — omitted from copy.  
-4. Trailing-slash 307→301 still recommended, not confirmed (Stage 0 leftover).
+1. Do not publish `[claim:support-24-7]` anywhere — confirmed false.  
+2. No verifiable Google rating/count yet — omitted from copy.  
+3. Trailing-slash 307→301 still recommended, not confirmed (Stage 0 leftover).  
+4. Exact public street address for LocalBusiness still TBD.
 
 ---
 
 ## Decisions needing the owner (Stage 1 gate)
 
-1. Approve `docs/strategy.md`.  
-2. Approve `docs/copy-deck.md` (or mark edits).  
-3. Confirm/edit/delete each claim in `src/data/claims.json`.  
-4. Keep “LTP” in Leighton C. quote as written?  
+| Topic | Status |
+|---|---|
+| Strategy + copy | **Approved** |
+| Claims (same-day true, 24/7 false, rest true) | **Locked in `claims.json`** |
+| Keep “LTP” in Leighton C. review | **Yes** |
 
 ---
 
@@ -85,8 +86,8 @@
 Per BUILD_PLAN: *“owner approves copy and confirms or edits each claim.”*
 
 - Deliverables ready: **yes**  
-- Owner approval: **pending**  
+- Owner approval: **closed 2026-10-21**  
 
 ## STOP
 
-Stage 1 agent work complete. **Do not start Stage 2** until the owner closes the gate above.
+Stage 1 gate closed. Say when to run **Stage 2 only**.

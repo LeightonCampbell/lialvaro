@@ -99,8 +99,7 @@ Use answers only after related claims are confirmed.
 | Slot | Copy |
 |---|---|
 | H2 | Ready when you are. |
-| Body | `[claim:support-24-7]` |
-| Body fallback | Questions? Call us — we’re happy to help. |
+| Body | Questions? Call us — we’re happy to help. *(Do not use `[claim:support-24-7]` — owner set confirmed false.)* |
 | Primary CTA | Get a free quote → `[claim:free-quote]` |
 | Secondary CTA | Call `[claim:phone-310-904-2655]` |
 
@@ -247,9 +246,9 @@ Do **not** use: fake countdown timers, “X people viewing”, inflated stock sc
 
 ---
 
-## Owner checklist (Stage 1 gate)
+## Owner checklist (Stage 1 gate) — closed 2026-10-21
 
-- [ ] Approve strategy audiences + homepage hierarchy (`docs/strategy.md`)
-- [ ] Approve this copy deck (or leave inline edits)
-- [ ] For each claim in `src/data/claims.json`: set `confirmed: true`, edit `text`, or remove
-- [ ] Decide whether to keep “LTP” inside Leighton C.’s review as written
+- [x] Approve strategy audiences + homepage hierarchy (`docs/strategy.md`)
+- [x] Approve this copy deck
+- [x] Claims: same-day true; 24/7 false; all others true (`src/data/claims.json`)
+- [x] Keep “LTP” inside Leighton C.’s review as written
