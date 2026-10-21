@@ -35,19 +35,50 @@
 
           <div class="service-picker" id="servicePicker">
             <div class="service-opt" data-service="Screen Printing">
-              <span class="service-opt-icon">🖨️</span>
+              <span class="service-opt-icon" aria-hidden="true">
+                <!-- Screen printing squeegee -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="10.6" y="2.8" width="2.8" height="9.2" rx="0.6" />
+                  <path d="M9 12h6" />
+                  <path d="M4.2 14.5h15.6" />
+                  <path d="M5 14.5v2.2c0 .7.4 1.3 1 1.6l5.2 2.4a2 2 0 0 0 1.6 0l5.2-2.4c.6-.3 1-.9 1-1.6V14.5" />
+                  <path d="M6.2 17.2h11.6" />
+                </svg>
+              </span>
               <span class="service-opt-name">Screen Printing</span>
             </div>
             <div class="service-opt" data-service="Direct to Garment">
-              <span class="service-opt-icon">🎨</span>
+              <span class="service-opt-icon" aria-hidden="true">
+                <!-- DTG printer -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3.5" y="7.5" width="17" height="10" rx="1.5" />
+                  <path d="M7 7.5V5.8A1.8 1.8 0 0 1 8.8 4h6.4A1.8 1.8 0 0 1 17 5.8V7.5" />
+                  <rect x="6.5" y="10" width="11" height="4.5" rx="0.8" />
+                  <path d="M8 12.2h5" />
+                  <path d="M5.2 17.5v2.2M18.8 17.5v2.2" />
+                  <circle cx="16.5" cy="12.2" r="0.7" fill="currentColor" stroke="none" />
+                  <path d="M9.5 20.2h5" />
+                </svg>
+              </span>
               <span class="service-opt-name">DTG Printing</span>
             </div>
             <div class="service-opt" data-service="Direct to Film">
-              <span class="service-opt-icon">🎞️</span>
+              <span class="service-opt-icon" aria-hidden="true">
+                <!-- Heat press -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="15" width="18" height="5" rx="1" />
+                  <path d="M5 15V12.5" />
+                  <path d="M5 12.5h11.5a1.5 1.5 0 0 0 1.5-1.5V8.2A1.7 1.7 0 0 0 16.3 6.5H7.2A1.7 1.7 0 0 0 5.5 8.2v4.3" />
+                  <path d="M12 6.5V4.2" />
+                  <path d="M9.5 4.2h5" />
+                  <circle cx="16.8" cy="4" r="1.1" />
+                  <path d="M6.5 17.5h11" />
+                </svg>
+              </span>
               <span class="service-opt-name">Direct to Film</span>
             </div>
             <div class="service-opt" data-service="Embroidery">
-              <span class="service-opt-icon">🪡</span>
+              <span class="service-opt-icon" aria-hidden="true">🪡</span>
               <span class="service-opt-name">Embroidery</span>
             </div>
           </div>
@@ -932,6 +963,25 @@
 
   .service-opt-icon {
     font-size: 20px;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--text-primary);
+    line-height: 1;
+  }
+
+  .service-opt-icon svg {
+    width: 22px;
+    height: 22px;
+    display: block;
+  }
+
+  .service-opt.selected .service-opt-icon,
+  .service-opt:hover .service-opt-icon {
+    color: var(--orange-deep, var(--orange));
   }
 
   .service-opt-name {
