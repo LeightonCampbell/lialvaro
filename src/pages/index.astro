@@ -23,8 +23,11 @@ import Layout from "../layouts/Layout.astro";
       <span class="badge-dot"></span>
       Best Custom Apparel Printer in Los Angeles
     </div>
-    <h1>Custom Printed <span>T-shirts,</span><br>Hoodies, Hats &amp; More.</h1>
-    <p class="hero-sub">Professional print quality, lightning-fast turnaround, and designs that leave a lasting impression — with no minimums.</p>
+    <h1>
+      Custom Printed<br />
+      <span class="hero-accent">T&#8209;shirts, Hoodies, Hats, &amp; More.</span>
+    </h1>
+    <p class="hero-sub">Professional print quality, lightning-fast turnaround, and designs that leave a lasting impression.</p>
     <div class="hero-actions">
       <button class="btn-primary" data-quote-trigger onclick="openModal()">Get Your Free Quote →</button>
       <a href="tel:3109042655" class="btn-secondary">
@@ -159,12 +162,12 @@ import Layout from "../layouts/Layout.astro";
   <div class="container">
     <div class="reveal">
       <div class="eyebrow">Real Google Reviews (all 5-stars)</div>
-      <h2 class="section-title">What our customers<br>are saying.</h2>
+      <h2 class="section-title">What our customers are saying.</h2>
     </div>
     <div class="cap-grid">
       <div class="cap-card reveal">
         <img class="cap-stars" src="/images/review-stars.png" alt="5-star review" loading="lazy" />
-        <div class="cap-body">I gad my logo designed and my t-shirts and polos printed here several years ago. Since then, I've had banners, posters, hats, and, many other products done by LTP (even ugly sweaters for Christmas of 2024). Li is so friendly and patient. I recommend LiAlvaro T-shirt Printing to everyone.</div>
+        <div class="cap-body">I had my logo designed and my t-shirts and polos printed here several years ago. Since then, I've had banners, posters, hats, and, many other products done by LTP (even ugly sweaters for Christmas of 2024). Li is so friendly and patient. I recommend LiAlvaro T-shirt Printing to everyone.</div>
         <div class="cap-author">Leighton C.</div>
       </div>
       <div class="cap-card reveal" style="transition-delay:0.08s">
@@ -350,15 +353,25 @@ import Layout from "../layouts/Layout.astro";
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
 
   .hero h1 {
-    font-size: clamp(42px, 6vw, 76px);
-    font-weight: 800; line-height: 1.05;
+    font-size: clamp(36px, 5.2vw, 68px);
+    font-weight: 800; line-height: 1.08;
     letter-spacing: -0.035em;
     color: rgba(255, 255, 255, 0.98);
-    max-width: 760px; margin: 0 auto 20px;
+    max-width: 920px; margin: 0 auto 20px;
     animation: fadeUp 0.55s 0.05s ease both;
     text-shadow: 0 10px 30px rgba(0,0,0,0.45);
   }
-  .hero h1 span { color: var(--orange); }
+  .hero h1 .hero-accent {
+    color: var(--orange);
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 640px) {
+    .hero h1 .hero-accent {
+      white-space: normal;
+    }
+  }
 
   .hero-sub {
     font-size: 19px; line-height: 1.65;
