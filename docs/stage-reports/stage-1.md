@@ -21,9 +21,11 @@
 - No review counts or “#1” claims without owner-supplied proof.
 - Contact phone/email stay as on the current site pending claim confirmation.
 
-## Blocking questions
+## Owner gate decisions (recorded 2026-10-21)
 
-None that prevent drafting. **Gate is owner review** of strategy, copy, and each claim.
+1. **Strategy + copy approved**
+2. **Claims:** `same-day-printing` true; `support-24-7` false; all other claims true
+3. **Keep “LTP”** in Leighton C.’s review as written
 
 ---
 

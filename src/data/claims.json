@@ -2,89 +2,94 @@
   "$schema_note": "Owner flips confirmed to true only for claims that are operationally true. Pages must not render a claim unless confirmed is true (enforced in later stages).",
   "brand": "LiAlvaro T-Shirt Printing",
   "updated": "2026-10-21",
+  "owner_gate": {
+    "strategy_copy_approved": true,
+    "keep_ltp_in_leighton_review": true,
+    "decided_at": "2026-10-21"
+  },
   "claims": [
     {
       "id": "same-day-printing",
       "text": "Same-day printing available for select orders in Los Angeles. Call to confirm.",
-      "confirmed": false,
-      "notes": "Public wording locked by BUILD_PLAN. Eligibility (products, ZIPs, cutoff) will live in same-day.json later. Never imply in-house production.",
+      "confirmed": true,
+      "notes": "Owner confirmed 2026-10-21. Public wording locked by BUILD_PLAN. Eligibility (products, ZIPs, cutoff) will live in same-day.json later. Never imply in-house production.",
       "surfaces": ["home", "shop", "custom-printing", "faq", "seo"]
     },
     {
       "id": "no-minimums",
       "text": "No minimum order quantity.",
-      "confirmed": false,
-      "notes": "Current site FAQ says single-shirt orders are OK; bulk pricing for screen printing often starts around 12+. Confirm both facts before publishing.",
+      "confirmed": true,
+      "notes": "Owner confirmed 2026-10-21. Bulk pricing for screen printing may still benefit at higher quantities — do not invent thresholds unless added as a separate claim.",
       "surfaces": ["home", "shop", "design", "custom-printing", "faq"]
     },
     {
       "id": "free-quote",
       "text": "Free quote — no obligation.",
-      "confirmed": false,
-      "notes": "Used on CTAs today. Confirm there is never a quote fee.",
+      "confirmed": true,
+      "notes": "Owner confirmed 2026-10-21.",
       "surfaces": ["home", "custom-printing", "header", "footer"]
     },
     {
       "id": "support-24-7",
       "text": "Our team is available 24/7 for quotes and design assistance.",
       "confirmed": false,
-      "notes": "Homepage currently asserts 24/7. Confirm staffing reality or soften later.",
+      "notes": "Owner rejected 2026-10-21 — do not use on production pages. Use fallback copy from copy-deck (call / we’re happy to help).",
       "surfaces": ["home", "contact", "faq"]
     },
     {
       "id": "quote-response-1-business-hour",
       "text": "We typically respond to quote requests within one business hour.",
-      "confirmed": false,
-      "notes": "Listed in Stage 1 plan; not strongly evidenced on current site. Confirm or rewrite before use.",
+      "confirmed": true,
+      "notes": "Owner confirmed 2026-10-21.",
       "surfaces": ["home", "custom-printing", "faq"]
     },
     {
       "id": "turnaround-standard-5-7",
       "text": "Standard turnaround is 5–7 business days after artwork approval and payment.",
-      "confirmed": false,
-      "notes": "From current FAQ. Confirm still accurate for local and other lanes.",
+      "confirmed": true,
+      "notes": "Owner confirmed 2026-10-21.",
       "surfaces": ["home", "faq", "custom-printing", "shop"]
     },
     {
       "id": "turnaround-rush-4",
       "text": "Rush orders (about 4 business days) are available for an additional fee.",
-      "confirmed": false,
-      "notes": "From current FAQ. Confirm fee policy before publishing details.",
+      "confirmed": true,
+      "notes": "Owner confirmed 2026-10-21. Do not invent the fee amount until pricing.json exists.",
       "surfaces": ["faq", "custom-printing"]
     },
     {
       "id": "la-local-delivery",
       "text": "Local delivery options are available in the Los Angeles area.",
-      "confirmed": false,
-      "notes": "From current FAQ. Exact pricing depends on order — do not invent rates.",
+      "confirmed": true,
+      "notes": "Owner confirmed 2026-10-21. Exact pricing depends on order — do not invent rates.",
       "surfaces": ["faq", "contact", "custom-printing"]
     },
     {
       "id": "phone-310-904-2655",
       "text": "Call (310) 904-2655.",
-      "confirmed": false,
-      "notes": "Contact number used across the live site. Confirm this remains the public line.",
+      "confirmed": true,
+      "notes": "Owner confirmed 2026-10-21.",
       "surfaces": ["global"]
     },
     {
       "id": "email-help",
       "text": "Email help@lialvaro.com.",
-      "confirmed": false,
-      "notes": "From contact page. Confirm inbox ownership/monitoring.",
+      "confirmed": true,
+      "notes": "Owner confirmed 2026-10-21.",
       "surfaces": ["contact", "footer"]
     },
     {
       "id": "methods-screen-dtg-dtf-embroidery",
       "text": "We offer screen printing, direct-to-garment (DTG), direct-to-film (DTF), and embroidery.",
-      "confirmed": false,
-      "notes": "Service set on current site. Confirm each method remains offered.",
+      "confirmed": true,
+      "notes": "Owner confirmed 2026-10-21.",
       "surfaces": ["home", "custom-printing", "seo"]
     },
     {
       "id": "los-angeles",
       "text": "Serving customers from Los Angeles, California.",
-      "confirmed": false,
-      "notes": "Location claim for LocalBusiness SEO later. Confirm public address policy (display exact address vs city-only).",
+      "confirmed": true,
+      "notes": "Owner confirmed 2026-10-21. Exact street address display still TBD for SEO/LocalBusiness.",
       "surfaces": ["global", "seo"]
     }
   ]

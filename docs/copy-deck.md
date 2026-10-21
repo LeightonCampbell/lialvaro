@@ -75,7 +75,7 @@
 **Approved review set (real):**
 
 1. **Leighton C.** — “I had my logo designed and my t-shirts and polos printed here several years ago. Since then, I've had banners, posters, hats, and, many other products done by LTP (even ugly sweaters for Christmas of 2024). Li is so friendly and patient. I recommend LiAlvaro T-shirt Printing to everyone.”  
-   *(Publish with typo fix “had”; keep “LTP” as the customer wrote it, or ask owner if redaction is preferred.)*
+   *(Publish with typo fix “had”; keep “LTP” as written — owner confirmed 2026-10-21.)*
 
 2. **Mark L.** — “I will never use another company for my Custom Printing needs. These guys do a wonderful job.”
 
