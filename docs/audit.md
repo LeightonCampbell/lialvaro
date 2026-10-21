@@ -23,13 +23,20 @@
 - Unmerged PRs (`homepage-printshop-look`, typo fix) are **not** live; noted as parallel work only.
 - Chrome UX Report / field CWV was not returned by Lighthouse for this origin in this run.
 
-### Blocking questions for the owner (gate)
+### Owner decisions (locked 2026-10-21)
 
-1. **Single brand name** — pick one public string (see §6). Gate cannot close until this is decided.
-2. Confirm production “source of truth” is the current live Workers deploy of this repo (not the unmerged printshop PR).
-3. Confirm keep-list for URLs: `/design-your-apparel`, `/about`, `/faq`, `/articles`, `/contact` (plus article slugs).
-4. Preferred canonical host: keep `www` (recommended) or switch to apex? (Affects redirect map.)
-5. Is same-day content currently only homepage/FAQ copy (no dedicated same-day route)? (Observed: no `/same-day` page.)
+| Decision | Owner answer | Applies when |
+|---|---|---|
+| Public brand name | **LiAlvaro T-Shirt Printing** | Stage 1+ copy; Stage 4 title/chrome pass |
+| Canonical host | **`www.lialvaro.com`** | Stage 4 host 301 + sitemap/canonical |
+| `/design-your-apparel/` | **301 → `/design/`** | Stage 4/6 when `/design/` ships (keep page until then) |
+
+Short UI form **LiAlvaro** (logo) remains acceptable; retire **LiAlvaro Apparel**, **LTP**, and mixed “T-shirt” casing in new copy. Do not invent a legal entity name beyond what the owner set.
+
+### Remaining open (non-blocking for Stage 0 gate)
+
+- Confirm production source of truth is this Workers deploy (not unmerged printshop PR #4).
+- Same-day is currently homepage/FAQ copy only (no `/same-day` route) — confirmed by audit.
 
 ---
 
@@ -214,16 +221,11 @@ Also exists: standalone design form on `/design-your-apparel` posting to the sam
 | D10 | Starter `Welcome.astro` still in tree | Components list |
 | D11 | README still Astro starter boilerplate | `README.md` |
 
-### Brand name decision (required for Stage 0 gate)
+### Brand name decision — **LOCKED**
 
-Please pick **one** public brand string:
-
-1. **LiAlvaro Apparel** (current homepage title / about)
-2. **LiAlvaro T-Shirt Printing** (footer / some reviews / Formspree)
-3. **LiAlvaro** (logo alt / short form)
-4. Other (specify)
-
-Recommendation for later stages: **LiAlvaro Apparel** publicly, short **LiAlvaro** in UI chrome; retire **LTP** and “T-Shirt Printing” as legal/trade names unless that is the registered DBA.
+**Public brand:** LiAlvaro T-Shirt Printing  
+**Short chrome:** LiAlvaro (logo / nav wordmark OK)  
+**Do not use going forward:** LiAlvaro Apparel, LTP, “Lialvaro Custom Apparel” title suffix (replace with brand), inconsistent “T-shirt” vs “T-Shirt” (prefer **T-Shirt**).
 
 ---
 
@@ -254,5 +256,7 @@ These must be moved into `src/data/claims.json` in Stage 1 with `confirmed` flag
 
 - [x] Audit written (`docs/audit.md`)  
 - [x] Redirect map proposed (`docs/redirects.md`)  
-- [ ] **Owner approves this audit**  
-- [ ] **Owner selects the single brand name**  
+- [x] **Owner brand name:** LiAlvaro T-Shirt Printing  
+- [x] **Owner canonical host:** www  
+- [x] **Owner redirect:** `/design-your-apparel/` → `/design/` (implement when `/design/` exists)  
+- [x] Stage 0 gate closed for these decisions (2026-10-21)  

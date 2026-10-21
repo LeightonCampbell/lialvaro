@@ -1,7 +1,7 @@
 # LiAlvaro redirect map (proposed)
 
-**Status:** Proposal only — Stage 0. Do not implement until Stage 4 (or owner explicitly asks).  
-**Canonical host (recommended):** `https://www.lialvaro.com`  
+**Status:** Owner-approved map (2026-10-21). Do not implement until Stage 4 / when target routes exist.  
+**Canonical host (locked):** `https://www.lialvaro.com`  
 **URL style (recommended):** trailing slash on all non-file paths (matches live 307 behavior and Astro `Layout` canonical normalization).
 
 ---
@@ -13,7 +13,6 @@ These must continue to resolve (200 or 301→canonical form):
 | Path | Notes |
 |---|---|
 | `/` | Homepage |
-| `/design-your-apparel/` | Keep (plan Stage 0 / Stage 4 port) |
 | `/about/` | Keep |
 | `/faq/` | Keep |
 | `/articles/` | Keep |
@@ -22,6 +21,8 @@ These must continue to resolve (200 or 301→canonical form):
 | `/the-ultimate-guide-to-finding-the-perfect-place-for-your-bulk-custom-t-shirt-event-needs/` | Article |
 | `/sitemap.xml` | Keep; update locs to trailing-slash www forms |
 | `/robots.txt` | Keep |
+
+`/design-your-apparel/` is **not** a permanent keep — see §5 (owner-approved 301 → `/design/`).
 
 ---
 
@@ -61,17 +62,18 @@ Until those pages exist, do **not** 301 `#` anywhere; implement real routes.
 
 ---
 
-## 5. Future IA (Stage 2+) — planned redirects when routes ship
+## 5. Future IA — owner-approved redirects when routes ship
 
-Only apply once the new page exists and owner approves IA. Tentative map:
+Apply only once the destination page exists (Stage 4/6 for Design Studio).
 
-| Legacy / interim | Future | Code | Notes |
+| Legacy / interim | Future | Code | Status |
 |---|---|---|---|
-| `/design-your-apparel/` | `/design/` **or** keep forever | TBD | Owner must choose: permanent keep vs 301 to Design Studio |
-| Homepage service CTAs / footer service links → `/design-your-apparel/` | `/custom-printing/` (quote) and/or `/shop/` | 301 or link update | Unmerged PR #4 already explores `/shop` + `/custom-printing` |
+| `/design-your-apparel` | `https://www.lialvaro.com/design/` | **301** | **Owner approved 2026-10-21** |
+| `/design-your-apparel/` | `https://www.lialvaro.com/design/` | **301** | **Owner approved 2026-10-21** |
+| Homepage service CTAs / footer service links → `/design-your-apparel/` | `/custom-printing/` and/or `/shop/` (link updates) | n/a until those routes ship | Pending Stage 2 IA |
 | *(none today)* | `/shop/`, `/cart/`, `/track/`, `/stores/[slug]/`, `/account/*`, `/admin/*` | n/a | New; no legacy |
 
-**Do not remove** `/design-your-apparel/` without an explicit owner decision and a 301.
+Until `/design/` is live, keep serving `/design-your-apparel/` (200). On cutover: add the 301s above and remove or stub the old page.
 
 ---
 
@@ -93,8 +95,12 @@ Only apply once the new page exists and owner approves IA. Tentative map:
 
 ---
 
-## 8. Owner decisions needed
+## 8. Owner decisions
 
-1. Canonical host: **www** (recommended) vs apex.  
-2. Keep `/design-your-apparel/` permanently, or eventually 301 → `/design/`?  
-3. Approve converting live **307** slash redirects to **301**.  
+| Topic | Decision | Date |
+|---|---|---|
+| Canonical host | **www.lialvaro.com** | 2026-10-21 |
+| `/design-your-apparel/` | **301 → `/design/`** when Design Studio ships | 2026-10-21 |
+| Convert live **307** slash redirects to **301** | Still recommended; not explicitly confirmed | Pending |
+
+Brand for titles/copy: **LiAlvaro T-Shirt Printing** (see `docs/audit.md`).

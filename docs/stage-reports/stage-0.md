@@ -21,15 +21,13 @@
 - Field CrUX data unavailable in this Lighthouse run.
 - Formspree remains the live lead intake until later stages replace it.
 
-## Blocking questions (awaiting owner — Stage 0 gate)
+## Owner gate decisions (recorded 2026-10-21)
 
-1. Approve this audit as accurate?
-2. **Single brand name** — which public string? (See `docs/audit.md` §6 options.)
-3. Confirm canonical host stays **www**?
-4. Keep `/design-your-apparel/` forever, or plan eventual 301 to `/design/`?
-5. Confirm production is this Workers deploy (not PR #4)?
+1. **Brand:** LiAlvaro T-Shirt Printing  
+2. **Canonical host:** www (`https://www.lialvaro.com`)  
+3. **`/design-your-apparel/`:** 301 → `/design/` when Design Studio exists  
 
-*Non-blocking clarifications are listed in the audit; work proceeded so deliverables exist for review.*
+Still open (non-blocking): confirm prod = this Workers deploy (not PR #4); prefer 301 over 307 for slash normalization.
 
 ---
 
