@@ -23,7 +23,10 @@ import Layout from "../layouts/Layout.astro";
       <span class="badge-dot"></span>
       Best Custom Apparel Printer in Los Angeles
     </div>
-    <h1>Custom Printed <span>T-shirts,</span><br>Hoodies, Hats &amp; More.</h1>
+    <h1>
+      Custom Printed<br />
+      <span class="hero-accent">T&#8209;shirts, Hoodies, Hats, &amp; More.</span>
+    </h1>
     <p class="hero-sub">Professional print quality, lightning-fast turnaround, and designs that leave a lasting impression — with no minimums.</p>
     <div class="hero-actions">
       <button class="btn-primary" data-quote-trigger onclick="openModal()">Get Your Free Quote →</button>
@@ -358,7 +361,10 @@ import Layout from "../layouts/Layout.astro";
     animation: fadeUp 0.55s 0.05s ease both;
     text-shadow: 0 10px 30px rgba(0,0,0,0.45);
   }
-  .hero h1 span { color: var(--orange); }
+  .hero h1 .hero-accent {
+    color: var(--orange);
+    display: inline-block;
+  }
 
   .hero-sub {
     font-size: 19px; line-height: 1.65;
