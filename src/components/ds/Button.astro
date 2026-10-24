@@ -1,0 +1,144 @@
+---
+interface Props {
+  variant?: 'primary' | 'secondary' | 'ghost';
+  type?: 'button' | 'submit' | 'reset';
+  href?: string;
+  disabled?: boolean;
+  loading?: boolean;
+  state?: 'default' | 'error';
+  class?: string;
+}
+
+const {
+  variant = 'primary',
+  type = 'button',
+  href,
+  disabled = false,
+  loading = false,
+  state = 'default',
+  class: className = '',
+} = Astro.props;
+
+const classes = ['ds-btn', `ds-btn--${variant}`, state === 'error' ? 'is-error' : '', loading ? 'is-loading' : '', className]
+  .filter(Boolean)
+  .join(' ');
+
+const isDisabled = disabled || loading;
+---
+
+{
+  href && !isDisabled ? (
+    <a class={classes} href={href} data-state={state} aria-busy={loading ? 'true' : undefined}>
+      {loading ? <span class="ds-btn__spinner" aria-hidden="true" /> : null}
+      <span class="ds-btn__label"><slot /></span>
+    </a>
+  ) : (
+    <button class={classes} type={type} disabled={isDisabled} data-state={state} aria-busy={loading ? 'true' : undefined}>
+      {loading ? <span class="ds-btn__spinner" aria-hidden="true" /> : null}
+      <span class="ds-btn__label"><slot /></span>
+    </button>
+  )
+}
+
+<style>
+  .ds-btn {
+    --btn-bg: var(--print-red);
+    --btn-ink: var(--white);
+    --btn-border: var(--print-red);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    padding: 0.7rem 1.15rem;
+    border: 2px solid var(--btn-border);
+    border-radius: var(--radius-md);
+    background: var(--btn-bg);
+    color: var(--btn-ink);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.2;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background var(--duration-fast) var(--ease-out),
+      color var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out),
+      transform var(--duration-fast) var(--ease-out);
+  }
+
+  .ds-btn--secondary {
+    --btn-bg: var(--white);
+    --btn-ink: var(--ink);
+    --btn-border: var(--ink);
+  }
+
+  .ds-btn--ghost {
+    --btn-bg: transparent;
+    --btn-ink: var(--ink);
+    --btn-border: transparent;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .ds-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  .ds-btn--primary:hover:not(:disabled) {
+    --btn-bg: color-mix(in srgb, var(--print-red) 88%, #000);
+    --btn-border: color-mix(in srgb, var(--print-red) 88%, #000);
+  }
+
+  .ds-btn--secondary:hover:not(:disabled) {
+    --btn-bg: color-mix(in srgb, var(--canvas) 70%, var(--white));
+  }
+
+  .ds-btn:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .ds-btn:disabled,
+  .ds-btn[aria-disabled='true'] {
+    background: var(--color-disabled-bg);
+    border-color: var(--color-disabled-bg);
+    color: var(--color-disabled-ink);
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .ds-btn.is-loading .ds-btn__label {
+    opacity: 0.75;
+  }
+
+  .ds-btn.is-error {
+    --btn-bg: var(--color-danger);
+    --btn-border: var(--color-danger);
+  }
+
+  .ds-btn__spinner {
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: ds-spin 0.7s linear infinite;
+  }
+
+  @keyframes ds-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ds-btn__spinner {
+      animation: none;
+      border-right-color: currentColor;
+      opacity: 0.6;
+    }
+  }
+</style>

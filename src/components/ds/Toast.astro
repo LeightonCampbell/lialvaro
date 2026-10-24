@@ -1,0 +1,91 @@
+---
+interface Props {
+  tone?: 'info' | 'success' | 'error';
+  title: string;
+  body?: string;
+  open?: boolean;
+  class?: string;
+}
+
+const { tone = 'info', title, body, open = true, class: className = '' } = Astro.props;
+---
+
+<div
+  class:list={['ds-toast', `ds-toast--${tone}`, open ? 'is-open' : '', className]}
+  role="status"
+  aria-live="polite"
+  hidden={!open}
+>
+  <div class="ds-toast__bar" aria-hidden="true"></div>
+  <div class="ds-toast__content">
+    <strong class="ds-toast__title">{title}</strong>
+    {body ? <p class="ds-toast__body">{body}</p> : null}
+  </div>
+  <button class="ds-toast__close" type="button" aria-label="Dismiss notification">×</button>
+</div>
+
+<style>
+  .ds-toast {
+    display: none;
+    grid-template-columns: 4px 1fr auto;
+    gap: var(--space-3);
+    align-items: start;
+    max-width: 22rem;
+    padding: var(--space-3);
+    background: var(--white);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+    color: var(--ink);
+  }
+
+  .ds-toast.is-open {
+    display: grid;
+  }
+
+  .ds-toast__bar {
+    width: 4px;
+    min-height: 100%;
+    border-radius: 2px;
+    background: var(--ink);
+  }
+
+  .ds-toast--success .ds-toast__bar {
+    background: var(--color-success);
+  }
+
+  .ds-toast--error .ds-toast__bar {
+    background: var(--color-danger);
+  }
+
+  .ds-toast__title {
+    display: block;
+    font-size: var(--text-sm);
+  }
+
+  .ds-toast__body {
+    margin: var(--space-1) 0 0;
+    font-size: var(--text-sm);
+    color: color-mix(in srgb, var(--ink) 80%, var(--mesh-grey));
+  }
+
+  .ds-toast__close {
+    border: none;
+    background: transparent;
+    color: var(--mesh-text);
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .ds-toast__close:hover {
+    color: var(--ink);
+  }
+
+  .ds-toast__close:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+</style>

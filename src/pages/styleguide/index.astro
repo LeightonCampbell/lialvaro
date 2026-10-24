@@ -1,0 +1,425 @@
+---
+// On-demand so middleware can rewrite BUILD_PLAN path `/_styleguide/` → this page.
+export const prerender = false;
+
+import StyleguideLayout from '../../layouts/StyleguideLayout.astro';
+import Button from '../../components/ds/Button.astro';
+import Badge from '../../components/ds/Badge.astro';
+import PriceTag from '../../components/ds/PriceTag.astro';
+import Field from '../../components/ds/Field.astro';
+import FileDrop from '../../components/ds/FileDrop.astro';
+import Photo from '../../components/ds/Photo.astro';
+import ProductCard from '../../components/ds/ProductCard.astro';
+import Section from '../../components/ds/Section.astro';
+import Accordion from '../../components/ds/Accordion.astro';
+import ReviewCard from '../../components/ds/ReviewCard.astro';
+import StepList from '../../components/ds/StepList.astro';
+import Toast from '../../components/ds/Toast.astro';
+import Modal from '../../components/ds/Modal.astro';
+import Drawer from '../../components/ds/Drawer.astro';
+import Header from '../../components/ds/Header.astro';
+import Footer from '../../components/ds/Footer.astro';
+
+const faqItems = [
+  {
+    id: 'shop-vs-quote',
+    question: 'Shop vs quote?',
+    answer: 'Shop is for standard products with listed prices. A quote is for bulk, specialty garments, or projects that need a custom plan.',
+  },
+  {
+    id: 'minimums',
+    question: 'Minimum order?',
+    answer: 'No minimum order quantity.',
+  },
+];
+
+const steps = [
+  { title: 'Choose your path', body: 'Design online or request a quote.' },
+  { title: 'Approve art & pricing', body: 'Confirm the proof and total before we print.' },
+  { title: 'We print & deliver', body: 'Track your order when it ships.' },
+];
+---
+
+<StyleguideLayout title="Design system styleguide">
+  <div class="sg-banner">
+    <p>
+      <strong>Stage 3 living styleguide</strong>
+      · Canonical preview path <code>/_styleguide/</code> (rewrites to <code>/styleguide/</code>)
+      · <span class="sg-banner__note">noindex</span>
+    </p>
+  </div>
+
+  <Header />
+
+  <main class="sg-main" id="main">
+    <header class="sg-hero">
+      <p class="sg-kicker">LiAlvaro T-Shirt Printing</p>
+      <h1>Design system</h1>
+      <p class="sg-lede">
+        Tokens, motifs, and components for Stage 4+. Live storefront pages still use the current CSS until the foundation
+        build.
+      </p>
+    </header>
+
+    <Section eyebrow="Tokens" title="Color, type, motifs" id="tokens">
+      <p slot="lede">Canvas, ink, print-red, gold, mesh-grey, white. Anton / Inter / IBM Plex Mono (self-hosted).</p>
+      <div class="sg-swatches" aria-label="Color tokens">
+        <div class="sg-swatch" style="--sw:#EFEBE1;--ink-sw:#1B2233"><span>canvas</span><code>#EFEBE1</code></div>
+        <div class="sg-swatch" style="--sw:#1B2233;--ink-sw:#FFFDF9"><span>ink</span><code>#1B2233</code></div>
+        <div class="sg-swatch" style="--sw:#C8102E;--ink-sw:#FFFDF9"><span>print-red</span><code>#C8102E</code></div>
+        <div class="sg-swatch" style="--sw:#B8912A;--ink-sw:#1B2233"><span>gold</span><code>#B8912A</code></div>
+        <div class="sg-swatch" style="--sw:#8B8B85;--ink-sw:#1B2233"><span>mesh-grey</span><code>#8B8B85</code></div>
+        <div class="sg-swatch" style="--sw:#FFFDF9;--ink-sw:#1B2233"><span>white</span><code>#FFFDF9</code></div>
+      </div>
+      <div class="sg-type">
+        <p class="sg-type-display">Display · Anton</p>
+        <p class="sg-type-body">Body · Inter — practical LA print partner copy.</p>
+        <p class="sg-type-mono">Mono · IBM Plex Mono — $24.00 · 5–7 days</p>
+      </div>
+      <div class="sg-motifs">
+        <span class="ds-reg-mark" aria-hidden="true"></span>
+        <hr class="ds-cutline" />
+        <span class="ds-reg-mark" aria-hidden="true"></span>
+      </div>
+      <p class="sg-caption">Registration marks + dashed cut-line divider</p>
+    </Section>
+
+    <Section eyebrow="Button" title="Button states" id="button">
+      <div class="sg-row">
+        <Button>Primary default</Button>
+        <Button variant="secondary">Secondary</Button>
+        <Button variant="ghost">Ghost</Button>
+        <Button loading>Loading</Button>
+        <Button disabled>Disabled</Button>
+        <Button state="error">Error</Button>
+      </div>
+      <p class="sg-caption">Hover and focus-visible are interactive in the browser.</p>
+    </Section>
+
+    <Section eyebrow="Badge & price" title="Badge / PriceTag" id="badge-price">
+      <div class="sg-row">
+        <Badge>Ink</Badge>
+        <Badge tone="red">Print red</Badge>
+        <Badge tone="gold">Gold</Badge>
+        <Badge tone="mesh">Mesh</Badge>
+        <PriceTag amount="$24.00" note="from" />
+        <PriceTag amount="" empty />
+      </div>
+    </Section>
+
+    <Section eyebrow="Fields" title="Field / Input / Select / Textarea" id="fields">
+      <div class="sg-grid-2">
+        <Field id="sg-name" label="First name" placeholder="Jordan" hint="Default + hint" />
+        <Field id="sg-email" label="Email" type="email" error="Enter a valid email." value="not-an-email" />
+        <Field id="sg-disabled" label="Disabled" value="Locked" disabled />
+        <Field
+          id="sg-service"
+          label="Service"
+          as="select"
+          placeholder="Select a service"
+          options={[
+            { value: 'screen', label: 'Screen Printing' },
+            { value: 'dtg', label: 'DTG' },
+          ]}
+        />
+        <Field id="sg-notes" label="Notes" as="textarea" placeholder="Deadline, placement…" />
+      </div>
+    </Section>
+
+    <Section eyebrow="Upload" title="FileDrop" id="filedrop">
+      <div class="sg-grid-2">
+        <FileDrop id="sg-file-empty" empty />
+        <FileDrop id="sg-file-filled" empty={false} label="Upload files (filled)" />
+        <FileDrop id="sg-file-error" error="File too large. Try a smaller export." />
+        <FileDrop id="sg-file-disabled" disabled label="Upload files (disabled)" />
+      </div>
+    </Section>
+
+    <Section eyebrow="Media" title="Photo" id="photo">
+      <div class="sg-grid-3">
+        <Photo alt="Placeholder garment photo" empty />
+        <Photo alt="Sample texture" src="/images/favicon.ico" aspect="1/1" />
+      </div>
+    </Section>
+
+    <Section eyebrow="Commerce" title="ProductCard (hangtag)" id="product">
+      <div class="sg-grid-3">
+        <ProductCard title="Heavyweight Tee" price="$18.00" badge="Popular" href="/shop/" />
+        <ProductCard title="Unavailable hoodie" price="$42.00" disabled href="/shop/" />
+        <ProductCard empty />
+      </div>
+    </Section>
+
+    <Section eyebrow="Content" title="StepList / ReviewCard / Accordion" id="content">
+      <StepList steps={steps} />
+      <div class="sg-grid-2" style="margin-top: 1.5rem">
+        <ReviewCard />
+        <ReviewCard empty />
+      </div>
+      <div style="margin-top: 1.5rem">
+        <Accordion items={faqItems} />
+        <Accordion items={[]} />
+      </div>
+    </Section>
+
+    <Section eyebrow="Feedback" title="Toast" id="toast">
+      <div class="sg-row sg-row--wrap">
+        <Toast title="Quote started" body="Step 1 of 4" />
+        <Toast tone="success" title="Added to cart" body="Heavyweight Tee · Qty 2" />
+        <Toast tone="error" title="Upload failed" body="Try again or call (310) 904-2655." />
+      </div>
+    </Section>
+
+    <Section eyebrow="Overlays" title="Modal & Drawer (static open demos)" id="overlays">
+      <p class="sg-caption">Demonstrated inline below (not full-viewport) so the styleguide stays scrollable for review.</p>
+      <div class="sg-overlay-demos">
+        <div class="sg-overlay-frame" aria-label="Modal demo">
+          <div class="sg-overlay-frame__label">Modal · default</div>
+          <div class="sg-modal-inline">
+            <h3 class="sg-modal-inline__title">Free quote</h3>
+            <p>We'll respond within 1 business hour.</p>
+            <div class="sg-row">
+              <Button variant="ghost">Cancel</Button>
+              <Button>Continue</Button>
+            </div>
+          </div>
+        </div>
+        <div class="sg-overlay-frame" aria-label="Drawer demo">
+          <div class="sg-overlay-frame__label">Drawer · default</div>
+          <div class="sg-drawer-inline">
+            <h3 class="sg-drawer-inline__title">Mobile menu</h3>
+            <ul>
+              <li><a href="/shop/">Shop</a></li>
+              <li><a href="/design/">Design</a></li>
+              <li><a href="/custom-printing/">Custom Printing</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- Keep real overlay components in DOM for axe/structure, closed by default -->
+      <Modal id="sg-modal-ref" title="Reference modal" open={false}>
+        <p>Hidden reference instance.</p>
+      </Modal>
+      <Drawer id="sg-drawer-ref" title="Reference drawer" open={false}>
+        <p>Hidden reference instance.</p>
+      </Drawer>
+    </Section>
+
+    <Section eyebrow="Chrome" title="Header / Nav / MobileMenu / Footer" id="chrome">
+      <p class="sg-caption">Header is rendered at the top of this page. Footer follows. Use a narrow viewport to exercise MobileMenu.</p>
+    </Section>
+  </main>
+
+  <Footer />
+</StyleguideLayout>
+
+<style>
+  .sg-banner {
+    background: var(--ink);
+    color: var(--white);
+    padding: 0.65rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .sg-banner p {
+    margin: 0;
+    max-width: 1120px;
+    margin-inline: auto;
+  }
+
+  .sg-banner code {
+    font-family: var(--font-mono);
+    font-size: 0.8em;
+  }
+
+  .sg-banner__note {
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+
+  .sg-main {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 1rem 4rem;
+  }
+
+  .sg-hero {
+    padding: 2.5rem 0 1rem;
+  }
+
+  .sg-kicker {
+    margin: 0 0 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+  }
+
+  .sg-hero h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.05;
+  }
+
+  .sg-lede {
+    margin: 0.75rem 0 0;
+    max-width: 40rem;
+    color: color-mix(in srgb, var(--ink) 80%, var(--mesh-grey));
+  }
+
+  .sg-swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .sg-swatch {
+    background: var(--sw);
+    color: var(--ink-sw);
+    border: 1px solid color-mix(in srgb, var(--ink) 20%, transparent);
+    border-radius: 4px;
+    padding: 1rem 0.75rem;
+    display: grid;
+    gap: 0.35rem;
+    min-height: 96px;
+  }
+
+  .sg-swatch span {
+    font-weight: 700;
+  }
+
+  .sg-swatch code {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+
+  .sg-type {
+    margin-top: 1.5rem;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .sg-type-display {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 2rem;
+    text-transform: uppercase;
+  }
+
+  .sg-type-body {
+    margin: 0;
+    font-size: 1.05rem;
+  }
+
+  .sg-type-mono {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+  }
+
+  .sg-motifs {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  .sg-motifs .ds-cutline {
+    margin: 0;
+  }
+
+  .sg-caption {
+    margin: 0.75rem 0 0;
+    font-size: 0.8rem;
+    color: var(--mesh-text);
+  }
+
+  .sg-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .sg-row--wrap {
+    align-items: stretch;
+  }
+
+  .sg-grid-2,
+  .sg-grid-3 {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 720px) {
+    .sg-grid-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .sg-grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .sg-overlay-demos {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 800px) {
+    .sg-overlay-demos {
+      grid-template-columns: 1.2fr 1fr;
+    }
+  }
+
+  .sg-overlay-frame {
+    border: var(--cutline);
+    border-width: 2px;
+    border-radius: 8px;
+    padding: 1rem;
+    background: color-mix(in srgb, var(--ink) 6%, var(--canvas));
+  }
+
+  .sg-overlay-frame__label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--mesh-text);
+    margin-bottom: 0.75rem;
+  }
+
+  .sg-modal-inline,
+  .sg-drawer-inline {
+    background: var(--white);
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    padding: 1.25rem;
+  }
+
+  .sg-modal-inline__title,
+  .sg-drawer-inline__title {
+    margin: 0 0 0.5rem;
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .sg-drawer-inline ul {
+    margin: 0;
+    padding-left: 1.1rem;
+  }
+
+  .sg-drawer-inline a {
+    color: var(--ink);
+  }
+</style>

@@ -1,0 +1,227 @@
+---
+import Button from './Button.astro';
+
+interface NavItem {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  items?: NavItem[];
+  cartCount?: number;
+  class?: string;
+}
+
+const {
+  items = [
+    { label: 'Shop', href: '/shop/' },
+    { label: 'Design', href: '/design/' },
+    { label: 'Custom Printing', href: '/custom-printing/' },
+    { label: 'About', href: '/about/' },
+    { label: 'FAQ', href: '/faq/' },
+  ],
+  cartCount = 0,
+  class: className = '',
+} = Astro.props;
+---
+
+<header class:list={['ds-header', className]}>
+  <div class="ds-header__inner">
+    <a class="ds-header__brand" href="/">LiAlvaro</a>
+
+    <nav class="ds-header__nav" aria-label="Primary">
+      <ul class="ds-header__list">
+        {
+          items.map((item) => (
+            <li>
+              <a class="ds-header__link" href={item.href}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="ds-header__actions">
+      <a class="ds-header__util" href="/cart/">Cart ({cartCount})</a>
+      <a class="ds-header__util" href="/account/">Sign in</a>
+      <Button variant="secondary" href="/custom-printing/">Get a quote</Button>
+      <Button href="/shop/">Shop now</Button>
+      <button class="ds-header__menu-btn" type="button" aria-expanded="false" aria-controls="ds-mobile-menu" data-ds-menu-toggle>
+        Menu
+      </button>
+    </div>
+  </div>
+
+  <div class="ds-mobile-menu" id="ds-mobile-menu" hidden>
+    <nav aria-label="Mobile">
+      <ul class="ds-mobile-menu__list">
+        {
+          items.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+        <li><a href="/cart/">Cart ({cartCount})</a></li>
+        <li><a href="/account/">Sign in</a></li>
+        <li><a href="/custom-printing/">Get a quote</a></li>
+        <li><a href="/shop/">Shop now</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector('[data-ds-menu-toggle]');
+  const menu = document.getElementById('ds-mobile-menu');
+  toggle?.addEventListener('click', () => {
+    const open = menu?.hasAttribute('hidden') ?? true;
+    if (!menu || !(toggle instanceof HTMLButtonElement)) return;
+    if (open) {
+      menu.removeAttribute('hidden');
+      toggle.setAttribute('aria-expanded', 'true');
+    } else {
+      menu.setAttribute('hidden', '');
+      toggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+</script>
+
+<style>
+  .ds-header {
+    background: var(--white);
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .ds-header__inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: var(--space-3) var(--space-4);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .ds-header__brand {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    text-decoration: none;
+    margin-right: auto;
+  }
+
+  .ds-header__brand:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .ds-header__nav {
+    display: none;
+  }
+
+  @media (min-width: 960px) {
+    .ds-header__nav {
+      display: block;
+    }
+
+    .ds-header__menu-btn {
+      display: none;
+    }
+  }
+
+  .ds-header__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .ds-header__link {
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: var(--text-sm);
+  }
+
+  .ds-header__link:hover {
+    color: var(--print-red);
+  }
+
+  .ds-header__link:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .ds-header__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .ds-header__util {
+    font-size: var(--text-sm);
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 var(--space-2);
+  }
+
+  .ds-header__util:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .ds-header__menu-btn {
+    min-height: 44px;
+    padding: 0 var(--space-3);
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .ds-header__menu-btn:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .ds-mobile-menu {
+    border-top: var(--cutline);
+    padding: var(--space-4);
+    background: var(--canvas);
+  }
+
+  .ds-mobile-menu__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .ds-mobile-menu__list a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .ds-mobile-menu__list a:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+</style>

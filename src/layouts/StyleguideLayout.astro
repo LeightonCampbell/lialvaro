@@ -1,0 +1,45 @@
+---
+import '../styles/tokens.css';
+
+interface Props {
+  title?: string;
+}
+
+const { title = 'Design system styleguide' } = Astro.props;
+const documentTitle = `${title} | LiAlvaro T-Shirt Printing`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="description" content="Internal Stage 3 living styleguide for LiAlvaro T-Shirt Printing." />
+    <title>{documentTitle}</title>
+    <link rel="preload" href="/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/ibm-plex-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+  </head>
+  <body class="sg-body">
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  .sg-body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: var(--leading-normal);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sg-body :focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+</style>

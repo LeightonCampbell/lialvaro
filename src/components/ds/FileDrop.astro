@@ -1,0 +1,129 @@
+---
+interface Props {
+  id?: string;
+  name?: string;
+  label?: string;
+  accept?: string;
+  disabled?: boolean;
+  error?: string;
+  empty?: boolean;
+  class?: string;
+}
+
+const {
+  id = 'ds-file',
+  name = 'files',
+  label = 'Upload files',
+  accept = 'image/png,image/jpeg,image/svg+xml',
+  disabled = false,
+  error,
+  empty = true,
+  class: className = '',
+} = Astro.props;
+---
+
+<div class:list={['ds-filedrop', error ? 'has-error' : '', disabled ? 'is-disabled' : '', className]}>
+  <label class="ds-filedrop__label" for={id}>{label}</label>
+  <div class="ds-filedrop__zone" data-empty={empty ? 'true' : 'false'}>
+    <input class="ds-filedrop__input" id={id} name={name} type="file" accept={accept} disabled={disabled} multiple />
+    <div class="ds-filedrop__content">
+      <span class="ds-reg-mark" aria-hidden="true"></span>
+      {
+        empty ? (
+          <p class="ds-filedrop__text">Drag & drop your design, or <span class="ds-filedrop__browse">browse</span></p>
+        ) : (
+          <p class="ds-filedrop__text">design-front.png · 1.2 MB</p>
+        )
+      }
+      <p class="ds-filedrop__hint">PNG, JPG, or SVG</p>
+    </div>
+  </div>
+  {error ? <p class="ds-filedrop__error" role="alert">{error}</p> : null}
+</div>
+
+<style>
+  .ds-filedrop {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .ds-filedrop__label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .ds-filedrop__zone {
+    position: relative;
+    border: var(--cutline);
+    border-width: 2px;
+    border-radius: var(--radius-lg);
+    background: var(--white);
+    min-height: 140px;
+    padding: var(--space-5);
+  }
+
+  .ds-filedrop__zone:hover {
+    border-color: var(--ink);
+  }
+
+  .ds-filedrop__zone:focus-within {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .ds-filedrop__input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .ds-filedrop__input:disabled {
+    cursor: not-allowed;
+  }
+
+  .ds-filedrop__content {
+    pointer-events: none;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-2);
+    text-align: center;
+  }
+
+  .ds-filedrop__text {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--ink);
+  }
+
+  .ds-filedrop__browse {
+    color: var(--print-red);
+    font-weight: 700;
+    text-decoration: underline;
+  }
+
+  .ds-filedrop__hint {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--mesh-text);
+  }
+
+  .ds-filedrop.has-error .ds-filedrop__zone {
+    border-color: var(--color-danger);
+    border-style: solid;
+  }
+
+  .ds-filedrop.is-disabled .ds-filedrop__zone {
+    background: var(--color-disabled-bg);
+    color: var(--color-disabled-ink);
+  }
+
+  .ds-filedrop__error {
+    margin: 0;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--color-danger);
+  }
+</style>

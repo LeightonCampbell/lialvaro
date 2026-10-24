@@ -1,0 +1,162 @@
+---
+interface Props {
+  id: string;
+  label: string;
+  name?: string;
+  type?: string;
+  as?: 'input' | 'textarea' | 'select';
+  placeholder?: string;
+  value?: string;
+  disabled?: boolean;
+  required?: boolean;
+  error?: string;
+  hint?: string;
+  options?: { value: string; label: string }[];
+  class?: string;
+}
+
+const {
+  id,
+  label,
+  name = id,
+  type = 'text',
+  as = 'input',
+  placeholder,
+  value,
+  disabled = false,
+  required = false,
+  error,
+  hint,
+  options = [],
+  class: className = '',
+} = Astro.props;
+
+const describedBy = [hint ? `${id}-hint` : null, error ? `${id}-error` : null].filter(Boolean).join(' ') || undefined;
+---
+
+<div class:list={['ds-field', error ? 'has-error' : '', disabled ? 'is-disabled' : '', className]}>
+  <label class="ds-field__label" for={id}>
+    {label}
+    {required ? <span class="ds-field__req" aria-hidden="true">*</span> : null}
+  </label>
+
+  {
+    as === 'textarea' ? (
+      <textarea
+        class="ds-field__control"
+        id={id}
+        name={name}
+        placeholder={placeholder}
+        disabled={disabled}
+        required={required}
+        aria-invalid={error ? 'true' : undefined}
+        aria-describedby={describedBy}
+      >{value ?? ''}</textarea>
+    ) : as === 'select' ? (
+      <select
+        class="ds-field__control"
+        id={id}
+        name={name}
+        disabled={disabled}
+        required={required}
+        aria-invalid={error ? 'true' : undefined}
+        aria-describedby={describedBy}
+      >
+        {placeholder ? <option value="">{placeholder}</option> : null}
+        {options.map((opt) => (
+          <option value={opt.value} selected={opt.value === value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    ) : (
+      <input
+        class="ds-field__control"
+        id={id}
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        disabled={disabled}
+        required={required}
+        aria-invalid={error ? 'true' : undefined}
+        aria-describedby={describedBy}
+      />
+    )
+  }
+
+  {hint && !error ? <p class="ds-field__hint" id={`${id}-hint`}>{hint}</p> : null}
+  {error ? <p class="ds-field__error" id={`${id}-error`} role="alert">{error}</p> : null}
+</div>
+
+<style>
+  .ds-field {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .ds-field__label {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .ds-field__req {
+    color: var(--print-red);
+    margin-left: 0.15rem;
+  }
+
+  .ds-field__control {
+    width: 100%;
+    min-height: 44px;
+    padding: 0.65rem 0.75rem;
+    border: 1.5px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: var(--text-md);
+    transition: border-color var(--duration-fast) var(--ease-out);
+  }
+
+  textarea.ds-field__control {
+    min-height: 7rem;
+    resize: vertical;
+  }
+
+  .ds-field__control:hover:not(:disabled) {
+    border-color: var(--ink);
+  }
+
+  .ds-field__control:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+    border-color: var(--print-red);
+  }
+
+  .ds-field__control:disabled {
+    background: var(--color-disabled-bg);
+    color: var(--color-disabled-ink);
+    cursor: not-allowed;
+  }
+
+  .ds-field.has-error .ds-field__control {
+    border-color: var(--color-danger);
+  }
+
+  .ds-field__hint,
+  .ds-field__error {
+    margin: 0;
+    font-size: var(--text-xs);
+  }
+
+  .ds-field__hint {
+    color: var(--mesh-text);
+  }
+
+  .ds-field__error {
+    color: var(--color-danger);
+    font-weight: 600;
+  }
+</style>

@@ -1,0 +1,56 @@
+---
+interface Props {
+  src?: string;
+  alt: string;
+  aspect?: '1/1' | '4/3' | '16/9' | '3/4';
+  empty?: boolean;
+  class?: string;
+}
+
+const { src, alt, aspect = '4/3', empty = !src, class: className = '' } = Astro.props;
+---
+
+<figure class:list={['ds-photo', empty ? 'is-empty' : '', className]} style={`--aspect:${aspect}`}>
+  {
+    empty ? (
+      <div class="ds-photo__placeholder" role="img" aria-label={alt || 'Image placeholder'}>
+        <span class="ds-reg-mark" aria-hidden="true"></span>
+        <span>Photo slot</span>
+      </div>
+    ) : (
+      <img class="ds-photo__img" src={src} alt={alt} loading="lazy" decoding="async" />
+    )
+  }
+</figure>
+
+<style>
+  .ds-photo {
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--canvas) 65%, var(--white));
+    aspect-ratio: var(--aspect);
+  }
+
+  .ds-photo__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ds-photo__placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--mesh-text);
+  }
+</style>
