@@ -1,0 +1,136 @@
+---
+import Photo from './Photo.astro';
+import PriceTag from './PriceTag.astro';
+import Badge from './Badge.astro';
+import Button from './Button.astro';
+
+interface Props {
+  title?: string;
+  href?: string;
+  price?: string;
+  badge?: string;
+  empty?: boolean;
+  disabled?: boolean;
+  class?: string;
+}
+
+const {
+  title = 'Product name',
+  href = '#',
+  price = '$24.00',
+  badge,
+  empty = false,
+  disabled = false,
+  class: className = '',
+} = Astro.props;
+---
+
+<article class:list={['ds-product-card', empty ? 'is-empty' : '', className]}>
+  <div class="ds-product-card__hangtag" aria-hidden="true">
+    <span class="ds-product-card__hole"></span>
+  </div>
+  {
+    empty ? (
+      <div class="ds-product-card__empty">
+        <p>No products to show yet.</p>
+        <Button variant="secondary" href="/custom-printing/">Get a custom quote</Button>
+      </div>
+    ) : (
+      <>
+        <a class="ds-product-card__media" href={href} tabindex="-1" aria-hidden="true">
+          <Photo alt={title} empty aspect="1/1" />
+        </a>
+        <div class="ds-product-card__body">
+          {badge ? <Badge tone="gold">{badge}</Badge> : null}
+          <h3 class="ds-product-card__title">
+            <a href={href}>{title}</a>
+          </h3>
+          <PriceTag amount={price} />
+          <Button variant="secondary" disabled={disabled}>{disabled ? 'Unavailable' : 'Add to cart'}</Button>
+        </div>
+      </>
+    )
+  }
+</article>
+
+<style>
+  .ds-product-card {
+    position: relative;
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    padding-top: var(--space-5);
+    background: var(--white);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .ds-product-card__hangtag {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 42px;
+    height: 18px;
+    transform: translate(-50%, -50%);
+    background: var(--canvas);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+  }
+
+  .ds-product-card__hole {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--canvas);
+    box-shadow: inset 0 0 0 1px var(--ink);
+  }
+
+  .ds-product-card__media {
+    display: block;
+    text-decoration: none;
+  }
+
+  .ds-product-card__body {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: start;
+  }
+
+  .ds-product-card__title {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--text-md);
+    font-weight: 700;
+    line-height: var(--leading-snug);
+  }
+
+  .ds-product-card__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .ds-product-card__title a:hover {
+    color: var(--print-red);
+  }
+
+  .ds-product-card__title a:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .ds-product-card__empty {
+    display: grid;
+    gap: var(--space-3);
+    min-height: 180px;
+    place-content: center;
+    text-align: center;
+    color: var(--mesh-text);
+  }
+
+  .ds-product-card__empty p {
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,107 @@
+---
+interface Props {
+  id?: string;
+  title: string;
+  open?: boolean;
+  side?: 'right' | 'left';
+  class?: string;
+}
+
+const { id = 'ds-drawer', title, open = false, side = 'right', class: className = '' } = Astro.props;
+---
+
+<div class:list={['ds-drawer', `ds-drawer--${side}`, open ? 'is-open' : '', className]} id={id} hidden={!open}>
+  <div class="ds-drawer__backdrop" data-ds-drawer-dismiss></div>
+  <aside
+    class="ds-drawer__panel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby={`${id}-title`}
+    tabindex="-1"
+  >
+    <header class="ds-drawer__header">
+      <h2 class="ds-drawer__title" id={`${id}-title`}>{title}</h2>
+      <button class="ds-drawer__close" type="button" aria-label="Close panel" data-ds-drawer-dismiss>×</button>
+    </header>
+    <div class="ds-drawer__body">
+      <slot />
+    </div>
+  </aside>
+</div>
+
+<style>
+  .ds-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    display: none;
+  }
+
+  .ds-drawer.is-open {
+    display: block;
+  }
+
+  .ds-drawer__backdrop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--ink) 45%, transparent);
+  }
+
+  .ds-drawer__panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: min(100%, 22rem);
+    background: var(--white);
+    border: 0 solid var(--ink);
+    padding: var(--space-5);
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: var(--space-4);
+    overflow: auto;
+  }
+
+  .ds-drawer--right .ds-drawer__panel {
+    right: 0;
+    border-left-width: 2px;
+  }
+
+  .ds-drawer--left .ds-drawer__panel {
+    left: 0;
+    border-right-width: 2px;
+  }
+
+  .ds-drawer__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .ds-drawer__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 400;
+    text-transform: uppercase;
+  }
+
+  .ds-drawer__close {
+    border: none;
+    background: transparent;
+    font-size: 1.5rem;
+    min-width: 44px;
+    min-height: 44px;
+    cursor: pointer;
+  }
+
+  .ds-drawer__close:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .ds-drawer__body {
+    color: var(--ink);
+    line-height: var(--leading-normal);
+  }
+</style>

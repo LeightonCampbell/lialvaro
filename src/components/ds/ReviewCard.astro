@@ -1,0 +1,59 @@
+---
+interface Props {
+  quote?: string;
+  name?: string;
+  empty?: boolean;
+  class?: string;
+}
+
+const {
+  quote = 'Truly 5 stars — this was so easy, even for my large, complicated order.',
+  name = 'Richard L.',
+  empty = false,
+  class: className = '',
+} = Astro.props;
+---
+
+<blockquote class:list={['ds-review', empty ? 'is-empty' : '', className]}>
+  {
+    empty ? (
+      <p class="ds-review__empty">Reviews will appear here.</p>
+    ) : (
+      <>
+        <p class="ds-review__quote">“{quote}”</p>
+        <footer class="ds-review__name">{name}</footer>
+      </>
+    )
+  }
+</blockquote>
+
+<style>
+  .ds-review {
+    margin: 0;
+    padding: var(--space-5);
+    background: var(--white);
+    border-left: 3px solid var(--print-red);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  }
+
+  .ds-review__quote {
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-md);
+    line-height: var(--leading-normal);
+    color: var(--ink);
+  }
+
+  .ds-review__name {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--mesh-text);
+  }
+
+  .ds-review__empty {
+    margin: 0;
+    color: var(--mesh-text);
+    font-style: italic;
+  }
+</style>

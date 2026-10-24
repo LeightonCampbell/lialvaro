@@ -105,20 +105,20 @@ curl -s -o /dev/null -w "%{http_code}" http://localhost:4321/_preview/wireframes
 
 ## Decisions needing the owner (Stage 2 gate)
 
-| Topic | Needed |
+| Topic | Status |
 |---|---|
-| Sitemap | Approve or edit |
-| Six user flows | Approve or edit |
-| Wireframe layouts (esp. home) | Approve via screenshots |
-| Non-blocking Q1–Q5 | Answer if changing defaults |
+| Sitemap | **Approved** |
+| Six user flows | **Approved** |
+| Wireframe layouts (esp. home) | **Approved** |
+| Non-blocking Q1–Q5 | Defaults accepted with approval |
 
 Per BUILD_PLAN: *“owner approves wireframes.”*
 
 - Deliverables ready: **yes**  
-- Owner approval: **pending**  
+- Owner approval: **closed 2026-10-24**  
 
 ---
 
 ## STOP
 
-Stage 2 complete for implementation. Do **not** begin Stage 3 until the owner approves the wireframes.
+Stage 2 gate closed. Say when to run **Stage 3 only**.

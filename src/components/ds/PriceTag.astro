@@ -1,0 +1,48 @@
+---
+interface Props {
+  amount: string;
+  note?: string;
+  empty?: boolean;
+  class?: string;
+}
+
+const { amount, note, empty = false, class: className = '' } = Astro.props;
+---
+
+{
+  empty ? (
+    <span class:list={['ds-price', 'is-empty', className]} aria-label="Price unavailable">
+      —
+    </span>
+  ) : (
+    <span class:list={['ds-price', className]}>
+      <span class="ds-price__amount">{amount}</span>
+      {note ? <span class="ds-price__note">{note}</span> : null}
+    </span>
+  )
+}
+
+<style>
+  .ds-price {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    font-family: var(--font-mono);
+    color: var(--ink);
+  }
+
+  .ds-price__amount {
+    font-size: var(--text-lg);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+
+  .ds-price__note {
+    font-size: var(--text-xs);
+    color: var(--mesh-text);
+  }
+
+  .ds-price.is-empty {
+    color: var(--mesh-text);
+  }
+</style>

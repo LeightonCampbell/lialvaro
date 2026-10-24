@@ -1,0 +1,89 @@
+---
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  id?: string;
+  cutline?: boolean;
+  class?: string;
+}
+
+const { eyebrow, title, id, cutline = true, class: className = '' } = Astro.props;
+---
+
+<section class:list={['ds-section', className]} id={id}>
+  {
+    cutline ? (
+      <div class="ds-section__marks" aria-hidden="true">
+        <span class="ds-reg-mark"></span>
+        <hr class="ds-cutline" />
+        <span class="ds-reg-mark"></span>
+      </div>
+    ) : null
+  }
+  {
+    eyebrow || title ? (
+      <header class="ds-section__header">
+        {eyebrow ? <p class="ds-section__eyebrow">{eyebrow}</p> : null}
+        {title ? <h2 class="ds-section__title">{title}</h2> : null}
+        <div class="ds-section__lede">
+          <slot name="lede" />
+        </div>
+      </header>
+    ) : null
+  }
+  <div class="ds-section__body">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .ds-section {
+    padding: var(--space-7) 0;
+  }
+
+  .ds-section__marks {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+  }
+
+  .ds-section__marks .ds-cutline {
+    margin: 0;
+  }
+
+  .ds-section__header {
+    display: grid;
+    gap: var(--space-2);
+    margin-bottom: var(--space-5);
+    max-width: 40rem;
+  }
+
+  .ds-section__eyebrow {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+  }
+
+  .ds-section__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: var(--leading-tight);
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .ds-section__lede :global(p) {
+    margin: 0;
+    color: color-mix(in srgb, var(--ink) 80%, var(--mesh-grey));
+    font-size: var(--text-md);
+    line-height: var(--leading-normal);
+  }
+</style>

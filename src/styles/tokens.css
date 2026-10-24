@@ -1,0 +1,121 @@
+/*
+  Stage 3 design tokens — single source of truth for look and feel.
+  Live marketing pages still use global.css until Stage 4 foundation build.
+*/
+
+@import './fonts.css';
+
+:root {
+  /* Brand palette (BUILD_PLAN) */
+  --canvas: #efebe1;
+  --ink: #1b2233;
+  --print-red: #c8102e;
+  --gold: #b8912a;
+  --mesh-grey: #8b8b85;
+  --white: #fffdf9;
+
+  /* Text-safe companions (AA on canvas/white; brand gold/mesh kept for fills) */
+  --gold-text: #6a5214;
+  --mesh-text: #5a5a55;
+
+  /* Semantic aliases */
+  --color-bg: var(--canvas);
+  --color-surface: var(--white);
+  --color-ink: var(--ink);
+  --color-muted: var(--mesh-text);
+  --color-accent: var(--print-red);
+  --color-accent-secondary: var(--gold-text);
+  --color-border: color-mix(in srgb, var(--ink) 18%, transparent);
+  --color-border-strong: color-mix(in srgb, var(--ink) 40%, transparent);
+  --color-focus: var(--print-red);
+  --color-danger: #9f1239;
+  --color-success: #166534;
+  --color-disabled-bg: color-mix(in srgb, var(--mesh-grey) 22%, var(--white));
+  --color-disabled-ink: color-mix(in srgb, var(--ink) 45%, var(--mesh-grey));
+
+  /* Typography */
+  --font-display: 'Anton', 'Arial Narrow', Impact, sans-serif;
+  --font-body: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', Menlo, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+  --text-4xl: clamp(2.5rem, 4vw, 3.5rem);
+
+  --leading-tight: 1.15;
+  --leading-snug: 1.35;
+  --leading-normal: 1.5;
+
+  /* Spacing & radii */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+
+  --shadow-soft: 0 1px 0 color-mix(in srgb, var(--ink) 8%, transparent);
+
+  /* Motifs */
+  --cutline: 1px dashed color-mix(in srgb, var(--mesh-grey) 80%, var(--ink));
+  --reg-mark-size: 14px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 120ms;
+  --duration-med: 220ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-med: 0ms;
+  }
+}
+
+/* Utility motifs */
+.ds-cutline {
+  border: none;
+  border-top: var(--cutline);
+  margin: var(--space-6) 0;
+}
+
+.ds-reg-mark {
+  --arm: 5px;
+  position: relative;
+  width: var(--reg-mark-size);
+  height: var(--reg-mark-size);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.ds-reg-mark::before,
+.ds-reg-mark::after {
+  content: '';
+  position: absolute;
+  background: var(--ink);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.ds-reg-mark::before {
+  width: 1px;
+  height: 100%;
+}
+
+.ds-reg-mark::after {
+  width: 100%;
+  height: 1px;
+}

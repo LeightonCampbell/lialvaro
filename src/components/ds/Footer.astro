@@ -1,0 +1,134 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class:list={['ds-footer', className]}>
+  <div class="ds-footer__inner">
+    <div class="ds-footer__brand">
+      <p class="ds-footer__name">LiAlvaro T-Shirt Printing</p>
+      <p class="ds-footer__tagline">Custom apparel printing in Los Angeles — design online or request a quote.</p>
+      <p class="ds-footer__contact">
+        <a href="tel:3109042655">(310) 904-2655</a>
+        ·
+        <a href="mailto:help@lialvaro.com">help@lialvaro.com</a>
+      </p>
+    </div>
+
+    <div>
+      <p class="ds-footer__heading">Shop</p>
+      <ul>
+        <li><a href="/shop/">Shop</a></li>
+        <li><a href="/design/">Design</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="ds-footer__heading">Services</p>
+      <ul>
+        <li><a href="/custom-printing/">Screen Printing</a></li>
+        <li><a href="/custom-printing/">DTG</a></li>
+        <li><a href="/custom-printing/">DTF</a></li>
+        <li><a href="/custom-printing/">Embroidery</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="ds-footer__heading">Company</p>
+      <ul>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/faq/">FAQ</a></li>
+        <li><a href="/articles/">Articles</a></li>
+        <li><a href="/contact/">Contact</a></li>
+        <li><a href="/privacy/">Privacy Policy</a></li>
+        <li><a href="/terms/">Terms of Service</a></li>
+      </ul>
+    </div>
+  </div>
+  <p class="ds-footer__legal">© {year} LiAlvaro T-Shirt Printing. All rights reserved. Los Angeles, CA.</p>
+</footer>
+
+<style>
+  .ds-footer {
+    background: var(--ink);
+    color: var(--white);
+    padding: var(--space-7) var(--space-4) var(--space-5);
+  }
+
+  .ds-footer__inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  @media (min-width: 800px) {
+    .ds-footer__inner {
+      grid-template-columns: 1.5fr repeat(3, 1fr);
+    }
+  }
+
+  .ds-footer__name {
+    margin: 0 0 var(--space-2);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    text-transform: uppercase;
+  }
+
+  .ds-footer__tagline,
+  .ds-footer__contact {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: color-mix(in srgb, var(--white) 82%, var(--mesh-grey));
+    line-height: var(--leading-normal);
+  }
+
+  .ds-footer__contact {
+    margin-top: var(--space-3);
+  }
+
+  .ds-footer__heading {
+    margin: 0 0 var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .ds-footer ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .ds-footer a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .ds-footer a:hover {
+    color: var(--gold);
+  }
+
+  .ds-footer a:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .ds-footer__legal {
+    max-width: 1120px;
+    margin: var(--space-6) auto 0;
+    padding-top: var(--space-4);
+    border-top: 1px dashed color-mix(in srgb, var(--white) 25%, transparent);
+    font-size: var(--text-xs);
+    color: color-mix(in srgb, var(--white) 70%, var(--mesh-grey));
+  }
+</style>

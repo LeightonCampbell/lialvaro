@@ -1,0 +1,98 @@
+---
+interface Item {
+  id: string;
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  items: Item[];
+  class?: string;
+}
+
+const { items, class: className = '' } = Astro.props;
+---
+
+<div class:list={['ds-accordion', className]}>
+  {
+    items.length === 0 ? (
+      <p class="ds-accordion__empty">No questions yet.</p>
+    ) : (
+      items.map((item, index) => (
+        <details class="ds-accordion__item" open={index === 0}>
+          <summary class="ds-accordion__summary">
+            <span>{item.question}</span>
+            <span class="ds-accordion__icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="ds-accordion__panel">
+            <p>{item.answer}</p>
+          </div>
+        </details>
+      ))
+    )
+  }
+</div>
+
+<style>
+  .ds-accordion {
+    display: grid;
+    gap: 0;
+    border-top: var(--cutline);
+  }
+
+  .ds-accordion__item {
+    border-bottom: var(--cutline);
+  }
+
+  .ds-accordion__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    min-height: 52px;
+    padding: var(--space-3) 0;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .ds-accordion__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .ds-accordion__summary:hover {
+    color: var(--print-red);
+  }
+
+  .ds-accordion__summary:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .ds-accordion__icon {
+    font-family: var(--font-mono);
+    color: var(--mesh-text);
+  }
+
+  .ds-accordion__item[open] .ds-accordion__icon {
+    transform: rotate(45deg);
+  }
+
+  .ds-accordion__panel {
+    padding: 0 0 var(--space-4);
+  }
+
+  .ds-accordion__panel p {
+    margin: 0;
+    max-width: 60ch;
+    color: color-mix(in srgb, var(--ink) 85%, var(--mesh-grey));
+    line-height: var(--leading-normal);
+  }
+
+  .ds-accordion__empty {
+    margin: 0;
+    color: var(--mesh-text);
+    font-style: italic;
+  }
+</style>
