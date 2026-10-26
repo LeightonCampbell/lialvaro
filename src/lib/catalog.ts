@@ -1,7 +1,14 @@
 import seed from '../data/catalog.seed.json';
-import { formatUsd } from './pricing';
+import { formatUsd, vendorCutCents } from './pricing';
 
-export type Lane = 'local' | 'pod' | 'broker';
+export type Lane = 'local' | 'broker';
+
+export type Vendor = {
+  id: string;
+  slug: string;
+  name: string;
+  email?: string | null;
+};
 
 export type CatalogVariant = {
   id: string;
@@ -9,9 +16,8 @@ export type CatalogVariant = {
   name: string;
   size?: string | null;
   color?: string | null;
-  providerVariantId?: string | null;
   lane: Lane;
-  vendorCostCents: number;
+  blankCostCents: number;
   retailPriceCents: number;
 };
 
@@ -21,42 +27,68 @@ export type CatalogProduct = {
   name: string;
   description: string;
   category: string;
-  provider?: string | null;
-  providerProductId?: string | null;
+  vendorId: string;
+  vendor: Vendor;
+  vendorCutBps: number;
+  blankCostCents: number;
   imageUrl?: string | null;
   variants: CatalogVariant[];
 };
 
-function mapSeed(): CatalogProduct[] {
-  return seed.products.map((p) => ({
-    id: p.id,
-    slug: p.slug,
-    name: p.name,
-    description: p.description,
-    category: p.category,
-    provider: p.provider,
-    providerProductId: p.providerProductId,
-    imageUrl: p.imageUrl,
-    variants: p.variants.map((v) => ({
-      id: v.id,
-      sku: v.sku,
-      name: v.name,
-      size: v.size,
-      color: v.color,
-      providerVariantId: v.providerVariantId,
-      lane: v.lane as Lane,
-      vendorCostCents: v.vendorCostCents,
-      retailPriceCents: v.retailPriceCents,
-    })),
+function mapSeed(): { vendors: Vendor[]; products: CatalogProduct[] } {
+  const vendors: Vendor[] = seed.vendors.map((v) => ({
+    id: v.id,
+    slug: v.slug,
+    name: v.name,
+    email: v.email ?? null,
   }));
+  const byId = new Map(vendors.map((v) => [v.id, v]));
+
+  const products: CatalogProduct[] = seed.products.map((p) => {
+    const vendor = byId.get(p.vendorId);
+    if (!vendor) throw new Error(`Seed catalog missing vendor ${p.vendorId} for ${p.id}`);
+    return {
+      id: p.id,
+      slug: p.slug,
+      name: p.name,
+      description: p.description,
+      category: p.category,
+      vendorId: p.vendorId,
+      vendor,
+      vendorCutBps: p.vendorCutBps,
+      blankCostCents: p.blankCostCents,
+      imageUrl: p.imageUrl,
+      variants: p.variants.map((v) => ({
+        id: v.id,
+        sku: v.sku,
+        name: v.name,
+        size: v.size,
+        color: v.color,
+        lane: (v.lane as Lane) || 'local',
+        blankCostCents: v.blankCostCents,
+        retailPriceCents: v.retailPriceCents,
+      })),
+    };
+  });
+
+  return { vendors, products };
 }
 
-let cache: CatalogProduct[] | null = null;
+let cache: { vendors: Vendor[]; products: CatalogProduct[] } | null = null;
+
+function ensure() {
+  if (!cache) cache = mapSeed();
+  return cache;
+}
+
+export function listVendors(): Vendor[] {
+  return ensure().vendors;
+}
 
 export function listProducts(category?: string): CatalogProduct[] {
-  if (!cache) cache = mapSeed();
-  if (!category || category === 'all') return cache;
-  return cache.filter((p) => p.category === category);
+  const products = ensure().products;
+  if (!category || category === 'all') return products;
+  return products.filter((p) => p.category === category);
 }
 
 export function getProductBySlug(slug: string): CatalogProduct | undefined {
@@ -78,4 +110,8 @@ export function isVariantId(id: string): boolean {
 export function productCardPrice(product: CatalogProduct): string {
   const cents = Math.min(...product.variants.map((v) => v.retailPriceCents));
   return formatUsd(cents);
+}
+
+export function lineVendorCutCents(product: CatalogProduct, retailLineCents: number): number {
+  return vendorCutCents(retailLineCents, product.vendorCutBps);
 }

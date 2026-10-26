@@ -59,8 +59,6 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     if (!lines.length) {
-      const lineItems = await stripe.checkout.sessions.listLineItems(session.id, { expand: ['data.price.product'] });
-      // Fallback: cannot recover variant ids without metadata
       await sendOwnerEmail({
         subject: `Paid order missing cart metadata — ${session.id}`,
         text: `Session ${session.id} completed but metadata.cart was empty.\nEmail: ${session.customer_details?.email}`,
@@ -71,7 +69,6 @@ export const POST: APIRoute = async ({ request }) => {
     const db = await getDb();
     let trackingCode = '';
     let orderId = '';
-    let providerFailed = false;
     try {
       const result = await createPaidOrderFromStripe({
         db,
@@ -86,10 +83,9 @@ export const POST: APIRoute = async ({ request }) => {
       orderId = result.orderId;
       trackingCode = result.trackingCode;
     } catch (err) {
-      providerFailed = true;
       await sendOwnerEmail({
         subject: `Order needs attention — ${session.id}`,
-        text: `Payment succeeded but fulfillment routing failed.\nSession: ${session.id}\nError: ${
+        text: `Payment succeeded but order write failed.\nSession: ${session.id}\nError: ${
           err instanceof Error ? err.message : String(err)
         }`,
       });
@@ -100,19 +96,17 @@ export const POST: APIRoute = async ({ request }) => {
       await sendCustomerEmail({
         to: email,
         subject: 'Your LiAlvaro order is confirmed',
-        text: `Thanks for your order.\n\nTrack it anytime: https://www.lialvaro.com/track/?code=${trackingCode}\nOrder id: ${orderId}${
-          providerFailed ? '\n\nOur team is reviewing fulfillment details and will follow up.' : ''
-        }`,
+        text: `Thanks for your order.\n\nWe’ll print and fulfill your order.\nTrack anytime: https://www.lialvaro.com/track/?code=${trackingCode}\nOrder id: ${orderId}`,
       });
     }
 
     await sendOwnerEmail({
-      subject: `New order — ${orderId || session.id}`,
-      text: `New paid order.\nCustomer: ${email ?? 'unknown'}\nTracking: ${trackingCode}\nSession: ${session.id}\nShipping: ${JSON.stringify(
+      subject: `New order — production queue — ${orderId || session.id}`,
+      text: `New paid order ready to print.\nCustomer: ${email ?? 'unknown'}\nTracking: ${trackingCode}\nSession: ${session.id}\nShipping: ${JSON.stringify(
         shippingFrom(session),
         null,
         2,
-      )}\nNeeds attention: ${providerFailed}`,
+      )}\n\nVendor cuts are recorded as owed; remit after fulfillment.`,
     });
   }
 

@@ -1,14 +1,21 @@
 {
   "currency": "usd",
-  "markup": {
-    "mode": "percent",
-    "percent": 40,
-    "notes": "Owner TODO: confirm live markup. Retail = vendor_cost * (1 + percent/100), rounded up to nearest cent."
+  "fulfillment": {
+    "mode": "owner_local",
+    "notes": "LiAlvaro prints and ships. No external POD platform."
+  },
+  "vendorCut": {
+    "mode": "bps_of_retail",
+    "defaultBps": 2000,
+    "notes": "Per-design vendorCutBps overrides this default. Cut = round(retail_line_total * bps / 10000). Owner TODO: confirm default."
+  },
+  "blankCost": {
+    "notes": "blankCostCents on variants is owner cost for the garment blank (internal margin calc)."
   },
   "shipping": {
-    "mode": "provider",
+    "mode": "flat_estimate",
     "fallback_flat_cents": 599,
-    "notes": "Prefer Printful shipping rates at checkout when configured; else flat fallback for estimates only."
+    "notes": "Checkout collects address via Stripe; flat estimate until live shipping rules are set."
   },
   "tax": {
     "stripe_automatic_tax": true,

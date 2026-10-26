@@ -1,6 +1,15 @@
 # LiAlvaro T-Shirt Printing (Astro)
 
-Custom apparel site for LiAlvaro. Local day-to-day workflow is Vite/Astro (`npm run dev`), not Wrangler preview.
+Custom apparel site for LiAlvaro. Local day-to-day workflow is Vite/Astro (`npm run dev`).
+
+## Model (locked)
+
+- **Store** lists designs from **vendors**.
+- **LiAlvaro fulfills** every store order (owner POD — no Printful/Printify).
+- After fulfillment, **vendors receive their cut** (tracked as payouts).
+- **Design Studio** = customer-ready-to-order path; other custom work uses the **quote modal**.
+
+See `docs/OWNER_LOCKS.md`.
 
 ## Commands
 
@@ -13,31 +22,19 @@ Custom apparel site for LiAlvaro. Local day-to-day workflow is Vite/Astro (`npm 
 
 ## Owner-editable data
 
-- `src/data/claims.json` — public claims (`confirmed: true` only)
-- `src/data/pricing.json` — markup / tax / shipping rules
+- `src/data/claims.json` — public claims
+- `src/data/catalog.seed.json` — vendors + designs until D1 is populated
+- `src/data/pricing.json` — vendor cut defaults, shipping estimate, tax
 - `src/data/same-day.json` — ZIP allowlist + cutoff
-- `src/data/catalog.seed.json` — storefront catalog until Printful sync fills D1
 - `src/data/site.json` — brand contact defaults
 
-Locked chrome/IA: `docs/OWNER_LOCKS.md`. Staged plan: `docs/BUILD_PLAN.md`.
-
-## Secrets (Cloudflare / `.env`)
+## Secrets
 
 | Name | Purpose |
 | --- | --- |
 | `STRIPE_SECRET_KEY` | Stripe Checkout |
-| `STRIPE_WEBHOOK_SECRET` | Webhook signature verify (`constructEventAsync`) |
+| `STRIPE_WEBHOOK_SECRET` | Webhook signature verify |
 | `RESEND_API_KEY` | Order emails |
-| `ORDER_NOTIFICATION_EMAIL` | Owner inbox for new orders |
-| `PRINTFUL_API_TOKEN` | Printful API v2 |
-| `PRINTFUL_STORE_ID` | Optional store header |
-| `CATALOG_SYNC_SECRET` | Protects `POST /api/catalog-sync` |
+| `ORDER_NOTIFICATION_EMAIL` | Owner inbox |
 
-D1 binding: `DB` (see `wrangler.jsonc`). Replace the placeholder `database_id` with a real D1 id before deploy.
-
-## Commerce notes (Stage 5)
-
-- Shop pages read the seed catalog (or D1 after sync). They never call Printful at request time.
-- Cart is client-side (`localStorage`) → `POST /api/create-checkout-session` → Stripe Checkout (automatic tax).
-- `POST /api/stripe-webhook` records idempotent events, writes orders, routes `pod` lines to Printful **draft** orders, emails customer + owner.
-- Track: `/track/?code=…` (requires D1).
+D1 binding: `DB` in `wrangler.jsonc` (replace placeholder `database_id` before deploy).

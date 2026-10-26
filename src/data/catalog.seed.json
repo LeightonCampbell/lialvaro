@@ -1,117 +1,128 @@
 {
   "syncedAt": null,
   "source": "seed",
+  "notes": "Store listings are vendor designs. LiAlvaro fulfills; vendorCutBps is the partner share of retail.",
+  "vendors": [
+    {
+      "id": "vnd_studio_north",
+      "slug": "studio-north",
+      "name": "Studio North",
+      "email": "studio-north@example.com"
+    },
+    {
+      "id": "vnd_eastside_ink",
+      "slug": "eastside-ink",
+      "name": "Eastside Ink",
+      "email": "eastside@example.com"
+    }
+  ],
   "products": [
     {
-      "id": "prod_tee_classic",
-      "slug": "classic-tee",
-      "name": "Classic Tee",
-      "description": "Everyday soft tee — great for logos and events. Print-on-demand fulfillment.",
+      "id": "dsn_la_sunrise",
+      "slug": "la-sunrise-tee",
+      "name": "LA Sunrise Tee",
+      "description": "Vendor design from Studio North — soft classic tee. Printed and fulfilled by LiAlvaro.",
       "category": "apparel",
-      "provider": "printful",
-      "providerProductId": "71",
+      "vendorId": "vnd_studio_north",
+      "vendorCutBps": 2000,
+      "blankCostCents": 700,
       "imageUrl": "/images/homepage-hero-2.jpg",
       "variants": [
         {
-          "id": "var_tee_s_white",
-          "sku": "TEE-S-WHT",
-          "name": "Classic Tee / S / White",
+          "id": "var_sunrise_s_white",
+          "sku": "SUN-S-WHT",
+          "name": "LA Sunrise Tee / S / White",
           "size": "S",
           "color": "White",
-          "providerVariantId": "4011",
-          "lane": "pod",
-          "vendorCostCents": 999,
-          "retailPriceCents": 1399
+          "lane": "local",
+          "blankCostCents": 700,
+          "retailPriceCents": 2499
         },
         {
-          "id": "var_tee_m_white",
-          "sku": "TEE-M-WHT",
-          "name": "Classic Tee / M / White",
+          "id": "var_sunrise_m_white",
+          "sku": "SUN-M-WHT",
+          "name": "LA Sunrise Tee / M / White",
           "size": "M",
           "color": "White",
-          "providerVariantId": "4012",
-          "lane": "pod",
-          "vendorCostCents": 999,
-          "retailPriceCents": 1399
+          "lane": "local",
+          "blankCostCents": 700,
+          "retailPriceCents": 2499
         },
         {
-          "id": "var_tee_l_white",
-          "sku": "TEE-L-WHT",
-          "name": "Classic Tee / L / White",
+          "id": "var_sunrise_l_white",
+          "sku": "SUN-L-WHT",
+          "name": "LA Sunrise Tee / L / White",
           "size": "L",
           "color": "White",
-          "providerVariantId": "4013",
-          "lane": "pod",
-          "vendorCostCents": 999,
-          "retailPriceCents": 1399
+          "lane": "local",
+          "blankCostCents": 700,
+          "retailPriceCents": 2499
         },
         {
-          "id": "var_tee_m_black",
-          "sku": "TEE-M-BLK",
-          "name": "Classic Tee / M / Black",
+          "id": "var_sunrise_m_black",
+          "sku": "SUN-M-BLK",
+          "name": "LA Sunrise Tee / M / Black",
           "size": "M",
           "color": "Black",
-          "providerVariantId": "4014",
-          "lane": "pod",
-          "vendorCostCents": 1099,
-          "retailPriceCents": 1549
+          "lane": "local",
+          "blankCostCents": 750,
+          "retailPriceCents": 2599
         }
       ]
     },
     {
-      "id": "prod_hoodie",
-      "slug": "pullover-hoodie",
-      "name": "Pullover Hoodie",
-      "description": "Cozy midweight hoodie for teams and merch drops.",
+      "id": "dsn_block_logo_hoodie",
+      "slug": "block-logo-hoodie",
+      "name": "Block Logo Hoodie",
+      "description": "Eastside Ink block-logo design on a midweight hoodie. Fulfilled by LiAlvaro.",
       "category": "apparel",
-      "provider": "printful",
-      "providerProductId": "146",
+      "vendorId": "vnd_eastside_ink",
+      "vendorCutBps": 2500,
+      "blankCostCents": 1800,
       "imageUrl": "/images/homepage-hero-2.jpg",
       "variants": [
         {
-          "id": "var_hood_m_navy",
-          "sku": "HOOD-M-NVY",
-          "name": "Pullover Hoodie / M / Navy",
+          "id": "var_block_m_navy",
+          "sku": "BLK-M-NVY",
+          "name": "Block Logo Hoodie / M / Navy",
           "size": "M",
           "color": "Navy",
-          "providerVariantId": "5523",
-          "lane": "pod",
-          "vendorCostCents": 2499,
-          "retailPriceCents": 3499
+          "lane": "local",
+          "blankCostCents": 1800,
+          "retailPriceCents": 4499
         },
         {
-          "id": "var_hood_l_navy",
-          "sku": "HOOD-L-NVY",
-          "name": "Pullover Hoodie / L / Navy",
+          "id": "var_block_l_navy",
+          "sku": "BLK-L-NVY",
+          "name": "Block Logo Hoodie / L / Navy",
           "size": "L",
           "color": "Navy",
-          "providerVariantId": "5524",
-          "lane": "pod",
-          "vendorCostCents": 2499,
-          "retailPriceCents": 3499
+          "lane": "local",
+          "blankCostCents": 1800,
+          "retailPriceCents": 4499
         }
       ]
     },
     {
-      "id": "prod_cap",
-      "slug": "structured-cap",
-      "name": "Structured Cap",
-      "description": "Structured six-panel cap — embroidery-friendly blank.",
+      "id": "dsn_script_cap",
+      "slug": "script-cap",
+      "name": "Script Cap",
+      "description": "Studio North script mark on a structured cap. Embroidered and fulfilled by LiAlvaro.",
       "category": "headwear",
-      "provider": "printful",
-      "providerProductId": "206",
+      "vendorId": "vnd_studio_north",
+      "vendorCutBps": 2000,
+      "blankCostCents": 900,
       "imageUrl": "/images/homepage-hero-2.jpg",
       "variants": [
         {
-          "id": "var_cap_os_black",
-          "sku": "CAP-OS-BLK",
-          "name": "Structured Cap / OS / Black",
+          "id": "var_script_os_black",
+          "sku": "SCR-OS-BLK",
+          "name": "Script Cap / OS / Black",
           "size": "OS",
           "color": "Black",
-          "providerVariantId": "7860",
-          "lane": "pod",
-          "vendorCostCents": 1299,
-          "retailPriceCents": 1899
+          "lane": "local",
+          "blankCostCents": 900,
+          "retailPriceCents": 2899
         }
       ]
     }

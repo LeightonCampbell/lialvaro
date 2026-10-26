@@ -1,4 +1,5 @@
 -- Stage 5 commerce core (D1 / SQLite)
+-- Owner-fulfilled POD: store lists vendor designs; LiAlvaro prints; vendors receive a cut.
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS users (
@@ -6,6 +7,16 @@ CREATE TABLE IF NOT EXISTS users (
   email TEXT NOT NULL UNIQUE,
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
   updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+);
+
+CREATE TABLE IF NOT EXISTS vendors (
+  id TEXT PRIMARY KEY,
+  slug TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  email TEXT,
+  notes TEXT,
+  active INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
 );
 
 CREATE TABLE IF NOT EXISTS stores (
@@ -17,14 +28,17 @@ CREATE TABLE IF NOT EXISTS stores (
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
 );
 
+-- Storefront "products" are vendor designs offered on blanks.
 CREATE TABLE IF NOT EXISTS products (
   id TEXT PRIMARY KEY,
   slug TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL,
   description TEXT NOT NULL DEFAULT '',
   category TEXT NOT NULL DEFAULT 'apparel',
-  provider TEXT,
-  provider_product_id TEXT,
+  vendor_id TEXT NOT NULL REFERENCES vendors(id),
+  -- Vendor cut as basis points of retail line total (2000 = 20%).
+  vendor_cut_bps INTEGER NOT NULL DEFAULT 2000,
+  blank_cost_cents INTEGER NOT NULL DEFAULT 0,
   image_url TEXT,
   active INTEGER NOT NULL DEFAULT 1,
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
@@ -38,9 +52,9 @@ CREATE TABLE IF NOT EXISTS variants (
   name TEXT NOT NULL,
   size TEXT,
   color TEXT,
-  provider_variant_id TEXT,
-  lane TEXT NOT NULL DEFAULT 'pod',
-  vendor_cost_cents INTEGER NOT NULL DEFAULT 0,
+  -- Store designs are owner-fulfilled.
+  lane TEXT NOT NULL DEFAULT 'local',
+  blank_cost_cents INTEGER NOT NULL DEFAULT 0,
   retail_price_cents INTEGER NOT NULL,
   currency TEXT NOT NULL DEFAULT 'usd',
   active INTEGER NOT NULL DEFAULT 1,
@@ -103,13 +117,25 @@ CREATE TABLE IF NOT EXISTS order_items (
   variant_name TEXT NOT NULL,
   quantity INTEGER NOT NULL,
   unit_price_cents INTEGER NOT NULL,
-  lane TEXT NOT NULL,
-  provider TEXT,
-  provider_order_id TEXT,
-  provider_item_id TEXT,
+  lane TEXT NOT NULL DEFAULT 'local',
+  vendor_id TEXT REFERENCES vendors(id),
+  vendor_cut_cents INTEGER NOT NULL DEFAULT 0,
+  -- owed after paid; paid after owner remits cut; void if refunded/canceled
+  vendor_payout_status TEXT NOT NULL DEFAULT 'owed',
   status TEXT NOT NULL DEFAULT 'pending',
   design_id TEXT REFERENCES designs(id),
   meta_json TEXT
+);
+
+CREATE TABLE IF NOT EXISTS vendor_payouts (
+  id TEXT PRIMARY KEY,
+  vendor_id TEXT NOT NULL REFERENCES vendors(id),
+  order_item_id TEXT NOT NULL REFERENCES order_items(id),
+  amount_cents INTEGER NOT NULL,
+  status TEXT NOT NULL DEFAULT 'owed',
+  paid_at TEXT,
+  notes TEXT,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
 );
 
 CREATE TABLE IF NOT EXISTS quotes (
@@ -137,9 +163,12 @@ CREATE TABLE IF NOT EXISTS webhook_events (
   UNIQUE(source, event_id)
 );
 
+CREATE INDEX IF NOT EXISTS idx_products_vendor ON products(vendor_id);
 CREATE INDEX IF NOT EXISTS idx_variants_product ON variants(product_id);
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_order_items_lane ON order_items(lane);
-CREATE INDEX IF NOT EXISTS idx_order_items_status ON order_items(status);
+CREATE INDEX IF NOT EXISTS idx_order_items_vendor ON order_items(vendor_id);
+CREATE INDEX IF NOT EXISTS idx_order_items_payout ON order_items(vendor_payout_status);
+CREATE INDEX IF NOT EXISTS idx_vendor_payouts_status ON vendor_payouts(status);
 CREATE INDEX IF NOT EXISTS idx_events_entity ON events(entity_type, entity_id);

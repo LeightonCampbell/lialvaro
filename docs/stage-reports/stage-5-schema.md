@@ -1,37 +1,27 @@
-# Stage 5 — D1 schema proposal
+# Stage 5 — D1 schema (owner-fulfilled POD)
 
 **Date:** 2026-10-26  
-**Status:** Proposed and implemented in `migrations/0001_commerce_core.sql`  
-**Owner review:** Confirm lanes, status enums, and markup rules in `src/data/pricing.json` before live Printful sync.
+**Status:** Implemented in `migrations/0001_commerce_core.sql`  
+**Owner lock:** No Printful/Printify. Store = vendor designs; LiAlvaro fulfills; vendors receive a cut.
 
-## Principles
+## Model
 
-- One storefront; lanes (`local` | `pod` | `broker`) live on `order_items`, never in public URLs.
-- Page renders never call Printful — catalog pages read D1 (or seed JSON when D1 is empty).
-- Stripe webhook events are stored by event id for idempotency.
-- Prices shown to customers are **retail** (vendor cost + markup), computed server-side.
-
-## Tables
-
-| Table | Purpose |
+| Concept | Meaning |
 |---|---|
-| `users` | Accounts (magic-link Stage 7); optional email on guest orders |
-| `products` | Storefront products synced from provider or seeded |
-| `variants` | SKU / size / color / provider variant id / lane default |
-| `stores` | Client storefronts (Stage 7); nullable FK on cart/order |
-| `carts` / `cart_items` | Server-side carts (cookie id); guest OK |
-| `orders` | Paid orders + Stripe session ids + status |
-| `order_items` | Line items with `lane`, provider ids, fulfillment status |
-| `quotes` | Broker quotes (Stage 8 fills out) |
-| `designs` | Design Studio exports (Stage 6) |
-| `events` | Audit log |
-| `webhook_events` | Stripe (and later Printful) event ids |
+| `vendors` | Design partners |
+| `products` | Store listings = vendor designs on blanks |
+| `variants` | Size/color SKUs; lane default `local` |
+| `order_items.vendor_cut_cents` | Partner share of that line |
+| `vendor_payouts` | Owed → paid after owner remits |
 
-## Status enums (text, checked in app)
+## Flow
 
-- Order: `pending_payment` → `paid` → `routing` → `fulfilled` | `needs_attention` | `canceled`
-- Order item: `pending` → `submitted` → `in_production` → `shipped` | `failed` | `needs_attention`
+1. Customer buys a vendor design from `/shop/`  
+2. Stripe Checkout → webhook creates `orders` + `order_items` (`status=queued`, lane=`local`)  
+3. `vendor_payouts` rows created with `status=owed`  
+4. Owner prints/ships from production queue (admin in Stage 7)  
+5. After fulfillment, mark payouts `paid`
 
-## Migrations
+## Struck
 
-Versioned under `/migrations/` for Wrangler D1 (`wrangler d1 migrations apply`).
+External POD provider tables/ids (`provider_order_id`, Printful sync) — not used.

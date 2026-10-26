@@ -1,7 +1,5 @@
-import { getVariantById } from './catalog';
+import { getVariantById, lineVendorCutCents } from './catalog';
 import { insertAuditEvent, newId, recordWebhookEvent } from './db';
-import { createPrintfulProvider } from './provider/printful';
-import { getAppEnv } from './env';
 import { canRequestSameDay } from './same-day';
 
 export type CheckoutLine = {
@@ -13,6 +11,10 @@ export function buildTrackingCode(): string {
   return `LA${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
 }
 
+/**
+ * After Stripe payment: create order, queue for LiAlvaro production, record vendor cuts as owed.
+ * No external POD provider.
+ */
 export async function createPaidOrderFromStripe(opts: {
   db: D1Database | null;
   stripeSessionId: string;
@@ -35,9 +37,11 @@ export async function createPaidOrderFromStripe(opts: {
   const shippingJson = opts.shipping ? JSON.stringify(opts.shipping) : null;
   const zip =
     opts.shipping && typeof opts.shipping === 'object' && opts.shipping !== null
-      ? String((opts.shipping as { postal_code?: string; zip?: string }).postal_code ??
-          (opts.shipping as { zip?: string }).zip ??
-          '')
+      ? String(
+          (opts.shipping as { postal_code?: string; zip?: string }).postal_code ??
+            (opts.shipping as { zip?: string }).zip ??
+            '',
+        )
       : '';
 
   if (opts.db) {
@@ -71,121 +75,59 @@ export async function createPaidOrderFromStripe(opts: {
       .run();
 
     for (const item of items) {
+      const retailLine = item.variant.retailPriceCents * item.line.quantity;
+      const cut = lineVendorCutCents(item.variant.product, retailLine);
       const sameDayOk =
         opts.sameDayRequested &&
         canRequestSameDay({ lane: item.variant.lane, zip: zip || undefined });
+      const orderItemId = newId('oi');
+
       await opts.db
         .prepare(
           `INSERT INTO order_items (
             id, order_id, variant_id, product_name, variant_name, quantity, unit_price_cents,
-            lane, provider, status, meta_json
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)`,
+            lane, vendor_id, vendor_cut_cents, vendor_payout_status, status, meta_json
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, 'local', ?, ?, 'owed', 'queued', ?)`,
         )
         .bind(
-          newId('oi'),
+          orderItemId,
           orderId,
           item.variant.id,
           item.variant.product.name,
           item.variant.name,
           item.line.quantity,
           item.variant.retailPriceCents,
-          item.variant.lane,
-          item.variant.product.provider ?? null,
-          JSON.stringify({ sameDayRequested: Boolean(sameDayOk) }),
+          item.variant.product.vendorId,
+          cut,
+          JSON.stringify({
+            sameDayRequested: Boolean(sameDayOk),
+            vendorName: item.variant.product.vendor.name,
+            vendorCutBps: item.variant.product.vendorCutBps,
+          }),
         )
         .run();
-    }
 
-    await insertAuditEvent(opts.db, 'order', orderId, 'paid', { stripeSessionId: opts.stripeSessionId });
-  }
-
-  await routeOrderItems({ orderId, trackingCode, items, shipping: opts.shipping, email: opts.email, db: opts.db });
-  return { orderId, trackingCode };
-}
-
-async function routeOrderItems(opts: {
-  orderId: string;
-  trackingCode: string;
-  items: Array<{ line: CheckoutLine; variant: NonNullable<ReturnType<typeof getVariantById>> }>;
-  shipping: unknown;
-  email?: string | null;
-  db: D1Database | null;
-}): Promise<void> {
-  const env = await getAppEnv();
-  const podItems = opts.items.filter((i) => i.variant.lane === 'pod');
-
-  if (!podItems.length) return;
-
-  if (!env.PRINTFUL_API_TOKEN) {
-    if (opts.db) {
       await opts.db
-        .prepare(`UPDATE order_items SET status = 'needs_attention' WHERE order_id = ? AND lane = 'pod'`)
-        .bind(opts.orderId)
+        .prepare(
+          `INSERT INTO vendor_payouts (id, vendor_id, order_item_id, amount_cents, status)
+           VALUES (?, ?, ?, ?, 'owed')`,
+        )
+        .bind(newId('pay'), item.variant.product.vendorId, orderItemId, cut)
         .run();
-      await opts.db.prepare(`UPDATE orders SET status = 'needs_attention' WHERE id = ?`).bind(opts.orderId).run();
-      await insertAuditEvent(opts.db, 'order', opts.orderId, 'needs_attention', {
-        reason: 'PRINTFUL_API_TOKEN missing',
-      });
     }
-    return;
-  }
 
-  const provider = createPrintfulProvider({
-    token: env.PRINTFUL_API_TOKEN,
-    storeId: env.PRINTFUL_STORE_ID,
-  });
-
-  const ship = (opts.shipping ?? {}) as Record<string, string>;
-  try {
-    const draft = await provider.createOrder({
-      externalId: opts.orderId,
-      recipient: {
-        name: ship.name ?? 'Customer',
-        address1: ship.line1 ?? ship.address1 ?? 'Address pending',
-        address2: ship.line2 ?? ship.address2,
-        city: ship.city ?? 'Los Angeles',
-        state_code: ship.state ?? ship.state_code ?? 'CA',
-        country_code: ship.country ?? 'US',
-        zip: ship.postal_code ?? ship.zip ?? '90012',
-        email: opts.email ?? undefined,
-        phone: ship.phone,
-      },
-      items: podItems.map((i) => ({
-        catalogVariantId: i.variant.providerVariantId ?? i.variant.id,
-        quantity: i.line.quantity,
-        retailPrice: (i.variant.retailPriceCents / 100).toFixed(2),
-        name: i.variant.name,
-      })),
+    // Owner production queue — not an external provider.
+    await opts.db.prepare(`UPDATE orders SET status = 'in_production' WHERE id = ?`).bind(orderId).run();
+    await insertAuditEvent(opts.db, 'order', orderId, 'queued_for_production', {
+      stripeSessionId: opts.stripeSessionId,
+      sameDayRequested: Boolean(opts.sameDayRequested),
     });
-
-    if (opts.db) {
-      await opts.db
-        .prepare(`UPDATE order_items SET status = 'submitted', provider_order_id = ? WHERE order_id = ? AND lane = 'pod'`)
-        .bind(String(draft.id), opts.orderId)
-        .run();
-      await opts.db.prepare(`UPDATE orders SET status = 'routing' WHERE id = ?`).bind(opts.orderId).run();
-      await insertAuditEvent(opts.db, 'order', opts.orderId, 'provider_draft', { providerOrderId: draft.id });
-    }
-  } catch (err) {
-    if (opts.db) {
-      await opts.db
-        .prepare(`UPDATE order_items SET status = 'needs_attention' WHERE order_id = ? AND lane = 'pod'`)
-        .bind(opts.orderId)
-        .run();
-      await opts.db.prepare(`UPDATE orders SET status = 'needs_attention' WHERE id = ?`).bind(opts.orderId).run();
-      await insertAuditEvent(opts.db, 'order', opts.orderId, 'provider_failure', {
-        error: err instanceof Error ? err.message : String(err),
-      });
-    }
-    // Owner email is sent by webhook caller when configured.
-    throw err;
   }
+
+  return { orderId, trackingCode };
 }
 
 export async function getOrderByTracking(db: D1Database | null, code: string) {
   if (!db) return null;
-  return db
-    .prepare('SELECT * FROM orders WHERE tracking_code = ?')
-    .bind(code)
-    .first();
+  return db.prepare('SELECT * FROM orders WHERE tracking_code = ?').bind(code).first();
 }

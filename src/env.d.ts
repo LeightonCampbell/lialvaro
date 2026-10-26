@@ -22,9 +22,6 @@ interface ImportMetaEnv {
   readonly STRIPE_WEBHOOK_SECRET?: string;
   readonly RESEND_API_KEY?: string;
   readonly ORDER_NOTIFICATION_EMAIL?: string;
-  readonly PRINTFUL_API_TOKEN?: string;
-  readonly PRINTFUL_STORE_ID?: string;
-  readonly CATALOG_SYNC_SECRET?: string;
 }
 
 interface ImportMeta {

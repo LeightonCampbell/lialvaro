@@ -42,6 +42,7 @@ export const POST: APIRoute = async ({ request, url }) => {
               variant_id: variant.id,
               lane: variant.lane,
               product_id: variant.product.id,
+              vendor_id: variant.product.vendorId,
             },
           },
           unit_amount: variant.retailPriceCents,

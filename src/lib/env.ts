@@ -3,8 +3,6 @@ export type AppEnv = {
   STRIPE_WEBHOOK_SECRET?: string;
   RESEND_API_KEY?: string;
   ORDER_NOTIFICATION_EMAIL?: string;
-  PRINTFUL_API_TOKEN?: string;
-  PRINTFUL_STORE_ID?: string;
   DB?: D1Database;
 };
 
@@ -50,8 +48,6 @@ export async function getAppEnv(): Promise<AppEnv> {
     STRIPE_WEBHOOK_SECRET: await readSecret('STRIPE_WEBHOOK_SECRET'),
     RESEND_API_KEY: await readSecret('RESEND_API_KEY'),
     ORDER_NOTIFICATION_EMAIL: await readSecret('ORDER_NOTIFICATION_EMAIL'),
-    PRINTFUL_API_TOKEN: await readSecret('PRINTFUL_API_TOKEN'),
-    PRINTFUL_STORE_ID: await readSecret('PRINTFUL_STORE_ID'),
     DB: cf?.DB as D1Database | undefined,
   };
 }

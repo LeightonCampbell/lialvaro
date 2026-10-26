@@ -11,7 +11,7 @@ export const GET: APIRoute = async () => {
       name: v.name,
       retailPriceCents: v.retailPriceCents,
       lane: v.lane,
-      product: { name: p.name, slug: p.slug },
+      product: { name: p.name, slug: p.slug, vendorName: p.vendor.name },
     })),
   );
   return new Response(JSON.stringify({ products, variants }), {

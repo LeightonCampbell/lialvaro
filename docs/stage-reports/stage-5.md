@@ -1,50 +1,44 @@
-# Stage 5 report — Commerce core
+# Stage 5 report — Commerce core (revised)
 
 **Date:** 2026-10-26 (America/Los_Angeles)  
 **Branch:** `cursor/stage-5-commerce-ba6a`  
-**Base:** `cursor/design-studio-nav-pivot-ba6a` (Stage 4 approved + IA locks)
+**Owner pivot:** Do **not** use Printful. LiAlvaro offers POD itself; Store lists vendor designs; owner fulfills; vendors get a cut.
 
-## Understanding (Stage Protocol)
+## Understanding
 
-1. Stage 5 wires money-in / orders-out: D1 schema, Printful provider interface, pricing rules, shop/PDP/cart, Stripe Checkout + Tax, webhook idempotency, POD order routing, same-day request rules, Resend emails, `/track`.
-2. Owner locks still apply: no `/custom-printing/` page; Design Studio remains order-ready; nav/hero unchanged except H1 already locked.
-3. Page renders never call Printful — seed catalog (or D1 after sync) only.
-4. Gate requires Stripe test order → Printful DRAFT + webhook replay — **blocked on secrets** (see open questions).
-5. Schema proposed in `docs/stage-reports/stage-5-schema.md` and applied as `migrations/0001_commerce_core.sql`.
+1. Money-in via Stripe; orders land in an **owner production queue** (not an external POD API).
+2. Catalog = **vendor designs** with per-design `vendorCutBps`.
+3. After payment, vendor cuts are recorded as **owed**; remitted after fulfillment (admin Stage 7).
+4. Design Studio + quote-modal locks unchanged.
+5. Gate: Stripe test checkout → order in production queue + webhook idempotency (Printful DRAFT gate **canceled**).
 
 ## What shipped
 
-| Area | Location |
+| Area | Notes |
 |---|---|
-| D1 schema + migration | `migrations/0001_commerce_core.sql`, wrangler `DB` binding |
-| Seed catalog | `src/data/catalog.seed.json` → `src/lib/catalog.ts` |
-| Pricing / same-day / site | `src/data/pricing.json`, `same-day.json`, `site.json` |
-| Printful v2 provider | `src/lib/provider/printful.ts` (+ types) |
-| Order router + webhook idempotency | `src/lib/orders.ts`, `src/pages/api/stripe-webhook.ts` |
-| Stripe Checkout | `src/pages/api/create-checkout-session.ts` (automatic_tax) |
-| Catalog sync job | `src/pages/api/catalog-sync.ts` |
-| Shop / PDP / cart / confirm / track | `src/pages/shop/*`, `cart/`, `order-confirmed/`, `track/` |
-| Client cart | `src/scripts/cart.ts` |
+| Schema | `vendors`, design `products`, `vendor_payouts`, local `order_items` |
+| Seed store | Studio North / Eastside Ink sample designs |
+| Stripe Checkout + webhook | Idempotent; queues production; emails owner + customer |
+| Shop / PDP / cart / track | Vendor attribution on PDP |
+| Pricing | `vendorCut` bps + blank cost (no Printful markup) |
+
+## Removed
+
+- Printful client, catalog sync API, `PRINTFUL_*` secrets
+- External POD routing / DRAFT-order gate
 
 ## Verification
 
-- `npm run build` — **pass** (shop PDPs + `/api/catalog.json` prerendered; checkout/webhook/track are server routes).
-- Local storefront: seed products on `/shop/`, PDP add-to-cart, cart UI (Playwright/manual against seed catalog).
-- Stripe/Printful live gate: **not run** — secrets not present in this environment.
+- `npm run build` after pivot
+- Store lists vendor designs; PDP shows “Design by …”; cart add works
 
-## Open / blocking for owner
+## Still needed from owner
 
-1. Provide Cloudflare **D1** database id (replace placeholder in `wrangler.jsonc`) and run `wrangler d1 migrations apply`.
-2. Stripe test keys: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (and confirm Stripe Tax for CA).
-3. Printful: `PRINTFUL_API_TOKEN`, optional `PRINTFUL_STORE_ID`; confirm catalog product IDs to sync (seed uses placeholders).
-4. Resend: `RESEND_API_KEY`, `ORDER_NOTIFICATION_EMAIL`.
-5. Confirm `pricing.json` markup **40%** and `same-day.json` ZIP/cutoff lists.
-
-## Decisions needing owner
-
-- Replace seed Printful variant IDs with real catalog IDs after first sync.
-- Whether guest carts stay localStorage-only until Stage 7 accounts (current) vs early D1 carts.
+1. Real D1 `database_id` + migrations apply  
+2. Stripe + Resend secrets  
+3. Confirm default vendor cut (seed uses 20–25%) and real vendor/design catalog  
+4. Same-day ZIP/cutoff confirmation  
 
 ## STOP
 
-Stage 5 implementation scaffold complete for review. Full gate (test-mode Stripe → Printful DRAFT + webhook replay + forced failure → `needs_attention`) waits on secrets above. Do not begin Stage 6 until owner accepts Stage 5 / supplies credentials for gate evidence.
+Revised Stage 5 ready for review. Do not reintroduce Printful. Do not start Stage 6 until owner accepts.

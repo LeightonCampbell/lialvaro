@@ -30,11 +30,10 @@ const defaultVariant = product.variants[0];
       </div>
       <div class="copy">
         <h1>{product.name}</h1>
+        <p class="vendor">Design by <strong>{product.vendor.name}</strong></p>
         <p class="price" id="pdpPrice">{formatUsd(defaultVariant.retailPriceCents)}</p>
         <p>{product.description}</p>
-        {product.variants.some((v) => v.lane === 'pod') && sameDay ? (
-          <p class="note">Same-day is not available for print-on-demand items. {sameDay}</p>
-        ) : null}
+        {sameDay ? <p class="note">{sameDay}</p> : null}
 
         <form id="addForm" class="form">
           {
@@ -156,6 +155,11 @@ const defaultVariant = product.variants[0];
     text-transform: uppercase;
     font-weight: 400;
     font-size: clamp(2rem, 4vw, 3rem);
+  }
+  .vendor {
+    margin: 0 0 0.5rem;
+    font-size: var(--text-sm);
+    color: color-mix(in srgb, var(--ink) 80%, var(--mesh-grey));
   }
   .price {
     font-family: var(--font-mono);
