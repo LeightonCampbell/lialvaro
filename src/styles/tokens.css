@@ -34,7 +34,7 @@
   --color-disabled-ink: color-mix(in srgb, var(--ink) 45%, var(--mesh-grey));
 
   /* Typography */
-  --font-display: 'Anton', 'Arial Narrow', Impact, sans-serif;
+  --font-display: 'Poppins', 'Segoe UI', Helvetica, Arial, sans-serif;
   --font-body: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', Menlo, monospace;
 

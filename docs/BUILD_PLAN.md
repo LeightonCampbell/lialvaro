@@ -87,7 +87,7 @@ One catalog, one cart, one order record. Each `order_item` carries a `lane`. Rou
 **Goal:** one source of truth for look and feel.
 **Do:**
 - Tokens (single CSS file): canvas `#EFEBE1`, ink `#1B2233`, print-red `#C8102E`, gold `#B8912A`, mesh-grey `#8B8B85`, white `#FFFDF9`.
-- Fonts: Anton (display), Inter (body), IBM Plex Mono (prices/specs), self-hosted, preloaded, with fallbacks.
+- Fonts: Poppins (display / headers), Inter (body), IBM Plex Mono (prices/specs), self-hosted, preloaded, with fallbacks.
 - Motifs: registration-mark crosshairs, dashed cut-line dividers, hangtag product cards.
 - Component inventory built in Astro: Button, Field/Input/Select/Textarea, FileDrop, ProductCard, PriceTag, Badge, Header/Nav/MobileMenu, Footer, Section, Accordion, ReviewCard, StepList, Modal/Drawer, Toast, Photo (obviously swappable placeholder).
 - Every component documents and renders its states: default, hover, focus, disabled, loading, error, empty.
