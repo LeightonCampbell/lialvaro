@@ -91,20 +91,20 @@ http://localhost:4321/_styleguide/
 
 ## Decisions needing the owner (Stage 3 gate)
 
-| Topic | Needed |
+| Topic | Status |
 |---|---|
-| Look / tokens / motifs | Approve or edit |
-| Component inventory on styleguide | Approve |
-| axe zero critical/serious | Met — confirm acceptance |
+| Look / tokens / motifs | **Approved** |
+| Component inventory on styleguide | **Approved** |
+| axe zero critical/serious | **Met (0)** |
 
 Per BUILD_PLAN: *“owner approves look; axe reports zero critical/serious issues on the styleguide.”*
 
 - Deliverables ready: **yes**  
 - axe critical/serious: **0**  
-- Owner look approval: **pending**  
+- Owner look approval: **closed 2026-10-26**  
 
 ---
 
 ## STOP
 
-Stage 3 complete for implementation. Do **not** begin Stage 4 until the owner approves the look.
+Stage 3 gate closed. Say when to run **Stage 4 only**.
