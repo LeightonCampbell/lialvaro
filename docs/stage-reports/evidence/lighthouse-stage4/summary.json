@@ -1,0 +1,32 @@
+[
+  {
+    "name": "home",
+    "url": "http://127.0.0.1:4322/",
+    "performance": 98,
+    "accessibility": 100,
+    "bestPractices": 100,
+    "seo": 100,
+    "lcpMs": 2259.64,
+    "cls": 0
+  },
+  {
+    "name": "faq",
+    "url": "http://127.0.0.1:4322/faq/",
+    "performance": 100,
+    "accessibility": 100,
+    "bestPractices": 100,
+    "seo": 100,
+    "lcpMs": 1653.5577,
+    "cls": 0
+  },
+  {
+    "name": "design",
+    "url": "http://127.0.0.1:4322/design/",
+    "performance": 100,
+    "accessibility": 100,
+    "bestPractices": 96,
+    "seo": 100,
+    "lcpMs": 1658.4545999999998,
+    "cls": 0.00003
+  }
+]

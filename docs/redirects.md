@@ -1,6 +1,6 @@
 # LiAlvaro redirect map (proposed)
 
-**Status:** Owner-approved map (2026-10-21). Do not implement until Stage 4 / when target routes exist.  
+**Status:** Stage 4 implementation in progress (2026-10-26). Host + trailing-slash + `/design-your-apparel/` → `/design/` enforced in `src/middleware.ts`.  
 **Canonical host (locked):** `https://www.lialvaro.com`  
 **URL style (recommended):** trailing slash on all non-file paths (matches live 307 behavior and Astro `Layout` canonical normalization).
 
@@ -68,8 +68,8 @@ Apply only once the destination page exists (Stage 4/6 for Design Studio).
 
 | Legacy / interim | Future | Code | Status |
 |---|---|---|---|
-| `/design-your-apparel` | `https://www.lialvaro.com/design/` | **301** | **Owner approved 2026-10-21** |
-| `/design-your-apparel/` | `https://www.lialvaro.com/design/` | **301** | **Owner approved 2026-10-21** |
+| `/design-your-apparel` | `https://www.lialvaro.com/design/` | **301** | **Implemented Stage 4** (middleware) |
+| `/design-your-apparel/` | `https://www.lialvaro.com/design/` | **301** | **Implemented Stage 4** (middleware) |
 | Homepage service CTAs / footer service links → `/design-your-apparel/` | `/custom-printing/` and/or `/shop/` (link updates) | n/a until those routes ship | Pending Stage 2 IA |
 | *(none today)* | `/shop/`, `/cart/`, `/track/`, `/stores/[slug]/`, `/account/*`, `/admin/*` | n/a | New; no legacy |
 

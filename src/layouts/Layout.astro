@@ -1,29 +1,30 @@
 ---
-import '../styles/global.css';
-import Header from '../components/Header.astro';
-import EmailSubscribe from '../components/EmailSubscribe.astro';
-import Footer from '../components/Footer.astro';
+import '../styles/tokens.css';
+import Header from '../components/ds/Header.astro';
+import Footer from '../components/ds/Footer.astro';
 import QuoteModal from '../components/QuoteModal.astro';
+import { brand, claimText } from '../lib/claims';
 
 interface Props {
 	title: string;
 	description?: string;
-	/** When true, `title` is used as the full document title (no `| Lialvaro…` suffix). */
+	/** When true, `title` is used as the full document title. */
 	exactTitle?: boolean;
 	keywords?: string;
-	/** FAQ page link for primary nav. */
-	faqHref?: string;
+	jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+	noindex?: boolean;
 }
 
 const {
 	title,
-	description = 'Premium custom t-shirt printing and embroidery in Los Angeles. No minimums, same-day printing available.',
+	description = 'Custom apparel printing in Los Angeles. Design online or request a quote for screen printing, DTG, DTF, and embroidery.',
 	exactTitle = false,
 	keywords,
-	faqHref = '/faq',
+	jsonLd,
+	noindex = false,
 } = Astro.props;
 
-const documentTitle = exactTitle ? title : `${title} | Lialvaro Custom Apparel`;
+const documentTitle = exactTitle ? title : `${title} | ${brand}`;
 const canonicalOrigin = 'https://www.lialvaro.com';
 const normalizedPathname =
 	Astro.url.pathname === '/'
@@ -32,59 +33,153 @@ const normalizedPathname =
 			? Astro.url.pathname
 			: `${Astro.url.pathname}/`;
 const canonicalUrl = new URL(normalizedPathname, canonicalOrigin).toString();
+const sameDay = claimText('same-day-printing');
+const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
+const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta name="description" content={description} />
 		{keywords ? <meta name="keywords" content={keywords} /> : null}
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		{noindex ? <meta name="robots" content="noindex,nofollow" /> : <meta name="robots" content="index,follow" />}
 		<link rel="icon" type="image/x-icon" href="/images/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{documentTitle}</title>
 		<link rel="canonical" href={canonicalUrl} />
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
-			rel="stylesheet"
-		/>
+		<link rel="preload" href="/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+		<link rel="preload" href="/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+		<link rel="preload" href="/fonts/inter-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content={brand} />
+		<meta property="og:title" content={documentTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonicalUrl} />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={documentTitle} />
+		<meta name="twitter:description" content={description} />
+		{
+			jsonLdBlocks.map((block) => (
+				<script type="application/ld+json" set:html={JSON.stringify(block)} />
+			))
+		}
 		<slot name="head" />
 	</head>
-	<body>
-		<!-- Matches homepage `.topbar` (no inner wrapper). -->
+	<body class="site-body">
 		<div class="topbar">
-			<p>Same-day service available in Los Angeles &nbsp;·&nbsp; Call <a href="tel:3109042655">(310) 904-2655</a> for instant help</p>
+			<p>
+				{sameDay ? <>{sameDay}&nbsp;·&nbsp;</> : null}
+				<a href="tel:3109042655">{phone.replace(/^Call\s+/i, '')}</a>
+			</p>
 		</div>
-		<Header faqHref={faqHref} />
-		<main class="pt-nav">
+		<Header />
+		<main id="main">
 			<slot />
 		</main>
-		<EmailSubscribe />
 		<Footer />
 		<QuoteModal />
+		<script>
+			import { initAnalyticsScaffold, track } from '../scripts/analytics.ts';
+			initAnalyticsScaffold();
+
+			document.addEventListener('click', (event) => {
+				const target = event.target;
+				if (!(target instanceof Element)) return;
+				const quoteTrigger = target.closest('[data-quote-trigger]');
+				if (quoteTrigger) {
+					track('quote_started', { source: 'trigger' });
+				}
+			});
+
+			window.addEventListener('lialvaro:quote-step', ((event: CustomEvent) => {
+				track('quote_step_N', { step: event.detail?.step });
+			}) as EventListener);
+
+			window.addEventListener('lialvaro:quote-submitted', (() => {
+				track('quote_submitted');
+			}) as EventListener);
+
+			window.addEventListener('lialvaro:design-started', (() => {
+				track('design_started');
+			}) as EventListener);
+		</script>
 	</body>
 </html>
 
-<style>
-	/* Homepage `index.astro` `.topbar` rules (uses --text-primary #1D1D1F) */
+<style is:global>
+	.site-body {
+		margin: 0;
+		min-height: 100vh;
+		background: var(--canvas);
+		color: var(--ink);
+		font-family: var(--font-body);
+		line-height: var(--leading-normal);
+		-webkit-font-smoothing: antialiased;
+	}
+
+	.site-body a:focus-visible,
+	.site-body button:focus-visible,
+	.site-body summary:focus-visible,
+	.site-body input:focus-visible,
+	.site-body select:focus-visible,
+	.site-body textarea:focus-visible {
+		outline: 3px solid var(--color-focus);
+		outline-offset: 2px;
+	}
+
 	.topbar {
-		background: #1d1d1f;
-		padding: 9px 0;
+		background: var(--ink);
+		color: var(--white);
+		padding: 0.55rem 1rem;
 		text-align: center;
+		font-size: 0.8rem;
 	}
 
 	.topbar p {
-		font-size: 12.5px;
-		color: rgba(255, 255, 255, 0.72);
-		letter-spacing: 0.02em;
+		margin: 0;
 	}
 
 	.topbar a {
-		color: #ff6b2b;
-		text-decoration: none;
-		font-weight: 600;
+		color: var(--white);
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+
+	.page-shell {
+		max-width: 1120px;
+		margin: 0 auto;
+		padding: 2.5rem 1rem 4rem;
+	}
+
+	.page-hero {
+		padding: 2.5rem 0 1.5rem;
+	}
+
+	.page-hero h1 {
+		margin: 0;
+		font-family: var(--font-display);
+		font-size: clamp(2.4rem, 6vw, 3.75rem);
+		font-weight: 400;
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
+		line-height: 1.05;
+	}
+
+	.page-hero p {
+		margin: 0.75rem 0 0;
+		max-width: 40rem;
+		color: color-mix(in srgb, var(--ink) 80%, var(--mesh-grey));
+	}
+
+	.eyebrow {
+		margin: 0 0 0.5rem;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--gold-text);
 	}
 </style>

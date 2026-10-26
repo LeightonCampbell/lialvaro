@@ -1,0 +1,256 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/ds/Button.astro';
+import Field from '../../components/ds/Field.astro';
+import { claimText } from '../../lib/claims';
+
+const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
+const quoteHour = claimText('quote-response-1-business-hour');
+---
+
+<Layout
+  title="Design a shirt"
+  description="Design a shirt with LiAlvaro T-Shirt Printing. Upload art, share project details, and get a clear next step."
+>
+  <div class="page-shell">
+    <header class="page-hero">
+      <p class="eyebrow">Design</p>
+      <h1>Design a shirt</h1>
+      <p>
+        Upload art, add details, and we’ll follow up with pricing and a production plan. Full Design Studio canvas ships
+        in a later stage — this intake keeps your project moving now.
+      </p>
+      <div class="hero-actions">
+        <Button href="#design-form">Start designing</Button>
+        <button type="button" class="ghost" data-quote-trigger>Prefer a quote form?</button>
+      </div>
+    </header>
+
+    <div class="layout-grid">
+      <article class="panel" id="design-form">
+        <h2>Project request</h2>
+        <p class="lede">
+          Share your vision, quantities, and timeline.
+          {quoteHour ? ` ${quoteHour}` : ''}
+        </p>
+
+        <form id="designRequestForm" class="form" action="https://formspree.io/f/xnjoaoyw" method="POST">
+          <input type="hidden" name="_subject" value="New Project Request — LiAlvaro T-Shirt Printing" />
+          <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
+
+          <div class="row">
+            <Field id="design-name" name="name" label="Full name" required />
+            <Field id="design-email" name="email" type="email" label="Email" required />
+          </div>
+          <div class="row">
+            <Field id="design-phone" name="phone" type="tel" label="Phone" placeholder="(310) 000-0000" />
+            <Field id="design-brand" name="brand" label="Business / brand name" />
+          </div>
+
+          <fieldset class="checks">
+            <legend>What would you like to design?</legend>
+            <label><input type="checkbox" name="items" value="T-Shirts" /> T-Shirts</label>
+            <label><input type="checkbox" name="items" value="Hoodies" /> Hoodies</label>
+            <label><input type="checkbox" name="items" value="Hats" /> Hats</label>
+            <label><input type="checkbox" name="items" value="Other" /> Other</label>
+          </fieldset>
+
+          <div class="row">
+            <Field
+              id="design-method"
+              name="method"
+              label="Preferred print method"
+              as="select"
+              placeholder="Select one"
+              options={[
+                { value: 'Screen Printing', label: 'Screen Printing' },
+                { value: 'Direct To Garment (DTG)', label: 'Direct To Garment (DTG)' },
+                { value: 'Direct To Film (DTF)', label: 'Direct To Film (DTF)' },
+                { value: 'Embroidery', label: 'Embroidery' },
+                { value: 'Not sure yet', label: 'Not sure yet' },
+              ]}
+            />
+            <Field
+              id="design-qty"
+              name="quantity"
+              label="Estimated quantity"
+              as="select"
+              placeholder="Select one"
+              options={[
+                { value: '1-11 pieces', label: '1-11 pieces' },
+                { value: '12-24 pieces', label: '12-24 pieces' },
+                { value: '25-49 pieces', label: '25-49 pieces' },
+                { value: '50-99 pieces', label: '50-99 pieces' },
+                { value: '100+ pieces', label: '100+ pieces' },
+              ]}
+            />
+          </div>
+
+          <Field
+            id="design-details"
+            name="details"
+            label="Project details"
+            as="textarea"
+            required
+            placeholder="Design goals, garment preferences, sizing, placements, and notes."
+          />
+
+          <Button type="submit">Submit design request</Button>
+          <p class="success" id="successMsg" hidden>Thanks — your request is in. We’ll contact you shortly.</p>
+          <p class="error" id="errorMsg" hidden>Submission failed. Please try again or {phone}</p>
+        </form>
+      </article>
+
+      <aside class="panel side">
+        <h2>What happens next?</h2>
+        <ul>
+          <li>Method recommendation</li>
+          <li>Artwork prep guidance</li>
+          <li>Timeline and production plan</li>
+          <li>Clear quote — no obligation</li>
+        </ul>
+        <p class="note">Need it fast? Ask about same-day and rush options for eligible Los Angeles orders.</p>
+        <Button variant="secondary" href="tel:3109042655">{phone}</Button>
+      </aside>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { track } from '../../scripts/analytics.ts';
+
+  const form = document.getElementById('designRequestForm');
+  const successMsg = document.getElementById('successMsg');
+  const errorMsg = document.getElementById('errorMsg');
+  const submitBtn = form?.querySelector('button[type="submit"]');
+
+  track('design_started', { source: 'design_page' });
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    successMsg?.setAttribute('hidden', '');
+    errorMsg?.setAttribute('hidden', '');
+    if (submitBtn instanceof HTMLButtonElement) {
+      submitBtn.disabled = true;
+      submitBtn.dataset.originalText = submitBtn.dataset.originalText || submitBtn.textContent || '';
+      submitBtn.textContent = 'Sending...';
+    }
+    try {
+      const formData = new FormData(form);
+      const response = await fetch(form.action, { method: 'POST', body: formData });
+      if (!response.ok) throw new Error('Request failed');
+      successMsg?.removeAttribute('hidden');
+      form.reset();
+    } catch {
+      errorMsg?.removeAttribute('hidden');
+    } finally {
+      if (submitBtn instanceof HTMLButtonElement) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = submitBtn.dataset.originalText || 'Submit design request';
+      }
+    }
+  });
+</script>
+
+<style>
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .ghost {
+    background: none;
+    border: none;
+    color: var(--print-red);
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  .layout-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 900px) {
+    .layout-grid {
+      grid-template-columns: 1.35fr 0.65fr;
+      align-items: start;
+    }
+  }
+
+  .panel {
+    background: var(--white);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+  }
+
+  .panel h2 {
+    margin: 0 0 0.5rem;
+    font-size: var(--text-xl);
+  }
+
+  .lede,
+  .note {
+    margin: 0 0 1rem;
+    color: color-mix(in srgb, var(--ink) 80%, var(--mesh-grey));
+  }
+
+  .form {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .row {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .checks {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .checks legend {
+    font-weight: 700;
+    padding: 0 0.25rem;
+  }
+
+  .checks label {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .side ul {
+    margin: 0 0 1rem;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .success {
+    color: var(--color-success);
+    font-weight: 600;
+  }
+
+  .error {
+    color: var(--color-danger);
+    font-weight: 600;
+  }
+</style>

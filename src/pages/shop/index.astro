@@ -1,0 +1,83 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProductCard from '../../components/ds/ProductCard.astro';
+import Button from '../../components/ds/Button.astro';
+import { claimText } from '../../lib/claims';
+
+const sameDay = claimText('same-day-printing');
+---
+
+<Layout
+  title="Shop"
+  description="Shop standard products from LiAlvaro T-Shirt Printing. Need bulk or custom? Request a quote."
+>
+  <div class="page-shell">
+    <header class="page-hero">
+      <p class="eyebrow">Shop</p>
+      <h1>Shop</h1>
+      <p>Standard products with listed prices. Need bulk or something custom? Request a quote.</p>
+      {sameDay ? <p class="note">{sameDay}</p> : null}
+    </header>
+
+    <div class="filters" role="group" aria-label="Product filters">
+      <span class="chip is-active">All</span>
+      <span class="chip">Apparel</span>
+      <span class="chip">Headwear &amp; accessories</span>
+    </div>
+
+    <div class="grid">
+      <ProductCard empty />
+    </div>
+
+    <div class="actions">
+      <Button href="/custom-printing/">Get a custom quote →</Button>
+      <Button variant="ghost" href="/design/">Design a shirt</Button>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .note {
+    margin: 0.75rem 0 0;
+    font-size: var(--text-sm);
+    color: var(--mesh-text);
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .chip {
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+    padding: 0.4rem 0.7rem;
+    font-size: var(--text-sm);
+    background: var(--white);
+  }
+
+  .chip.is-active {
+    border-color: var(--ink);
+    font-weight: 700;
+  }
+
+  .grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 800px) {
+    .grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+</style>
