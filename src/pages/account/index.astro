@@ -1,0 +1,46 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/ds/Button.astro';
+---
+
+<Layout
+  title="Account"
+  description="Account sign-in for LiAlvaro T-Shirt Printing. Magic-link login ships in a later stage."
+  noindex={true}
+>
+  <div class="page-shell">
+    <header class="page-hero">
+      <p class="eyebrow">Account</p>
+      <h1>Sign in</h1>
+      <p>Magic-link accounts ship in a later stage. For now, call or request a quote and we’ll help you reorder.</p>
+    </header>
+    <div class="actions">
+      <Button href="/contact/">Contact us</Button>
+      <button type="button" class="ds-btn ds-btn--secondary" data-quote-trigger>Get a quote</button>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .ds-btn--secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.7rem 1.15rem;
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    cursor: pointer;
+  }
+</style>

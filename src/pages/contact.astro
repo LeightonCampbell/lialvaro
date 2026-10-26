@@ -1,96 +1,121 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Button from '../components/ds/Button.astro';
+import { claimText } from '../lib/claims';
+
+const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
+const email = claimText('email-help') ?? 'Email help@lialvaro.com.';
+const sameDay = claimText('same-day-printing');
+const losAngeles = claimText('los-angeles');
 ---
 
-<Layout title="Contact Us | Lialvaro Custom Apparel">
-  <section class="page-header text-center animate-up">
-    <div class="container">
-      <h1>Let's talk project.</h1>
-      <p class="mt-2 text-secondary" style="max-width: 700px; margin-left: auto; margin-right: auto; font-size: 1.25rem;">Got an idea? Need a quote? Just want to say hi? We're available 24/7 to help you bring your vision to life.</p>
+<Layout
+  title="Contact"
+  description="Contact LiAlvaro T-Shirt Printing in Los Angeles for quotes, design help, and custom apparel projects."
+>
+  <div class="page-shell">
+    <header class="page-hero">
+      <p class="eyebrow">Contact</p>
+      <h1>Let’s talk project.</h1>
+      <p>Got an idea? Need a quote? Call or email — we’re happy to help.</p>
+    </header>
+
+    <div class="contact-grid">
+      <article class="card">
+        <h2>Call us</h2>
+        <p>The fastest way to get clarity on timing and pricing.</p>
+        <Button href="tel:3109042655">{phone}</Button>
+      </article>
+      <article class="card">
+        <h2>Email</h2>
+        <p>Send project details and files when that is easier.</p>
+        <Button variant="secondary" href="mailto:help@lialvaro.com">{email}</Button>
+      </article>
+      <article class="card">
+        <h2>Los Angeles</h2>
+        <p>{losAngeles ?? 'Serving customers from Los Angeles, California.'}</p>
+        {sameDay ? <p class="note">{sameDay}</p> : null}
+        <Button variant="ghost" href="/custom-printing/">Custom printing →</Button>
+      </article>
     </div>
-  </section>
 
-  <section class="contact-section mt-4 pb-4">
-    <div class="container animate-up delay-1">
-      <div class="contact-grid">
-        <div class="contact-info-card">
-          <div class="icon">📞</div>
-          <h3>Call or Text Us</h3>
-          <p class="mt-2">The fastest way to get a quote. We're ready to answer your call.</p>
-          <a href="tel:3109042655" class="contact-link mt-2">(310) 904-2655</a>
-        </div>
-        
-        <div class="contact-info-card">
-          <div class="icon">📍</div>
-          <h3>Local to LA</h3>
-          <p class="mt-2">We proudly serve Los Angeles and the surrounding areas. Free delivery available for local bulk orders.</p>
-          <p class="contact-link mt-2">Los Angeles, CA</p>
-        </div>
-
-        <div class="contact-info-card">
-          <div class="icon">⏱️</div>
-          <h3>Need it Fast?</h3>
-          <p class="mt-2">Ask about our Same-Day Print Guarantee for urgent, last-minute projects.</p>
-          <a href="/design-your-apparel" class="contact-link mt-2">View Turnarounds</a>
-        </div>
-      </div>
-
-      <div class="form-wrapper mt-4 pt-4 text-center">
-        <h2>Prefer Email?</h2>
-        <p class="mt-2 text-secondary mb-2">Drop us a line and we'll get back to you immediately.</p>
-        <a href="mailto:help@lialvaro.com" class="button primary">Email help@lialvaro.com</a>
-      </div>
-    </div>
-  </section>
+    <section class="quote-band">
+      <h2>Prefer a form?</h2>
+      <p>Request a free quote — no obligation.</p>
+      <button type="button" class="ds-btn ds-btn--primary" data-quote-trigger>Get a free quote</button>
+    </section>
+  </div>
 </Layout>
 
 <style>
-  .page-header { padding: 120px 0 60px; border-bottom: 1px solid var(--border-color); }
-  
-  .contact-section { padding-top: 6rem; padding-bottom: 6rem; }
-  
   .contact-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 3rem;
+    gap: 1rem;
   }
 
-  .contact-info-card {
-    background: var(--bg-secondary);
-    padding: 4rem 2rem;
-    border-radius: 28px;
-    border: 1px solid var(--border-color);
+  @media (min-width: 800px) {
+    .contact-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .card {
+    background: var(--white);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    display: grid;
+    gap: 0.75rem;
+    align-content: start;
+  }
+
+  .card h2 {
+    margin: 0;
+    font-size: var(--text-xl);
+  }
+
+  .card p {
+    margin: 0;
+    color: color-mix(in srgb, var(--ink) 80%, var(--mesh-grey));
+  }
+
+  .note {
+    font-size: var(--text-sm);
+  }
+
+  .quote-band {
+    margin-top: 2.5rem;
+    padding: 1.75rem;
     text-align: center;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    background: var(--white);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
   }
 
-  .contact-info-card:hover {  
-    transform: translateY(-8px); 
-    border-color: rgba(255,255,255,0.2); 
-    background-color: #151518;
+  .quote-band h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-weight: 400;
   }
-  
-  .contact-info-card .icon { font-size: 3.5rem; margin-bottom: 1.5rem; display: block; }
-  .contact-info-card p { line-height: 1.6; color: var(--text-secondary); }
-  
-  .contact-link {
-    display: inline-block;
-    font-size: 1.75rem;
+
+  .quote-band p {
+    margin: 0.5rem 0 1rem;
+  }
+
+  .ds-btn--primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.7rem 1.15rem;
+    border: 2px solid var(--print-red);
+    border-radius: var(--radius-md);
+    background: var(--print-red);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
     font-weight: 700;
-    color: var(--text-primary);
-    text-decoration: none;
-    transition: color 0.3s ease;
-    letter-spacing: -0.02em;
-  }
-
-  .contact-link:hover { color: var(--accent); }
-
-  .form-wrapper { border-top: 1px solid var(--border-color); margin-top: 6rem; padding-top: 6rem; }
-
-  @media (max-width: 992px) {
-    .page-header { padding: 100px 0 40px; }
-    .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
-    .contact-info-card { padding: 3rem 1.5rem; }
-    .form-wrapper { margin-top: 4rem; padding-top: 4rem; }
+    cursor: pointer;
   }
 </style>

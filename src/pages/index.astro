@@ -1,894 +1,348 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import Layout from '../layouts/Layout.astro';
+import Button from '../components/ds/Button.astro';
+import Section from '../components/ds/Section.astro';
+import StepList from '../components/ds/StepList.astro';
+import ProductCard from '../components/ds/ProductCard.astro';
+import ReviewCard from '../components/ds/ReviewCard.astro';
+import Accordion from '../components/ds/Accordion.astro';
+import { brand, claimText } from '../lib/claims';
+
+const sameDay = claimText('same-day-printing');
+const methods = claimText('methods-screen-dtg-dtf-embroidery');
+const noMinimums = claimText('no-minimums');
+const turnaround = claimText('turnaround-standard-5-7');
+const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
+
+const steps = [
+  { title: 'Choose your path', body: 'Design online or request a quote.' },
+  { title: 'Approve art & pricing', body: 'Confirm the proof and total before we print.' },
+  { title: 'We print & deliver', body: 'We print and get it to you.' },
+];
+
+const reviews = [
+  {
+    name: 'Leighton C.',
+    quote:
+      "I had my logo designed and my t-shirts and polos printed here several years ago. Since then, I've had banners, posters, hats, and, many other products done by LTP (even ugly sweaters for Christmas of 2024). Li is so friendly and patient. I recommend LiAlvaro T-shirt Printing to everyone.",
+  },
+  {
+    name: 'Mark L.',
+    quote: 'I will never use another company for my Custom Printing needs. These guys do a wonderful job.',
+  },
+  {
+    name: 'Richard L.',
+    quote:
+      'Truly 5 stars - This was so easy, even for my large, complicated order. Li at LiAlvaro T-shirt Printing guided me through the process and was super responsive to my questions. The shirts are comfortable, the design is perfect. We all love them. This was a great experience!',
+  },
+];
+
+const faqItems = [
+  {
+    id: 'shop-vs-quote',
+    question: 'Shop vs quote?',
+    answer:
+      'Shop is for standard products with listed prices. A quote is for bulk, specialty garments, or projects that need a custom plan.',
+  },
+  {
+    id: 'minimums',
+    question: 'Minimum order?',
+    answer: noMinimums ?? 'Ask us about quantity for your project.',
+  },
+  {
+    id: 'how-fast',
+    question: 'How fast?',
+    answer: [turnaround, sameDay].filter(Boolean).join(' ') || 'Call us to confirm timing for your order.',
+  },
+];
+
+const localBusiness = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: brand,
+  url: 'https://www.lialvaro.com/',
+  telephone: '+1-310-904-2655',
+  email: 'help@lialvaro.com',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Los Angeles',
+    addressRegion: 'CA',
+    addressCountry: 'US',
+  },
+  areaServed: 'Los Angeles',
+  description:
+    'Custom apparel printing in Los Angeles — screen printing, DTG, DTF, and embroidery. Design online or request a quote.',
+};
+
+const faqPageLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqItems.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: { '@type': 'Answer', text: item.answer },
+  })),
+};
 ---
 
 <Layout
-  title="LiAlvaro Apparel — Custom Printing, Los Angeles"
-  exactTitle
-  description="LiAlvaro Apparel — Los Angeles' premier custom apparel printer. Screen printing, DTG, DTF, embroidery. No minimums. Same-day service. Call (310) 904-2655."
-  keywords="custom t-shirts Los Angeles, screen printing LA, DTG printing, custom embroidery, custom hoodies, same day printing Los Angeles"
-  faqHref="/faq"
+  title="Custom T-Shirt Printing in Los Angeles"
+  description="Custom printed apparel with a clear process. Design online or request a quote. LiAlvaro T-Shirt Printing — Los Angeles."
+  keywords="custom t-shirt printing Los Angeles, screen printing, DTG, DTF, embroidery"
+  jsonLd={[localBusiness, faqPageLd]}
 >
-  <link slot="head" rel="preconnect" href="https://fonts.googleapis.com" />
-  <link
-    slot="head"
-    href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap"
-    rel="stylesheet"
-  />
+  <section class="home-hero">
+    <div class="home-hero__copy">
+      <p class="eyebrow">Los Angeles{methods ? ` · ${methods}` : ''}</p>
+      <h1>LiAlvaro T-Shirt Printing</h1>
+      <p class="home-hero__headline">Custom printed apparel. Clear process.</p>
+      <p class="home-hero__sub">
+        Design online and checkout, or request a quote for custom and bulk work.
+        {sameDay ? ` ${sameDay}` : ''}
+      </p>
+      <div class="home-hero__ctas">
+        <Button href="/design/">Design a shirt →</Button>
+        <button type="button" class="ds-btn ds-btn--secondary" data-quote-trigger>Get a free quote →</button>
+        <Button variant="ghost" href="tel:3109042655">{phone}</Button>
+      </div>
+    </div>
+    <div class="home-hero__visual" role="img" aria-label="Custom apparel printing">
+      <img
+        src="/images/homepage-hero-2.jpg"
+        alt=""
+        width="1200"
+        height="800"
+        fetchpriority="high"
+        decoding="async"
+      />
+    </div>
+  </section>
 
-<section class="hero">
-  <div class="hero-glow"></div>
-  <div class="container">
-    <div class="hero-badge">
-      <span class="badge-dot"></span>
-      Best Custom Apparel Printer in Los Angeles
-    </div>
-    <h1>Custom Printed <span>T-shirts,</span><br>Hoodies, Hats &amp; More.</h1>
-    <p class="hero-sub">Professional print quality, lightning-fast turnaround, and designs that leave a lasting impression — with no minimums.</p>
-    <div class="hero-actions">
-      <button class="btn-primary" data-quote-trigger onclick="openModal()">Get Your Free Quote →</button>
-      <a href="tel:3109042655" class="btn-secondary">
-        <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M3.7 1C3.3 1 2.5 1.3 1.9 2L1 3c-.7.7-1 2 .3 4 .7 1.2 1.7 2.6 3.1 4s2.8 2.4 4 3.1c2 1.3 3.3 1 4 .3l1-1c.7-.7 1-1.5 1-1.9 0-.2-.2-.5-.5-.7L12 9.5c-.3-.2-.6-.3-.8-.2l-1.3.4c-.3.1-.6 0-.8-.2L7.5 8l-1.5-1.6c-.2-.2-.3-.5-.2-.8L6.2 4.4c.1-.2 0-.5-.2-.8L4.4 1.5C4.2 1.2 3.9 1 3.7 1z"/></svg>
-        Call (310) 904-2655
-      </a>
-    </div>
-    <div class="hero-stats">
-      <div class="hero-stat">
-        <div class="stat-val">No<span> Min.</span></div>
-        <div class="stat-label">No minimum order</div>
+  <div class="page-shell home-sections">
+    <Section eyebrow="How it works" title="Three steps. No runaround.">
+      <StepList steps={steps} />
+      <div class="section-cta">
+        <Button href="/design/">Start your design →</Button>
+        <Button variant="ghost" href="/custom-printing/">Get a quote</Button>
       </div>
-      <div class="hero-stat">
-        <div class="stat-val">Same<span>-Day</span></div>
-        <div class="stat-label">Available in LA</div>
+    </Section>
+
+    <Section eyebrow="Shop" title="Standard products with clear pricing.">
+      <p slot="lede">Browse ready-to-order items. Custom and bulk jobs use a quote instead.</p>
+      <div class="product-grid">
+        <ProductCard empty />
       </div>
-      <div class="hero-stat">
-        <div class="stat-val">24<span>/7</span></div>
-        <div class="stat-label">Team support</div>
+      <div class="section-cta">
+        <Button href="/shop/">Shop products →</Button>
       </div>
-      <div class="hero-stat">
-        <div class="stat-val">4<span> Methods</span></div>
-        <div class="stat-label">Printing options</div>
+    </Section>
+
+    <Section eyebrow="Custom printing" title="The right method for the job.">
+      <p slot="lede">
+        {methods
+          ? `${methods} Tell us about quantity, garment, and timing — we’ll recommend a path.`
+          : 'Tell us about quantity, garment, and timing — we’ll recommend a path.'}
+      </p>
+      <div class="method-grid">
+        <div class="method-card">Screen Printing</div>
+        <div class="method-card">DTG</div>
+        <div class="method-card">DTF</div>
+        <div class="method-card">Embroidery</div>
       </div>
-    </div>
+      <div class="section-cta">
+        <Button href="/custom-printing/">Get a custom quote →</Button>
+      </div>
+    </Section>
+
+    <Section eyebrow="Customer reviews" title="What people say.">
+      <div class="review-grid">
+        {reviews.map((review) => <ReviewCard quote={review.quote} name={review.name} />)}
+      </div>
+    </Section>
+
+    <Section eyebrow="FAQ" title="Quick answers" id="faq">
+      <Accordion items={faqItems} />
+      <div class="section-cta">
+        <Button href="/faq/">View the full FAQ →</Button>
+      </div>
+    </Section>
+
+    <section class="final-cta">
+      <h2>Ready when you are.</h2>
+      <p>Questions? Call us — we’re happy to help.</p>
+      <div class="section-cta">
+        <button type="button" class="ds-btn ds-btn--primary" data-quote-trigger>Get a free quote →</button>
+        <Button variant="secondary" href="tel:3109042655">{phone}</Button>
+      </div>
+    </section>
   </div>
-</section>
-
-<section class="services-section" id="services">
-  <div class="container">
-    <div class="services-header reveal">
-      <div class="eyebrow">Print Services</div>
-      <h2 class="section-title">Every print method,<br>under one roof.</h2>
-      <p class="section-sub">From single shirts to large-scale production runs — we have the right process for your project.</p>
-    </div>
-
-    <div class="services-grid">
-      <div class="service-card service-card-silkscreen-bg reveal" onclick="openModal('Screen Printing')">
-        <div class="service-tag">Most Popular</div>
-        <div class="service-name">Silkscreen Printing</div>
-        <div class="service-desc">The gold standard for bulk apparel. Crisp, durable ink applied through a mesh screen delivers vivid, long-lasting colors at the best price-per-piece for larger quantities.</div>
-        <button class="service-link">Get screen printing →</button>
-      </div>
-
-      <div class="service-card service-card-dtg-bg reveal" onclick="openModal('Direct to Garment')">
-        <div class="service-tag">No Minimums</div>
-        <div class="service-name">Direct To Garment</div>
-        <div class="service-desc">Vibrant, photo-realistic graphics printed directly onto your garment. Perfect for complex, full-color designs with no setup fees and no minimums.</div>
-        <button class="service-link">Print with DTG →</button>
-      </div>
-
-      <div class="service-card service-card-dtf-bg reveal" style="transition-delay:0.08s" onclick="openModal('Direct to Film')">
-        <div class="service-tag">Best Durability</div>
-        <div class="service-name">Direct To Film</div>
-        <div class="service-desc">Our DTF service produces top-quality prints that bond to virtually any fabric. Exceptional durability and color vibrancy that holds up wash after wash.</div>
-        <button class="service-link">Start DTF printing →</button>
-      </div>
-
-      <div class="service-card service-card-embroidery-bg reveal" style="transition-delay:0.16s" onclick="openModal('Embroidery')">
-        <div class="service-tag">Premium Finish</div>
-        <div class="service-name">Custom Embroidery</div>
-        <div class="service-desc">Elevate your brand with professional, tactile stitching. Our skilled artisans bring your vision to life on hats, polos, jackets, and premium outerwear.</div>
-        <button class="service-link">Get embroidery →</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="about-section" id="about">
-  <div class="container">
-    <div class="about-grid">
-      <div class="reveal">
-        <div class="about-label"><span>Our Story</span></div>
-        <h2 class="about-title">We're not just another print shop.</h2>
-        <p class="about-body">We started LiAlvaro Apparel with a simple goal: to make premium custom printing accessible to everyone. Forget complicated processes and hidden fees. We're open about everything, dedicated to ethical practices, and always just a phone call away.</p>
-
-        <div class="about-features">
-          <div class="about-feature">
-            <div class="feature-check">
-              <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 6L5 9L10 3" stroke="#FF6B2B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <div class="feature-text"><strong>Transparent pricing</strong> — no surprise fees, ever</div>
-          </div>
-          <div class="about-feature">
-            <div class="feature-check">
-              <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 6L5 9L10 3" stroke="#FF6B2B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <div class="feature-text"><strong>Ethical practices</strong> — sourced and printed responsibly</div>
-          </div>
-          <div class="about-feature">
-            <div class="feature-check">
-              <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 6L5 9L10 3" stroke="#FF6B2B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <div class="feature-text"><strong>Always reachable</strong> — real humans, 24/7 support</div>
-          </div>
-          <div class="about-feature">
-            <div class="feature-check">
-              <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 6L5 9L10 3" stroke="#FF6B2B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <div class="feature-text"><strong>Design assistance</strong> — we'll help perfect your artwork</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="about-right reveal" style="transition-delay:0.1s">
-        <div class="about-card">
-          <div class="about-card-val">12+</div>
-          <div class="about-card-label">Min. qty for bulk pricing</div>
-        </div>
-        <div class="about-card">
-          <div class="about-card-val">5–7</div>
-          <div class="about-card-label">Day standard turnaround</div>
-        </div>
-        <div class="about-card accent">
-          <div class="about-card-val">Same day</div>
-          <div class="about-card-label">Rush service available for Los Angeles orders</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="cap-section">
-  <div class="container">
-    <div class="reveal">
-      <div class="eyebrow">Real Google Reviews (all 5-stars)</div>
-      <h2 class="section-title">What our customers<br>are saying.</h2>
-    </div>
-    <div class="cap-grid">
-      <div class="cap-card reveal">
-        <img class="cap-stars" src="/images/review-stars.png" alt="5-star review" loading="lazy" />
-        <div class="cap-body">I gad my logo designed and my t-shirts and polos printed here several years ago. Since then, I've had banners, posters, hats, and, many other products done by LTP (even ugly sweaters for Christmas of 2024). Li is so friendly and patient. I recommend LiAlvaro T-shirt Printing to everyone.</div>
-        <div class="cap-author">Leighton C.</div>
-      </div>
-      <div class="cap-card reveal" style="transition-delay:0.08s">
-        <img class="cap-stars" src="/images/review-stars.png" alt="5-star review" loading="lazy" />
-        <div class="cap-body">I will never use another company for my Custom Printing needs. These guys do a wonderful job.</div>
-        <div class="cap-author">Mark L.</div>
-      </div>
-      <div class="cap-card reveal" style="transition-delay:0.16s">
-        <img class="cap-stars" src="/images/review-stars.png" alt="5-star review" loading="lazy" />
-        <div class="cap-body">Truly 5 stars - This was so easy, even for my large, complicated order. Li at LiAlvaro T-shirt Printing guided me through the process and was super responsive to my questions. The shirts are comfortable, the design is perfect. We all love them. This was a great experience!</div>
-        <div class="cap-author">Richard L.</div>
-      </div>
-      <div class="cap-card reveal" style="transition-delay:0.24s">
-        <img class="cap-stars" src="/images/review-stars.png" alt="5-star review" loading="lazy" />
-        <div class="cap-body">Responded quickly and delivered beautifully!</div>
-        <div class="cap-author">Melinda M.</div>
-      </div>
-      <div class="cap-card reveal" style="transition-delay:0.32s">
-        <img class="cap-stars" src="/images/review-stars.png" alt="5-star review" loading="lazy" />
-        <div class="cap-body">Excellent service all the time. Thanks Li.</div>
-        <div class="cap-author">Calvary Chapel Crenshaw</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="cta-band">
-  <div class="container">
-    <h2>Ready to make something<br>incredible?</h2>
-    <p>Our team is available 24/7 for instant quotes and design assistance.</p>
-    <div class="cta-band-actions">
-      <button class="btn-white" data-quote-trigger onclick="openModal()">Get a Free Quote</button>
-      <a href="tel:3109042655" class="btn-outline-white">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3.7 1C3.3 1 2.5 1.3 1.9 2L1 3c-.7.7-1 2 .3 4 .7 1.2 1.7 2.6 3.1 4s2.8 2.4 4 3.1c2 1.3 3.3 1 4 .3l1-1c.7-.7 1-1.5 1-1.9 0-.2-.2-.5-.5-.7L12 9.5c-.3-.2-.6-.3-.8-.2l-1.3.4c-.3.1-.6 0-.8-.2L7.5 8l-1.5-1.6c-.2-.2-.3-.5-.2-.8L6.2 4.4c.1-.2 0-.5-.2-.8L4.4 1.5C4.2 1.2 3.9 1 3.7 1z"/></svg>
-        Call (310) 904-2655
-      </a>
-    </div>
-  </div>
-</section>
-
-<section class="faq-section" id="faq">
-  <div class="container">
-    <div class="reveal" style="text-align:center; margin-bottom:0">
-      <div class="eyebrow">FAQ</div>
-      <h2 class="section-title">Frequently asked<br>questions.</h2>
-    </div>
-
-    <div class="faq-grid">
-      <div>
-        <div class="faq-item open">
-          <div class="faq-question">
-            <span class="faq-q-text">What type of shirt can I choose?</span>
-            <div class="faq-icon">+</div>
-          </div>
-          <div class="faq-answer">You have many brand and material options — cotton, polyester, blends, and more — as well as weight, size, and gender preferences. You may also bring your own shirts to print on.</div>
-        </div>
-
-        <div class="faq-item">
-          <div class="faq-question">
-            <span class="faq-q-text">How can I get a price quote?</span>
-            <div class="faq-icon">+</div>
-          </div>
-          <div class="faq-answer">Click any "Get a Quote" button on the site and complete the quick form. You can also call us at (310) 904-2655 for a fast estimate — we respond within 1 business hour.</div>
-        </div>
-
-        <div class="faq-item">
-          <div class="faq-question">
-            <span class="faq-q-text">How do I order a custom shirt?</span>
-            <div class="faq-icon">+</div>
-          </div>
-          <div class="faq-answer">Ordering starts with selecting your garment, creating or uploading your design, and choosing placement. Our team guides you through the entire process from start to finish.</div>
-        </div>
-
-        <div class="faq-item">
-          <div class="faq-question">
-            <span class="faq-q-text">What's the minimum order quantity?</span>
-            <div class="faq-icon">+</div>
-          </div>
-          <div class="faq-answer">We have no minimum order quantity. You can order a single shirt! That said, you benefit significantly at 12+ pieces due to bulk pricing on screen printing.</div>
-        </div>
-      </div>
-
-      <div>
-        <div class="faq-item">
-          <div class="faq-question">
-            <span class="faq-q-text">Do I need to create my own design?</span>
-            <div class="faq-icon">+</div>
-          </div>
-          <div class="faq-answer">Not at all. We accept high-resolution files in .ai, .png, .jpg, or .svg formats. We can also edit your existing design or create a custom design for you at a small cost.</div>
-        </div>
-
-        <div class="faq-item">
-          <div class="faq-question">
-            <span class="faq-q-text">How long does it take to get my shirts?</span>
-            <div class="faq-icon">+</div>
-          </div>
-          <div class="faq-answer">Standard turnaround is 5–7 business days after artwork approval and payment. Rush orders (4 business days) are available for an additional fee. Same-day service available locally in LA.</div>
-        </div>
-
-        <div class="faq-item">
-          <div class="faq-question">
-            <span class="faq-q-text">How much is delivery?</span>
-            <div class="faq-icon">+</div>
-          </div>
-          <div class="faq-answer">Local delivery options are available in the Los Angeles area. Final delivery cost depends on order size and location. Contact us for an exact quote including delivery.</div>
-        </div>
-
-        <div class="faq-item">
-          <div class="faq-question">
-            <span class="faq-q-text">What printing method is right for me?</span>
-            <div class="faq-icon">+</div>
-          </div>
-          <div class="faq-answer">For bulk + simple designs: screen printing. For photo-quality or small batches: DTG. For versatility across fabrics: DTF. For premium branded items: embroidery. We'll help you choose.</div>
-        </div>
-      </div>
-    </div>
-    <p class="faq-see-all">
-      <a href="/faq">View the complete FAQ →</a>
-    </p>
-  </div>
-</section>
-
 </Layout>
 
-<style is:global>
-  html { scroll-behavior: smooth; font-size: 16px; }
-
-  .container { max-width: 1080px; margin: 0 auto; padding: 0 40px; }
-  .eyebrow {
-    font-size: 13px; font-weight: 600; letter-spacing: 0.06em;
-    text-transform: uppercase; color: var(--orange);
-    margin-bottom: 12px;
-  }
-
-  .hero {
-    background: #0a0a0c;
-    padding: 100px 0 80px;
-    text-align: center;
-    position: relative; overflow: hidden;
-    background-image: url('/images/homepage-hero-2.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-
-  .hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse at 50% 0%, rgba(255,107,43,0.22), transparent 60%),
-      linear-gradient(180deg, rgba(0,0,0,0.25), rgba(0,0,0,0.78));
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .hero .container {
-    position: relative;
-    z-index: 3;
-  }
-
-  .hero-glow {
-    position: absolute; top: -60px; left: 50%;
-    transform: translateX(-50%);
-    width: 700px; height: 400px;
-    background: radial-gradient(ellipse at 50% 0%, rgba(34,133,108,0.14), transparent 70%);
-    pointer-events: none;
-    z-index: 2;
-  }
-
-  .hero-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: #ffffff; border: 1px solid rgba(34, 133, 108, 0.42);
-    color: #22856c; padding: 6px 14px; border-radius: 100px;
-    font-size: 12.5px; font-weight: 700; letter-spacing: 0.02em;
-    margin-bottom: 28px;
-    animation: fadeUp 0.5s ease both;
-  }
-  .badge-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    background: #33c8a3; animation: pulse 2s infinite;
-  }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
-
-  .hero h1 {
-    font-size: clamp(42px, 6vw, 76px);
-    font-weight: 800; line-height: 1.05;
-    letter-spacing: -0.035em;
-    color: rgba(255, 255, 255, 0.98);
-    max-width: 760px; margin: 0 auto 20px;
-    animation: fadeUp 0.55s 0.05s ease both;
-    text-shadow: 0 10px 30px rgba(0,0,0,0.45);
-  }
-  .hero h1 span { color: var(--orange); }
-
-  .hero-sub {
-    font-size: 19px; line-height: 1.65;
-    color: rgba(255, 255, 255, 0.78);
-    font-weight: 400;
-    max-width: 520px; margin: 0 auto 44px;
-    animation: fadeUp 0.55s 0.1s ease both;
-  }
-
-  .hero-actions {
-    display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
-    animation: fadeUp 0.55s 0.15s ease both;
-    margin-bottom: 64px;
-  }
-
-  .btn-primary {
-    background: var(--orange); color: white;
-    padding: 14px 30px; border-radius: 100px;
-    font-size: 16px; font-weight: 700; letter-spacing: -0.01em;
-    border: none; cursor: pointer;
-    transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
-    box-shadow: 0 4px 20px rgba(255,107,43,0.35);
-  }
-  .btn-primary:hover {
-    background: var(--orange-deep);
-    transform: scale(1.02);
-    box-shadow: 0 6px 28px rgba(255,107,43,0.45);
-  }
-
-  .btn-secondary {
-    background: var(--surface); color: var(--text-primary);
-    padding: 14px 30px; border-radius: 100px;
-    font-size: 16px; font-weight: 600;
-    border: 1px solid var(--border); cursor: pointer;
-    text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
-    transition: background 0.18s, transform 0.15s;
-  }
-  .btn-secondary:hover { background: var(--border-soft); color: #22856c; transform: scale(1.02); }
-
-  .hero-stats {
-    display: flex; justify-content: center; gap: 0;
-    border-top: 1px solid rgba(255,255,255,0.18);
-    padding-top: 48px;
-    animation: fadeUp 0.55s 0.22s ease both;
-  }
-
-  .hero-stat {
-    padding: 0 48px;
-    border-right: 1px solid var(--border);
-    text-align: center;
-  }
-  .hero-stat:last-child { border-right: none; }
-
-  .hero .stat-val {
-    font-size: 32px; font-weight: 800; letter-spacing: -0.04em;
-    color: rgba(255,255,255,0.98);
-    line-height: 1;
-    margin-bottom: 5px;
-  }
-  .stat-val span { color: rgba(255,255,255,0.98); }
-  .hero .stat-label {
-    font-size: 13px;
-    color: #ff6b2b;
-    font-weight: 700;
-  }
-
-  .services-section {
-    padding: 100px 0;
-    background: var(--bg);
-  }
-
-  .services-header {
-    text-align: center; margin-bottom: 60px;
-  }
-
-  .section-title {
-    font-size: clamp(32px, 4vw, 48px);
-    font-weight: 800; letter-spacing: -0.03em;
-    color: var(--text-primary); line-height: 1.1;
-  }
-
-  .section-sub {
-    font-size: 17px; color: var(--text-secondary);
-    margin-top: 12px; font-weight: 400; line-height: 1.6;
-  }
-
-  .services-grid {
+<style>
+  .home-hero {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
+    gap: 0;
+    background: var(--ink);
+    color: var(--white);
   }
 
-  .service-card {
-    background: white;
-    border-radius: var(--radius-lg);
-    padding: 40px;
-    border: 1px solid var(--border-soft);
-    transition: transform 0.25s, box-shadow 0.25s;
-    position: relative; overflow: hidden;
-    cursor: pointer;
-  }
-  .service-card > * {
-    position: relative;
-    z-index: 1;
-  }
-  .service-card::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 3px;
-    background: linear-gradient(90deg, var(--orange), var(--orange-deep));
-    transform: scaleX(0); transform-origin: left;
-    transition: transform 0.3s ease;
-    border-radius: 3px 3px 0 0;
-    z-index: 2;
-  }
-  .service-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
-  .service-card:hover::before { transform: scaleX(1); }
-
-  .service-card-silkscreen-bg {
-    background: white;
-    border: 1px solid var(--border-soft);
-    box-shadow: none;
-  }
-  .service-card-silkscreen-bg::after {
-    content: '';
-    position: absolute;
-    inset: 1px;
-    border-radius: calc(var(--radius-lg) - 1px);
-    background-image:
-      linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-      url('/images/screenprinting.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: 0;
-  }
-  .service-card-dtg-bg {
-    background: white;
-    border: 1px solid var(--border-soft);
-    box-shadow: none;
-  }
-  .service-card-dtf-bg {
-    background: white;
-    border: 1px solid var(--border-soft);
-    box-shadow: none;
-  }
-  .service-card-embroidery-bg {
-    background: white;
-    border: 1px solid var(--border-soft);
-    box-shadow: none;
-  }
-  .service-card-dtg-bg::after,
-  .service-card-dtf-bg::after,
-  .service-card-embroidery-bg::after {
-    content: '';
-    position: absolute;
-    inset: 1px;
-    border-radius: calc(var(--radius-lg) - 1px);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: 0;
-  }
-  .service-card-dtg-bg::after {
-    background-image:
-      linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-      url('/images/dtg.jpg');
-  }
-  .service-card-dtf-bg::after {
-    background-image:
-      linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-      url('/images/dtf.jpg');
-  }
-  .service-card-embroidery-bg::after {
-    background-image:
-      linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-      url('/images/embroidery.jpg');
-  }
-  .service-card-silkscreen-bg .service-name,
-  .service-card-dtg-bg .service-name,
-  .service-card-dtf-bg .service-name,
-  .service-card-embroidery-bg .service-name,
-  .service-card-silkscreen-bg .service-desc,
-  .service-card-dtg-bg .service-desc,
-  .service-card-dtf-bg .service-desc,
-  .service-card-embroidery-bg .service-desc,
-  .service-card-silkscreen-bg .service-link,
-  .service-card-dtg-bg .service-link,
-  .service-card-dtf-bg .service-link,
-  .service-card-embroidery-bg .service-link {
-    color: #ffffff;
+  @media (min-width: 900px) {
+    .home-hero {
+      grid-template-columns: 1.05fr 1fr;
+      min-height: min(78vh, 720px);
+    }
   }
 
-  .service-icon {
-    width: 52px; height: 52px; border-radius: var(--radius-sm);
-    background: var(--orange-soft); display: flex; align-items: center; justify-content: center;
-    font-size: 24px; margin-bottom: 24px;
+  .home-hero__copy {
+    padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 3rem);
+    display: grid;
+    align-content: center;
+    gap: 0.75rem;
   }
 
-  .service-tag {
-    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--orange);
-    margin-bottom: 8px;
+  .home-hero__copy .eyebrow {
+    color: var(--gold);
   }
 
-  .service-name {
-    font-size: 22px; font-weight: 800; letter-spacing: -0.02em;
-    color: var(--text-primary); margin-bottom: 10px;
-  }
-
-  .service-desc {
-    font-size: 15px; color: var(--text-secondary);
-    line-height: 1.65; font-weight: 400;
-  }
-
-  .service-link {
-    display: inline-flex; align-items: center; gap: 5px;
-    margin-top: 24px; font-size: 14px; font-weight: 700;
-    color: #ffffff; text-decoration: none;
-    transition: gap 0.2s, background 0.18s;
-    background: #22856c;
-    padding: 10px 16px;
-    border-radius: 100px;
-    border: none;
-    cursor: pointer;
-  }
-  .service-link:hover { gap: 9px; background: #1b6f5a; }
-
-  .about-section {
-    background: white;
-    padding: 100px 0;
-  }
-
-  .about-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 80px; align-items: center;
-  }
-
-  .about-label {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: var(--orange-soft); border-radius: 100px;
-    padding: 6px 14px; margin-bottom: 20px;
-  }
-  .about-label span {
-    font-size: 12.5px; font-weight: 700;
-    color: var(--orange); letter-spacing: 0.04em; text-transform: uppercase;
-  }
-
-  .about-title {
-    font-size: clamp(30px, 3.5vw, 44px);
-    font-weight: 800; letter-spacing: -0.03em;
-    line-height: 1.1; margin-bottom: 20px;
-  }
-
-  .about-body {
-    font-size: 16px; color: var(--text-secondary);
-    line-height: 1.75; font-weight: 400; margin-bottom: 28px;
-  }
-
-  .about-features {
-    display: flex; flex-direction: column; gap: 14px;
-  }
-
-  .about-feature {
-    display: flex; align-items: flex-start; gap: 12px;
-  }
-  .feature-check {
-    width: 22px; height: 22px; border-radius: 50%;
-    background: var(--orange-soft); display: flex;
-    align-items: center; justify-content: center;
-    flex-shrink: 0; margin-top: 1px;
-  }
-  .feature-check svg { width: 11px; height: 11px; }
-  .feature-text { font-size: 15px; color: var(--text-secondary); font-weight: 500; line-height: 1.5; }
-  .feature-text strong { color: var(--text-primary); }
-
-  .about-right {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-  }
-
-  .about-card {
-    background: var(--surface); border-radius: var(--radius-md);
-    padding: 28px 24px; border: 1px solid var(--border-soft);
-    transition: transform 0.2s;
-  }
-  .about-card:hover { transform: translateY(-2px); }
-
-  .about-card.accent {
-    background: var(--orange); grid-column: 1 / -1;
-    padding: 28px;
-  }
-
-  .about-card-val {
-    font-size: 40px; font-weight: 800; letter-spacing: -0.04em;
-    color: var(--text-primary); line-height: 1;
-  }
-  .about-card.accent .about-card-val { color: white; }
-
-  .about-card-label {
-    font-size: 13px; color: var(--text-secondary); font-weight: 500; margin-top: 6px;
-  }
-  .about-card.accent .about-card-label { color: rgba(255,255,255,0.75); }
-
-  .cap-section {
-    background: var(--bg);
-    padding: 100px 0;
-  }
-
-  .cap-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
-    margin-top: 52px;
-  }
-
-  .cap-card {
-    background: white; border-radius: var(--radius-lg);
-    padding: 36px 32px; border: 1px solid var(--border-soft);
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .cap-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
-
-  .cap-icon {
-    font-size: 36px; margin-bottom: 20px; display: block;
-  }
-  .cap-stars {
-    display: block;
-    width: 130px;
-    height: auto;
-    margin-bottom: 12px;
-  }
-  .cap-body {
-    font-size: 14.5px; color: var(--text-secondary);
-    line-height: 1.65; font-weight: 400;
-  }
-  .cap-author {
-    font-size: 15px;
-    font-weight: 700;
-    color: #22856c;
-    margin-top: 14px;
-  }
-
-  .cta-band {
-    background: var(--text-primary);
-    padding: 80px 0; text-align: center;
-    position: relative; overflow: hidden;
-  }
-  .cta-band::before {
-    content: '';
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 800px; height: 400px;
-    background: radial-gradient(ellipse, rgba(255,107,43,0.14), transparent 65%);
-    pointer-events: none;
-  }
-
-  .cta-band h2 {
-    font-size: clamp(32px, 4vw, 52px); font-weight: 800;
-    letter-spacing: -0.03em; color: white;
-    margin-bottom: 14px; position: relative;
-  }
-  .cta-band p {
-    font-size: 17px; color: rgba(255,255,255,0.6);
-    max-width: 460px; margin: 0 auto 36px; line-height: 1.6;
-    position: relative;
-  }
-  .cta-band-actions {
-    display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
-    position: relative;
-  }
-
-  .btn-white {
-    background: white; color: var(--text-primary);
-    padding: 14px 30px; border-radius: 100px;
-    font-size: 15px; font-weight: 700;
-    border: none; cursor: pointer;
-    transition: background 0.18s, transform 0.15s;
-  }
-  .btn-white:hover { background: #f0f0f0; transform: scale(1.02); }
-
-  .btn-outline-white {
-    background: transparent; color: white;
-    padding: 13px 28px; border-radius: 100px;
-    font-size: 15px; font-weight: 600;
-    border: 1.5px solid rgba(255,255,255,0.25); cursor: pointer;
-    transition: border-color 0.18s, transform 0.15s;
-    display: flex; align-items: center; gap: 7px;
-    text-decoration: none;
-  }
-  .btn-outline-white:hover { border-color: rgba(255,255,255,0.5); color: #22856c; transform: scale(1.02); }
-
-  .faq-section {
-    background: white; padding: 100px 0;
-  }
-
-  .faq-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 0 60px;
-    margin-top: 52px;
-  }
-
-  .faq-item {
-    padding: 24px 0;
-    border-bottom: 1px solid var(--border-soft);
-    cursor: pointer;
-  }
-  .faq-item:first-child { border-top: 1px solid var(--border-soft); }
-  .faq-item:nth-child(2) { border-top: 1px solid var(--border-soft); }
-
-  .faq-question {
-    display: flex; justify-content: space-between; align-items: center;
-    gap: 16px;
-  }
-  .faq-q-text {
-    font-size: 15px; font-weight: 700; color: var(--text-primary);
-    line-height: 1.4;
-  }
-  .faq-icon {
-    width: 24px; height: 24px; border-radius: 50%;
-    background: var(--surface); display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; font-size: 14px; color: var(--text-secondary);
-    transition: background 0.2s, transform 0.25s;
-    font-weight: 700;
-  }
-  .faq-item.open .faq-icon {
-    background: var(--orange); color: white; transform: rotate(45deg);
-  }
-  .faq-answer {
-    font-size: 14.5px; color: var(--text-secondary); line-height: 1.7;
-    max-height: 0; overflow: hidden;
-    transition: max-height 0.3s ease, padding 0.3s ease;
+  .home-hero h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.6rem, 7vw, 4.4rem);
     font-weight: 400;
-  }
-  .faq-item.open .faq-answer {
-    max-height: 200px; padding-top: 12px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    line-height: 0.98;
   }
 
-  .faq-see-all {
+  .home-hero__headline {
+    margin: 0;
+    font-size: clamp(1.15rem, 2.4vw, 1.5rem);
+    font-weight: 700;
+  }
+
+  .home-hero__sub {
+    margin: 0;
+    max-width: 36rem;
+    color: color-mix(in srgb, var(--white) 82%, var(--mesh-grey));
+  }
+
+  .home-hero__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .home-hero__ctas :global(.ds-btn--ghost) {
+    color: var(--white);
+  }
+
+  .home-hero__ctas .ds-btn--secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.7rem 1.15rem;
+    border: 2px solid var(--white);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .home-hero__visual {
+    min-height: 240px;
+    overflow: hidden;
+  }
+
+  .home-hero__visual img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .home-sections :global(.ds-section) {
+    padding-block: 2.5rem;
+  }
+
+  .section-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  .product-grid,
+  .method-grid,
+  .review-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .method-grid,
+    .review-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .method-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .method-card {
+    border: 1px solid var(--color-border-strong);
+    background: var(--white);
+    border-radius: var(--radius-md);
+    padding: 1.25rem 1rem;
+    font-weight: 700;
     text-align: center;
-    margin-top: 40px;
-    margin-bottom: 0;
   }
 
-  .faq-see-all a {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--orange);
-    text-decoration: none;
+  .final-cta {
+    margin: 2rem 0 1rem;
+    padding: 2rem 1.25rem;
+    text-align: center;
+    background: var(--white);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
   }
 
-  .faq-see-all a:hover {
-    opacity: 0.88;
+  .final-cta h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 400;
+    text-transform: uppercase;
   }
 
-  .email-section {
-    background: var(--surface);
-    padding: 80px 0; text-align: center;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
+  .final-cta p {
+    margin: 0.5rem auto 0;
+    max-width: 36rem;
+    color: color-mix(in srgb, var(--ink) 80%, var(--mesh-grey));
   }
 
-  .email-section h2 {
-    font-size: 30px; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 8px;
-  }
-  .email-section p { font-size: 15px; color: var(--text-secondary); margin-bottom: 28px; }
-
-  .email-form {
-    display: flex; gap: 0; max-width: 420px; margin: 0 auto;
-    border-radius: 100px; overflow: hidden;
-    box-shadow: var(--shadow-sm); border: 1.5px solid var(--border);
-    background: white;
-  }
-  .email-input {
-    flex: 1; padding: 14px 20px;
-    background: transparent; color: var(--text-primary);
-    border: none; font-family: 'Manrope', sans-serif;
-    font-size: 14.5px; outline: none;
-  }
-  .email-input::placeholder { color: var(--text-tertiary); }
-  .email-submit {
-    background: var(--orange); color: white;
-    border: none; padding: 12px 22px;
-    font-family: 'Manrope', sans-serif; font-weight: 700;
-    font-size: 13.5px; cursor: pointer;
-    border-radius: 100px; margin: 4px;
-    transition: background 0.18s;
-  }
-  .email-submit:hover { background: var(--orange-deep); }
-  .email-fine { font-size: 12px; color: var(--text-tertiary); margin-top: 12px; }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(18px); }
-    to   { opacity: 1; transform: translateY(0); }
+  .final-cta .section-cta {
+    justify-content: center;
   }
 
-  .reveal {
-    opacity: 0; transform: translateY(22px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-
-  @media (max-width: 900px) {
-    .services-grid { grid-template-columns: 1fr; }
-    .about-grid { grid-template-columns: 1fr; }
-    .cap-grid { grid-template-columns: 1fr 1fr; }
-    .faq-grid { grid-template-columns: 1fr; }
-    .container { padding: 0 24px; }
-    .hero h1 { font-size: 42px; }
-    .hero-stats { gap: 0; }
-    .hero-stat { padding: 0 24px; }
-  }
-
-  @media (max-width: 600px) {
-    .cap-grid { grid-template-columns: 1fr; }
-    .hero-stats { flex-direction: column; gap: 24px; }
-    .hero-stat { border-right: none; border-bottom: 1px solid var(--border); padding-bottom: 24px; }
-    .hero-stat:last-child { border-bottom: none; padding-bottom: 0; }
-    .about-right { grid-template-columns: 1fr 1fr; }
+  .final-cta .ds-btn--primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.7rem 1.15rem;
+    border: 2px solid var(--print-red);
+    border-radius: var(--radius-md);
+    background: var(--print-red);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    cursor: pointer;
   }
 </style>
-
-<script is:inline>
-  document.querySelectorAll('.faq-item').forEach(item => {
-    item.querySelector('.faq-question').addEventListener('click', () => {
-      const isOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-      if (!isOpen) item.classList.add('open');
-    });
-  });
-
-  const revealObserver = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) e.target.classList.add('visible');
-    });
-  }, { threshold: 0.08 });
-  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-</script>

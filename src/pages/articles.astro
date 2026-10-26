@@ -1,99 +1,108 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import ArticleCard from "../components/ArticleCard.astro";
+import Layout from '../layouts/Layout.astro';
+
+const articles = [
+  {
+    href: '/best-affordable-custom-t-shirt-printing-in-los-angeles-2026-local-guide/',
+    imageUrl: '/images/screenprinting.jpg',
+    meta: 'Local Guide · 5 Min Read',
+    title: 'Best Affordable Custom T-Shirt Printing in Los Angeles (2026 Local Guide)',
+    excerpt: 'How to navigate the LA market for high-quality prints without overspending.',
+  },
+  {
+    href: '/the-ultimate-guide-to-finding-the-perfect-place-for-your-bulk-custom-t-shirt-event-needs/',
+    imageUrl: '/images/DTF.jpg',
+    meta: 'Event Planning · 8 Min Read',
+    title: 'The Ultimate Guide to Finding the Perfect Place for Your Bulk Custom T-Shirt Event Needs',
+    excerpt: 'What to look for when choosing a print partner for high-volume event orders.',
+  },
+];
 ---
 
-<Layout title="Articles | LiAlvaro Apparel">
-  <section class="hero">
-    <div class="container">
-      <h1>Insights. Guides. Inspiration.</h1>
-      <p>Everything you need to know about custom apparel from the experts in Los Angeles.</p>
-    </div>
-  </section>
+<Layout
+  title="Articles"
+  description="Guides and insights on custom apparel printing from LiAlvaro T-Shirt Printing in Los Angeles."
+>
+  <div class="page-shell">
+    <header class="page-hero">
+      <p class="eyebrow">Articles</p>
+      <h1>Guides &amp; insights.</h1>
+      <p>Practical notes on custom apparel from Los Angeles.</p>
+    </header>
 
-  <section class="section">
-    <div class="container">
-      <div class="articles-grid">
-        {
-          [
-            {
-              href: "/best-affordable-custom-t-shirt-printing-in-los-angeles-2026-local-guide",
-              imageUrl: "/images/screenprinting.jpg",
-              meta: "Local Guide • 5 Min Read",
-              title: "Best Affordable Custom T-Shirt Printing in Los Angeles (2026 Local Guide)",
-              excerpt: "Discover how to navigate the LA market to find high-quality prints without overspending.",
-            },
-            {
-              href: "/the-ultimate-guide-to-finding-the-perfect-place-for-your-bulk-custom-t-shirt-event-needs",
-              imageUrl: "/images/dtf.jpg",
-              meta: "Event Planning • 8 Min Read",
-              title: "The Ultimate Guide to Finding the Perfect Place for Your Bulk Custom T-Shirt Event Needs",
-              excerpt: "Learn exactly what to look for when choosing a print partner for high-volume event orders.",
-            },
-          ].map((a) => (
-            <ArticleCard
-              href={a.href}
-              imageUrl={a.imageUrl}
-              meta={a.meta}
-              title={a.title}
-              excerpt={a.excerpt}
-            />
-          ))
-        }
-      </div>
+    <div class="articles-grid">
+      {
+        articles.map((article) => (
+          <a class="article-card" href={article.href}>
+            <img src={article.imageUrl} alt="" width="640" height="400" loading="lazy" decoding="async" />
+            <div class="article-card__body">
+              <p class="meta">{article.meta}</p>
+              <h2>{article.title}</h2>
+              <p>{article.excerpt}</p>
+            </div>
+          </a>
+        ))
+      }
     </div>
-  </section>
+  </div>
 </Layout>
 
 <style>
-  .hero {
-    padding: 110px 0 70px;
-    text-align: center;
-    background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-    border-bottom: 1px solid var(--border-soft);
-  }
-
-  .hero h1 {
-    font-size: clamp(40px, 6vw, 70px);
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    margin-bottom: 14px;
-    color: var(--text-primary);
-  }
-
-  .hero p {
-    max-width: 760px;
-    margin: 0 auto;
-    color: var(--text-secondary);
-    font-size: 19px;
-    line-height: 1.65;
-  }
-
-  .section {
-    padding: 80px 0 90px;
-  }
-
   .articles-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 22px;
+    gap: 1rem;
   }
 
-  @media (max-width: 1200px) {
+  @media (min-width: 800px) {
     .articles-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: 1fr 1fr;
     }
   }
 
-  @media (max-width: 1024px) {
-    .articles-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+  .article-card {
+    display: grid;
+    background: var(--white);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
   }
 
-  @media (max-width: 900px) {
-    .articles-grid {
-      grid-template-columns: 1fr;
-    }
+  .article-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .article-card__body {
+    padding: 1.25rem;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .meta {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+  }
+
+  .article-card h2 {
+    margin: 0;
+    font-size: var(--text-lg);
+    line-height: var(--leading-snug);
+  }
+
+  .article-card p:last-child {
+    margin: 0;
+    color: color-mix(in srgb, var(--ink) 80%, var(--mesh-grey));
+  }
+
+  .article-card:hover h2 {
+    color: var(--print-red);
   }
 </style>

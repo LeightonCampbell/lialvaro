@@ -1,0 +1,122 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/ds/Button.astro';
+import { claimText } from '../../lib/claims';
+
+const methods = claimText('methods-screen-dtg-dtf-embroidery');
+const quoteHour = claimText('quote-response-1-business-hour');
+const sameDay = claimText('same-day-printing');
+const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
+---
+
+<Layout
+  title="Custom printing & quotes"
+  description="Custom printing and bulk orders in Los Angeles — screen printing, DTG, DTF, and embroidery. Request a free quote."
+>
+  <div class="page-shell">
+    <header class="page-hero">
+      <p class="eyebrow">Custom printing</p>
+      <h1>Custom printing &amp; bulk orders</h1>
+      <p>
+        {methods ?? 'Screen printing, DTG, DTF, and embroidery.'}
+        Tell us what you need and we’ll follow up with pricing.
+        {quoteHour ? ` ${quoteHour}` : ''}
+      </p>
+      <div class="actions">
+        <button type="button" class="ds-btn ds-btn--primary" data-quote-trigger>Request a quote</button>
+        <Button variant="secondary" href="/shop/">Shop standard products →</Button>
+      </div>
+    </header>
+
+    <div class="methods">
+      <button type="button" class="method" data-quote-trigger data-quote-service="Screen Printing">Screen Printing</button>
+      <button type="button" class="method" data-quote-trigger data-quote-service="Direct to Garment">DTG</button>
+      <button type="button" class="method" data-quote-trigger data-quote-service="Direct to Film">Direct to Film</button>
+      <button type="button" class="method" data-quote-trigger data-quote-service="Embroidery">Embroidery</button>
+    </div>
+
+    {sameDay ? <p class="note">{sameDay}</p> : null}
+
+    <section class="band">
+      <h2>Questions first?</h2>
+      <p>{phone}</p>
+      <Button variant="secondary" href="tel:3109042655">Call now</Button>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .methods {
+    display: grid;
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+  }
+
+  @media (min-width: 800px) {
+    .methods {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .method {
+    min-height: 88px;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .method:hover {
+    border-color: var(--print-red);
+    color: var(--print-red);
+  }
+
+  .note {
+    color: var(--mesh-text);
+    font-size: var(--text-sm);
+  }
+
+  .band {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--white);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
+  }
+
+  .band h2 {
+    margin: 0 0 0.35rem;
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .band p {
+    margin: 0 0 0.75rem;
+  }
+
+  .ds-btn--primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.7rem 1.15rem;
+    border: 2px solid var(--print-red);
+    border-radius: var(--radius-md);
+    background: var(--print-red);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    cursor: pointer;
+  }
+</style>

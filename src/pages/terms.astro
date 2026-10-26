@@ -1,0 +1,59 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TodoBanner from '../components/TodoBanner.astro';
+---
+
+<Layout
+  title="Terms of Service"
+  description="Terms of Service for LiAlvaro T-Shirt Printing."
+>
+  <div class="page-shell">
+    <header class="page-hero">
+      <p class="eyebrow">Legal</p>
+      <h1>Terms of Service</h1>
+      <p>Terms that apply when you use this website or request services from LiAlvaro T-Shirt Printing.</p>
+    </header>
+
+    <TodoBanner title="Owner-supplied legal text required">
+      <p>
+        Replace this scaffold with the final Terms of Service before launch. Until then, contact
+        <a href="mailto:help@lialvaro.com">help@lialvaro.com</a> with questions.
+      </p>
+    </TodoBanner>
+
+    <div class="prose">
+      <h2>Overview</h2>
+      <p>
+        By using this site or submitting a quote/design request, you agree to provide accurate contact information and
+        confirm you have rights to any artwork you upload.
+      </p>
+      <h2>Contact</h2>
+      <p>
+        Questions about these terms: <a href="mailto:help@lialvaro.com">help@lialvaro.com</a> or
+        <a href="tel:3109042655">(310) 904-2655</a>.
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .prose {
+    max-width: 42rem;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .prose h2 {
+    margin: 1rem 0 0;
+    font-size: var(--text-xl);
+  }
+
+  .prose p {
+    margin: 0;
+    color: color-mix(in srgb, var(--ink) 85%, var(--mesh-grey));
+  }
+
+  .prose a {
+    color: var(--print-red);
+  }
+</style>

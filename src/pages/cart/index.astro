@@ -1,0 +1,30 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/ds/Button.astro';
+---
+
+<Layout
+  title="Cart"
+  description="Your LiAlvaro cart. Commerce checkout ships in a later stage."
+  noindex={true}
+>
+  <div class="page-shell">
+    <header class="page-hero">
+      <p class="eyebrow">Cart</p>
+      <h1>Your cart</h1>
+      <p>Your cart is empty. Browse products to get started, or request a custom quote.</p>
+    </header>
+    <div class="actions">
+      <Button href="/shop/">Browse products</Button>
+      <Button variant="secondary" href="/custom-printing/">Get a custom quote</Button>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+</style>

@@ -2,69 +2,108 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Bulk Custom T-Shirt Event Needs | The Ultimate Guide">
-  <article class="blog-post">
-    <header class="post-header text-center animate-up">
-      <div class="container">
-        <div class="meta text-secondary mb-2">Event Planning • 8 Min Read</div>
-        <h1>The Ultimate Guide to Finding the Perfect Place for Your Bulk Custom T-Shirt Event Needs</h1>
-        <p class="mt-2 text-secondary lead">Organizing a large event? Learn exactly what to look for when choosing a print partner for bulk orders to ensure everything arrives flawlessly and on time.</p>
-        <div class="author mt-4">By the Lialvaro Team</div>
-      </div>
+<Layout
+  exactTitle={true}
+  title="Bulk Custom T-Shirt Event Needs | LiAlvaro T-Shirt Printing"
+  description="What to look for when choosing a print partner for bulk custom t-shirt event orders in Los Angeles."
+>
+  <article class="page-shell post">
+    <header class="page-hero">
+      <p class="eyebrow">Event planning · 8 min read</p>
+      <h1>The Ultimate Guide to Finding the Perfect Place for Your Bulk Custom T-Shirt Event Needs</h1>
+      <p>
+        Organizing a large event? Here’s what to look for when choosing a print partner for bulk orders so everything
+        arrives on time.
+      </p>
     </header>
 
-    <div class="container post-content animate-up delay-1">
-      <p>Planning an event is stressful enough without worrying if the merchandise or volunteer uniforms will look right—or arrive on time. Whether it's a corporate retreat in Downtown LA, a marathon, or a massive music festival, your bulk t-shirt order is a critical component of the event's professional image.</p>
+    <div class="prose">
+      <p>
+        Planning an event is stressful enough without worrying whether volunteer shirts or merch will look right — or
+        arrive on time. For corporate retreats, races, and festivals, bulk apparel is part of the professional image.
+      </p>
 
-      <h2>1. Prioritize Communication</h2>
-      <p>When dealing with hundreds or thousands of garments, you cannot afford to work with a "submit your file and hope for the best" online portal. You need a dedicated partner. Look for print shops that offer phone support and real aesthetic guidance before the ink hits the fabric. A good printer will evaluate your artwork, suggest the best garment style, and warn you of potential print issues early on.</p>
+      <h2>1. Prioritize communication</h2>
+      <p>
+        For hundreds or thousands of garments, you need a partner who will review artwork, suggest garments, and flag
+        print issues early — not only a file-upload portal.
+      </p>
 
-      <h2>2. Insist on Screen Printing for Scale</h2>
-      <p>While DTG (Direct to Garment) is amazing for small batches, bulk orders require <strong>Screen Printing</strong>. It is the gold standard for high-volume jobs because it's significantly faster per shirt and the cost plummets as quantity increases. Furthermore, screen printing delivers that vibrant, tactile feel that event-goers love to wear for years to come.</p>
+      <h2>2. Use the right method at scale</h2>
+      <p>
+        DTG is excellent for small batches. Larger runs often favor screen printing for speed and unit cost. We’ll help
+        you match method to quantity and design.
+      </p>
 
-      <h2>3. Ask About Capacity and Deadlines</h2>
-      <p>Can the shop handle an order of 2,000 shirts in 7 days? Some boutique shops max out at a few hundred shirts a week. Always clearly state your absolute drop-dead date before signing off on a quote. Shops that handle all printing in-house (rather than outsourcing) have total control over their schedule and are much more reliable.</p>
+      <h2>3. Ask about capacity and deadlines</h2>
+      <p>
+        State your drop-dead date before you approve a quote. Clear timing beats surprises — especially for event day.
+      </p>
 
-      <h2>4. Request a Sample or Proof</h2>
-      <p>Never run a bulk order completely blind. Ask for a digital mock-up, or even better, a physical printed sample if time permits. Seeing the pantone colors on the actual fabric type you selected can save you from a massive, costly disappointment.</p>
+      <h2>4. Request a proof</h2>
+      <p>
+        Ask for a digital mock-up, or a physical sample when timing allows. Seeing color on the actual fabric saves costly
+        rework.
+      </p>
 
-      <h2>5. Delivery Logistics</h2>
-      <p>Shipping 50 massive boxes of shirts across the country is expensive and risky. If your event is in Los Angeles, partner with a Los Angeles-based printer like Lialvaro Apparel. We frequently work with local event coordinators, offering direct-to-venue delivery, bypassing shipping headaches entirely.</p>
+      <h2>5. Delivery logistics</h2>
+      <p>
+        If your event is in Los Angeles, a local partner can simplify logistics. Ask about local delivery options for
+        your order size and venue.
+      </p>
 
-      <div class="post-cta text-center mt-4">
-        <h3>Planning an event in LA?</h3>
-        <p class="mb-2">Let us handle the merchandising so you can focus on the event itself.</p>
-        <a href="/contact" class="button primary" data-quote-trigger>Get a Bulk Order Quote</a>
+      <div class="cta">
+        <h2>Planning an event in LA?</h2>
+        <p>Request a bulk order quote — no obligation.</p>
+        <button type="button" data-quote-trigger>Get a bulk order quote</button>
       </div>
     </div>
   </article>
 </Layout>
 
 <style>
-  .post-header { padding: 140px 0 60px; border-bottom: 1px solid var(--border-color); background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%); }
-  .post-header h1 { font-size: 3.5rem; max-width: 900px; margin: 0 auto; line-height: 1.15; letter-spacing: -0.02em; color: #fff; }
-  .meta { font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.9rem;}
-  .lead { font-size: 1.5rem; max-width: 700px; margin: 1rem auto; line-height: 1.6; color: rgba(255, 255, 255, 0.78); }
-  .author { font-weight: 600; color: rgba(255, 255, 255, 0.92); }
+  .prose {
+    max-width: 42rem;
+    display: grid;
+    gap: 0.85rem;
+  }
 
-  .post-content { max-width: 800px; margin: 0 auto; padding: 4rem 20px 8rem; }
-  .post-content p { font-size: 1.25rem; line-height: 1.8; margin-bottom: 2rem; color: var(--text-muted); }
-  .post-content h2 { margin: 4rem 0 1.5rem; font-size: 2.25rem; color: var(--text-primary); letter-spacing: -0.02em; }
-  
-  .post-content ul { margin-bottom: 2rem; font-size: 1.25rem; color: var(--text-muted); padding-left: 2rem; line-height: 1.8; }
-  .post-content ul li { margin-bottom: 0.5rem; }
-  .post-content strong { color: var(--text-primary); }
+  .prose h2 {
+    margin: 1.25rem 0 0;
+    font-size: var(--text-2xl);
+  }
 
-  .post-cta { padding: 4rem; background: var(--bg-secondary); border-radius: 24px; border: 1px solid var(--border-color); margin-top: 4rem; }
-  .post-cta h3 { font-size: 2.25rem; margin-bottom: 1rem; color: #fff; }
-  .post-cta p { color: rgba(255, 255, 255, 0.78); }
+  .prose p {
+    margin: 0;
+    color: color-mix(in srgb, var(--ink) 85%, var(--mesh-grey));
+    line-height: 1.7;
+  }
 
-  @media (max-width: 768px) {
-    .post-header { padding: 100px 0 40px; }
-    .post-header h1 { font-size: 2.5rem; }
-    .lead { font-size: 1.25rem; }
-    .post-content p, .post-content ul { font-size: 1.15rem; }
-    .post-content h2 { font-size: 1.75rem; margin-top: 3rem; }
-    .post-cta { padding: 2.5rem 1.5rem; }
+  .cta {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: var(--white);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
+  }
+
+  .cta h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+
+  .cta button {
+    margin-top: 0.75rem;
+    min-height: 44px;
+    padding: 0.7rem 1.15rem;
+    border: 2px solid var(--print-red);
+    border-radius: var(--radius-md);
+    background: var(--print-red);
+    color: var(--white);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
   }
 </style>

@@ -1,186 +1,81 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import Layout from '../layouts/Layout.astro';
+import Button from '../components/ds/Button.astro';
+import Section from '../components/ds/Section.astro';
+import { brand } from '../lib/claims';
 ---
 
-<Layout title="About Us | LiAlvaro Apparel">
-  <section class="hero">
-    <div class="container">
+<Layout
+  title="About"
+  description={`The story behind ${brand} — custom apparel printing in Los Angeles since 2020.`}
+>
+  <div class="page-shell">
+    <header class="page-hero">
+      <p class="eyebrow">About</p>
       <h1>The story behind the print.</h1>
-      <p>Born in Los Angeles, LiAlvaro Apparel was founded by artists who understand the power of a perfect garment and the impact a great print can make.</p>
-    </div>
-  </section>
+      <p>Born in Los Angeles, LiAlvaro was founded by people who care about clear process and durable results.</p>
+    </header>
 
-  <section class="section">
-    <div class="container grid">
-      <article class="panel">
-        <h2>Our Story</h2>
+    <Section eyebrow="Our story" title="Los Angeles custom apparel" cutline={false}>
+      <div class="prose">
         <p>
-          Lialvaro Apparel is a rising star in the Los Angeles T-shirt printing and embroidery scene, bringing its fresh and vibrant designs to the city since 2020. Founded by a passionate team of artists and entrepreneurs, Lialvaro Apparel quickly gained recognition for its high-quality printing, unique designs, and commitment to ethical and sustainable practices. From eye-catching custom creations for individuals and businesses to trendy collections that capture the LA vibe, Lialvaro Apparel has something for everyone. Whether you are looking for a statement T-shirt to express your individuality or a stylish way to promote your brand, Lialvaro Apparel is sure to have the perfect design and printing technique to bring your vision to life.
+          LiAlvaro T-Shirt Printing has served Los Angeles with custom printing and embroidery since 2020. We help
+          individuals, teams, and businesses get apparel that matches their brand — from single pieces to larger runs.
         </p>
-        <p style="margin-top: 1rem;">
-          In addition to their exceptional printing and embroidery services, Lialvaro Apparel is also dedicated to giving back to the community. They partner with local organizations to support social causes and promote sustainability, making them a brand you can feel good about wearing. So, if you are in Los Angeles and looking for a high-quality, stylish, and socially conscious T-shirt or embroidered garment, look no further than Lialvaro Apparel.
+        <p>
+          Whether you need a statement tee, event merch, or branded workwear, we will help you choose the right method
+          and path: design online when that fits, or request a quote for custom and bulk work.
         </p>
-        <p style="margin-top: 1.5rem;">
-          <a href="/contact" class="inline-cta" data-quote-trigger>Start an order</a>
-        </p>
-      </article>
-      <div class="stack">
-        <article class="mini">
-          <h3>Our vision</h3>
-          <p>From bold streetwear to delicate embroidery, we will bridge the gap between dream and fabric, celebrating the diverse narratives that dance beneath the LA sun. Forget faceless merch, ours will be a haven for the dreamers, the doers, the artists, the hustlers. We will be the canvas, the needle, the ink; you, the masterpiece.</p>
-        </article>
-        <article class="mini">
-          <h3>Our promise</h3>
-          <p>We will continue helping you tell your story, stitch by stitch and with every droplet of ink. We promise to remain relevant enough for you to rely on us for your brands, special events, or anything else brilliant enough to be called yours.</p>
-          <p style="margin-top: 1rem;">
-            <a href="/contact" class="inline-cta" data-quote-trigger>Start an order</a>
-          </p>
-        </article>
+        <div class="actions">
+          <Button href="/design/">Design a shirt</Button>
+          <button type="button" class="linkish" data-quote-trigger>Get a free quote</button>
+        </div>
       </div>
-    </div>
-  </section>
+    </Section>
 
-  <section class="cta">
-    <div class="container">
-      <h2>Start a new design project</h2>
-      <p>Tell us what you need, and we will help you choose the right print method, garment, and turnaround.</p>
-      <a href="/contact">Get a Free Quote</a>
-    </div>
-  </section>
+    <Section eyebrow="Vision" title="Your story, in print">
+      <div class="prose">
+        <p>
+          From streetwear to embroidery, we help bridge the gap between idea and finished garment. You bring the story —
+          we help you get it onto apparel with a clear process.
+        </p>
+        <p>
+          We will keep helping you tell that story, project by project — for brands, events, and anything important
+          enough to call yours.
+        </p>
+      </div>
+    </Section>
+  </div>
 </Layout>
 
 <style>
-  .hero {
-    padding: 110px 0 70px;
-    text-align: center;
-    background: #fff;
-    border-bottom: 1px solid #e5e5ea;
-  }
-
-  .hero h1 {
-    font-size: clamp(40px, 6vw, 72px);
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    margin-bottom: 16px;
-  }
-
-  .hero p {
-    max-width: 760px;
-    margin: 0 auto;
-    font-size: 19px;
-    line-height: 1.65;
-    color: #6e6e73;
-  }
-
-  .section {
-    padding: 88px 0;
-  }
-
-  .grid {
+  .prose {
+    max-width: 42rem;
     display: grid;
-    grid-template-columns: 1.3fr 1fr;
-    gap: 24px;
+    gap: 1rem;
   }
 
-  .panel {
-    background: #fff;
-    border: 1px solid #f0f0f5;
-    border-radius: 32px;
-    padding: 34px 30px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  .prose p {
+    margin: 0;
+    color: color-mix(in srgb, var(--ink) 85%, var(--mesh-grey));
   }
 
-  .panel h2 {
-    font-size: 34px;
-    letter-spacing: -0.025em;
-    margin-bottom: 14px;
-  }
-
-  .panel p {
-    color: #6e6e73;
-    font-size: 16px;
-    line-height: 1.75;
-  }
-
-  .stack {
-    display: grid;
-    gap: 16px;
-  }
-
-  .mini {
-    background: #fff;
-    border: 1px solid #f0f0f5;
-    border-radius: 24px;
-    padding: 24px;
-  }
-
-  .mini h3 {
-    font-size: 22px;
-    margin-bottom: 8px;
-    letter-spacing: -0.02em;
-  }
-
-  .mini p {
-    color: #6e6e73;
-    line-height: 1.65;
-    font-size: 14.5px;
-  }
-
-  .inline-cta {
-    display: inline-flex;
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
     align-items: center;
-    justify-content: center;
-    background: #22856c;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 999px;
-    padding: 10px 18px;
+  }
+
+  .linkish {
+    background: none;
+    border: none;
+    color: var(--print-red);
+    font: inherit;
     font-weight: 700;
-    font-size: 14px;
-  }
-
-  .inline-cta:hover {
-    background: #1b6f5a;
-  }
-
-  .cta {
-    text-align: center;
-    padding: 70px 0;
-    background: linear-gradient(180deg, #fff 0%, #f5f5f7 100%);
-    border-top: 1px solid #e5e5ea;
-  }
-
-  .cta h2 {
-    font-size: clamp(34px, 5vw, 58px);
-    letter-spacing: -0.03em;
-    margin-bottom: 16px;
-  }
-
-  .cta p {
-    color: #6e6e73;
-    max-width: 620px;
-    margin: 0 auto 24px;
-  }
-
-  .cta a {
-    display: inline-flex;
-    text-decoration: none;
-    align-items: center;
-    justify-content: center;
-    background: #22856c;
-    color: #fff;
-    font-weight: 700;
-    border-radius: 999px;
-    padding: 14px 28px;
-  }
-
-  .cta a:hover {
-    background: #1b6f5a;
-  }
-
-  @media (max-width: 900px) {
-    .grid {
-      grid-template-columns: 1fr;
-    }
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+    min-height: 44px;
   }
 </style>

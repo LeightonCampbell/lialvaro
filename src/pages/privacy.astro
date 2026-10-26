@@ -1,0 +1,59 @@
+---
+import Layout from '../layouts/Layout.astro';
+import TodoBanner from '../components/TodoBanner.astro';
+---
+
+<Layout
+  title="Privacy Policy"
+  description="Privacy Policy for LiAlvaro T-Shirt Printing."
+>
+  <div class="page-shell">
+    <header class="page-hero">
+      <p class="eyebrow">Legal</p>
+      <h1>Privacy Policy</h1>
+      <p>How we handle information you share with LiAlvaro T-Shirt Printing.</p>
+    </header>
+
+    <TodoBanner title="Owner-supplied legal text required">
+      <p>
+        Replace this scaffold with the final Privacy Policy before launch. Until then, contact
+        <a href="mailto:help@lialvaro.com">help@lialvaro.com</a> with privacy questions.
+      </p>
+    </TodoBanner>
+
+    <div class="prose">
+      <h2>Overview</h2>
+      <p>
+        We collect information you submit through quote and design forms (such as name, email, phone, and project
+        details) so we can respond to your request. We do not sell personal information.
+      </p>
+      <h2>Contact</h2>
+      <p>
+        Questions about this policy: <a href="mailto:help@lialvaro.com">help@lialvaro.com</a> or
+        <a href="tel:3109042655">(310) 904-2655</a>.
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .prose {
+    max-width: 42rem;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .prose h2 {
+    margin: 1rem 0 0;
+    font-size: var(--text-xl);
+  }
+
+  .prose p {
+    margin: 0;
+    color: color-mix(in srgb, var(--ink) 85%, var(--mesh-grey));
+  }
+
+  .prose a {
+    color: var(--print-red);
+  }
+</style>
