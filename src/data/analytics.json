@@ -1,0 +1,16 @@
+{
+  "provider": null,
+  "provider_options": ["ga4", "plausible"],
+  "clarity": false,
+  "note": "Owner decides GA4 or Plausible; enable Microsoft Clarity when approved. Events are scaffolded in src/scripts/analytics.ts.",
+  "events": [
+    "quote_started",
+    "quote_step_N",
+    "quote_submitted",
+    "design_started",
+    "view_item",
+    "add_to_cart",
+    "begin_checkout",
+    "purchase"
+  ]
+}

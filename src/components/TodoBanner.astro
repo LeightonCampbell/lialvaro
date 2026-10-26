@@ -1,0 +1,41 @@
+---
+interface Props {
+  title?: string;
+}
+
+const { title = 'Owner content needed' } = Astro.props;
+---
+
+<aside class="todo-banner" role="note">
+  <strong>{title}</strong>
+  <div class="todo-banner__body">
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .todo-banner {
+    margin: var(--space-4) 0;
+    padding: var(--space-4);
+    border: 2px dashed var(--gold-text);
+    background: color-mix(in srgb, var(--gold) 12%, var(--white));
+    border-radius: var(--radius-md);
+    color: var(--ink);
+  }
+
+  .todo-banner strong {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gold-text);
+  }
+
+  .todo-banner__body :global(p) {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+  }
+</style>

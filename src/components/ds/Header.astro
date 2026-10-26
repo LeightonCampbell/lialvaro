@@ -46,7 +46,7 @@ const {
     <div class="ds-header__actions">
       <a class="ds-header__util" href="/cart/">Cart ({cartCount})</a>
       <a class="ds-header__util" href="/account/">Sign in</a>
-      <Button variant="secondary" href="/custom-printing/">Get a quote</Button>
+      <button type="button" class="ds-btn ds-btn--secondary" data-quote-trigger>Get a quote</button>
       <Button href="/shop/">Shop now</Button>
       <button class="ds-header__menu-btn" type="button" aria-expanded="false" aria-controls="ds-mobile-menu" data-ds-menu-toggle>
         Menu
@@ -66,7 +66,7 @@ const {
         }
         <li><a href="/cart/">Cart ({cartCount})</a></li>
         <li><a href="/account/">Sign in</a></li>
-        <li><a href="/custom-printing/">Get a quote</a></li>
+        <li><button type="button" data-quote-trigger>Get a quote</button></li>
         <li><a href="/shop/">Shop now</a></li>
       </ul>
     </nav>
@@ -211,17 +211,46 @@ const {
     gap: var(--space-2);
   }
 
-  .ds-mobile-menu__list a {
+  .ds-mobile-menu__list a,
+  .ds-mobile-menu__list button {
     display: flex;
     align-items: center;
     min-height: 44px;
     color: var(--ink);
     font-weight: 600;
     text-decoration: none;
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    text-align: left;
   }
 
-  .ds-mobile-menu__list a:focus-visible {
+  .ds-mobile-menu__list a:focus-visible,
+  .ds-mobile-menu__list button:focus-visible {
     outline: 3px solid var(--color-focus);
     outline-offset: 2px;
+  }
+
+  /* Match DS button look for quote trigger in header actions */
+  .ds-header__actions .ds-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.7rem 1.15rem;
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .ds-header__actions .ds-btn:hover {
+    background: color-mix(in srgb, var(--canvas) 70%, var(--white));
   }
 </style>

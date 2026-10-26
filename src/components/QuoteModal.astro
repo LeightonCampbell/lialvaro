@@ -326,6 +326,7 @@
       });
       setError('');
       if (step === 2) updateColorsVisibility();
+      window.dispatchEvent(new CustomEvent('lialvaro:quote-step', { detail: { step } }));
     }
 
     function resetForm() {
@@ -387,7 +388,8 @@
     document.querySelectorAll('[data-quote-trigger]').forEach(function (el) {
       el.addEventListener('click', function (event) {
         if (el.tagName === 'A') event.preventDefault();
-        openModal();
+        var service = el.getAttribute('data-quote-service') || undefined;
+        openModal(service);
       });
     });
 
@@ -522,6 +524,7 @@
           formView.style.display = 'none';
           successView.style.display = 'block';
           setError('');
+          window.dispatchEvent(new CustomEvent('lialvaro:quote-submitted'));
           return;
         }
 
