@@ -1,0 +1,197 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/ds/Button.astro';
+import { getProductBySlug, listProducts } from '../../lib/catalog';
+import { formatUsd } from '../../lib/pricing';
+import { claimText } from '../../lib/claims';
+
+export function getStaticPaths() {
+  return listProducts().map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const product = getProductBySlug(slug!);
+if (!product) {
+  return Astro.redirect('/shop/');
+}
+
+const sameDay = claimText('same-day-printing');
+const sizes = [...new Set(product.variants.map((v) => v.size).filter(Boolean))];
+const colors = [...new Set(product.variants.map((v) => v.color).filter(Boolean))];
+const defaultVariant = product.variants[0];
+---
+
+<Layout title={product.name} description={product.description}>
+  <div class="page-shell pdp">
+    <p class="eyebrow"><a href="/shop/">Store</a> / {product.category}</p>
+    <div class="grid">
+      <div class="media">
+        {product.imageUrl ? <img src={product.imageUrl} alt="" width="800" height="800" /> : null}
+      </div>
+      <div class="copy">
+        <h1>{product.name}</h1>
+        <p class="price" id="pdpPrice">{formatUsd(defaultVariant.retailPriceCents)}</p>
+        <p>{product.description}</p>
+        {product.variants.some((v) => v.lane === 'pod') && sameDay ? (
+          <p class="note">Same-day is not available for print-on-demand items. {sameDay}</p>
+        ) : null}
+
+        <form id="addForm" class="form">
+          {
+            colors.length ? (
+              <label>
+                Color
+                <select name="color" id="colorSelect">
+                  {colors.map((c) => (
+                    <option value={c!}>{c}</option>
+                  ))}
+                </select>
+              </label>
+            ) : null
+          }
+          {
+            sizes.length ? (
+              <label>
+                Size
+                <select name="size" id="sizeSelect">
+                  {sizes.map((s) => (
+                    <option value={s!}>{s}</option>
+                  ))}
+                </select>
+              </label>
+            ) : null
+          }
+          <label>
+            Qty
+            <input type="number" name="qty" id="qty" min="1" max="20" value="1" />
+          </label>
+          <input type="hidden" id="variantId" value={defaultVariant.id} />
+          <Button type="submit">Add to cart</Button>
+          <p class="ok" id="addedMsg" hidden>Added — <a href="/cart/">view cart</a></p>
+        </form>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script type="application/json" id="pdp-variants" set:html={JSON.stringify(product.variants)} />
+<script>
+  import { addToCart } from '../../scripts/cart.ts';
+  import { track } from '../../scripts/analytics.ts';
+
+  type PdpVariant = {
+    id: string;
+    size?: string | null;
+    color?: string | null;
+    retailPriceCents: number;
+  };
+
+  const raw = document.getElementById('pdp-variants')?.textContent ?? '[]';
+  const variants = JSON.parse(raw) as PdpVariant[];
+
+  track('view_item', { product: variants[0]?.id });
+
+  const colorSelect = document.getElementById('colorSelect');
+  const sizeSelect = document.getElementById('sizeSelect');
+  const variantIdInput = document.getElementById('variantId');
+  const priceEl = document.getElementById('pdpPrice');
+  const form = document.getElementById('addForm');
+  const addedMsg = document.getElementById('addedMsg');
+
+  function resolveVariant() {
+    const color = colorSelect instanceof HTMLSelectElement ? colorSelect.value : null;
+    const size = sizeSelect instanceof HTMLSelectElement ? sizeSelect.value : null;
+    const match =
+      variants.find((v) => (!color || v.color === color) && (!size || v.size === size)) || variants[0];
+    if (variantIdInput instanceof HTMLInputElement) variantIdInput.value = match.id;
+    if (priceEl) {
+      priceEl.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
+        match.retailPriceCents / 100,
+      );
+    }
+    return match;
+  }
+
+  colorSelect?.addEventListener('change', resolveVariant);
+  sizeSelect?.addEventListener('change', resolveVariant);
+  resolveVariant();
+
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const variant = resolveVariant();
+    const qtyInput = document.getElementById('qty');
+    const qty = qtyInput instanceof HTMLInputElement ? Number(qtyInput.value) || 1 : 1;
+    addToCart(variant.id, qty);
+    track('add_to_cart', { variantId: variant.id, quantity: qty });
+    addedMsg?.removeAttribute('hidden');
+  });
+</script>
+
+<style>
+  .pdp .grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+  @media (min-width: 900px) {
+    .pdp .grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .media {
+    background: var(--white);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    min-height: 280px;
+  }
+  .media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .copy h1 {
+    margin: 0 0 0.35rem;
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-weight: 400;
+    font-size: clamp(2rem, 4vw, 3rem);
+  }
+  .price {
+    font-family: var(--font-mono);
+    font-size: var(--text-xl);
+    margin: 0 0 0.75rem;
+  }
+  .note {
+    font-size: var(--text-sm);
+    color: var(--mesh-text);
+  }
+  .form {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    max-width: 22rem;
+  }
+  label {
+    display: grid;
+    gap: 0.35rem;
+    font-weight: 600;
+    font-size: var(--text-sm);
+  }
+  select,
+  input {
+    min-height: 44px;
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-md);
+    padding: 0.5rem 0.75rem;
+    font: inherit;
+  }
+  .ok {
+    margin: 0;
+    font-weight: 600;
+    color: var(--color-success);
+  }
+  .eyebrow a {
+    color: inherit;
+  }
+</style>

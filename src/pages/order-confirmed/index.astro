@@ -1,0 +1,43 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/ds/Button.astro';
+
+const sessionId = Astro.url.searchParams.get('session_id');
+---
+
+<Layout
+  title="Order confirmed"
+  description="Thanks for your LiAlvaro order."
+  noindex={true}
+>
+  <div class="page-shell">
+    <header class="page-hero">
+      <p class="eyebrow">Checkout</p>
+      <h1>Order confirmed</h1>
+      <p>
+        Thanks — payment received. You’ll get a confirmation email with a tracking link when fulfillment is queued.
+        {sessionId ? ` Reference: ${sessionId}.` : ''}
+      </p>
+      <div class="actions">
+        <Button href="/track/">Track an order</Button>
+        <Button variant="secondary" href="/shop/">Back to store</Button>
+      </div>
+    </header>
+  </div>
+</Layout>
+
+<script>
+  import { clearCart } from '../../scripts/cart.ts';
+  import { track } from '../../scripts/analytics.ts';
+  clearCart();
+  track('purchase', { source: 'stripe_checkout' });
+</script>
+
+<style>
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+</style>

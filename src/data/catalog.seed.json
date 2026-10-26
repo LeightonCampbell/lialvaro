@@ -1,0 +1,119 @@
+{
+  "syncedAt": null,
+  "source": "seed",
+  "products": [
+    {
+      "id": "prod_tee_classic",
+      "slug": "classic-tee",
+      "name": "Classic Tee",
+      "description": "Everyday soft tee — great for logos and events. Print-on-demand fulfillment.",
+      "category": "apparel",
+      "provider": "printful",
+      "providerProductId": "71",
+      "imageUrl": "/images/homepage-hero-2.jpg",
+      "variants": [
+        {
+          "id": "var_tee_s_white",
+          "sku": "TEE-S-WHT",
+          "name": "Classic Tee / S / White",
+          "size": "S",
+          "color": "White",
+          "providerVariantId": "4011",
+          "lane": "pod",
+          "vendorCostCents": 999,
+          "retailPriceCents": 1399
+        },
+        {
+          "id": "var_tee_m_white",
+          "sku": "TEE-M-WHT",
+          "name": "Classic Tee / M / White",
+          "size": "M",
+          "color": "White",
+          "providerVariantId": "4012",
+          "lane": "pod",
+          "vendorCostCents": 999,
+          "retailPriceCents": 1399
+        },
+        {
+          "id": "var_tee_l_white",
+          "sku": "TEE-L-WHT",
+          "name": "Classic Tee / L / White",
+          "size": "L",
+          "color": "White",
+          "providerVariantId": "4013",
+          "lane": "pod",
+          "vendorCostCents": 999,
+          "retailPriceCents": 1399
+        },
+        {
+          "id": "var_tee_m_black",
+          "sku": "TEE-M-BLK",
+          "name": "Classic Tee / M / Black",
+          "size": "M",
+          "color": "Black",
+          "providerVariantId": "4014",
+          "lane": "pod",
+          "vendorCostCents": 1099,
+          "retailPriceCents": 1549
+        }
+      ]
+    },
+    {
+      "id": "prod_hoodie",
+      "slug": "pullover-hoodie",
+      "name": "Pullover Hoodie",
+      "description": "Cozy midweight hoodie for teams and merch drops.",
+      "category": "apparel",
+      "provider": "printful",
+      "providerProductId": "146",
+      "imageUrl": "/images/homepage-hero-2.jpg",
+      "variants": [
+        {
+          "id": "var_hood_m_navy",
+          "sku": "HOOD-M-NVY",
+          "name": "Pullover Hoodie / M / Navy",
+          "size": "M",
+          "color": "Navy",
+          "providerVariantId": "5523",
+          "lane": "pod",
+          "vendorCostCents": 2499,
+          "retailPriceCents": 3499
+        },
+        {
+          "id": "var_hood_l_navy",
+          "sku": "HOOD-L-NVY",
+          "name": "Pullover Hoodie / L / Navy",
+          "size": "L",
+          "color": "Navy",
+          "providerVariantId": "5524",
+          "lane": "pod",
+          "vendorCostCents": 2499,
+          "retailPriceCents": 3499
+        }
+      ]
+    },
+    {
+      "id": "prod_cap",
+      "slug": "structured-cap",
+      "name": "Structured Cap",
+      "description": "Structured six-panel cap — embroidery-friendly blank.",
+      "category": "headwear",
+      "provider": "printful",
+      "providerProductId": "206",
+      "imageUrl": "/images/homepage-hero-2.jpg",
+      "variants": [
+        {
+          "id": "var_cap_os_black",
+          "sku": "CAP-OS-BLK",
+          "name": "Structured Cap / OS / Black",
+          "size": "OS",
+          "color": "Black",
+          "providerVariantId": "7860",
+          "lane": "pod",
+          "vendorCostCents": 1299,
+          "retailPriceCents": 1899
+        }
+      ]
+    }
+  ]
+}

@@ -3,8 +3,11 @@ import Layout from '../../layouts/Layout.astro';
 import ProductCard from '../../components/ds/ProductCard.astro';
 import Button from '../../components/ds/Button.astro';
 import { claimText } from '../../lib/claims';
+import { listProducts, productCardPrice } from '../../lib/catalog';
 
 const sameDay = claimText('same-day-printing');
+const category = Astro.url.searchParams.get('category') ?? 'all';
+const products = listProducts(category === 'all' ? undefined : category);
 ---
 
 <Layout
@@ -13,20 +16,35 @@ const sameDay = claimText('same-day-printing');
 >
   <div class="page-shell">
     <header class="page-hero">
-      <p class="eyebrow">Shop</p>
+      <p class="eyebrow">Store</p>
       <h1>Shop</h1>
       <p>Standard products with listed prices. Need bulk or something custom? Request a quote.</p>
       {sameDay ? <p class="note">{sameDay}</p> : null}
     </header>
 
     <div class="filters" role="group" aria-label="Product filters">
-      <span class="chip is-active">All</span>
-      <span class="chip">Apparel</span>
-      <span class="chip">Headwear &amp; accessories</span>
+      <a class:list={['chip', category === 'all' && 'is-active']} href="/shop/">All</a>
+      <a class:list={['chip', category === 'apparel' && 'is-active']} href="/shop/?category=apparel">Apparel</a>
+      <a class:list={['chip', category === 'headwear' && 'is-active']} href="/shop/?category=headwear"
+        >Headwear &amp; accessories</a
+      >
     </div>
 
     <div class="grid">
-      <ProductCard empty />
+      {
+        products.length ? (
+          products.map((product) => (
+            <ProductCard
+              title={product.name}
+              href={`/shop/${product.slug}/`}
+              price={productCardPrice(product)}
+              badge={product.category}
+            />
+          ))
+        ) : (
+          <ProductCard empty />
+        )
+      }
     </div>
 
     <div class="actions">
@@ -56,6 +74,11 @@ const sameDay = claimText('same-day-printing');
     padding: 0.4rem 0.7rem;
     font-size: var(--text-sm);
     background: var(--white);
+    color: inherit;
+    text-decoration: none;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
   }
 
   .chip.is-active {

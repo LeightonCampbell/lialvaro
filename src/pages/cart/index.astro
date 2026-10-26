@@ -1,46 +1,252 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Button from '../../components/ds/Button.astro';
+import { claimText } from '../../lib/claims';
+
+const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
 ---
 
-<Layout
-  title="Cart"
-  description="Your LiAlvaro cart. Commerce checkout ships in a later stage."
-  noindex={true}
->
+<Layout title="Cart" description="Your LiAlvaro cart.">
   <div class="page-shell">
     <header class="page-hero">
       <p class="eyebrow">Cart</p>
       <h1>Your cart</h1>
-      <p>Your cart is empty. Browse products to get started, or request a custom quote.</p>
+      <p>Review items, then checkout securely with Stripe.</p>
     </header>
-    <div class="actions">
-      <Button href="/shop/">Browse products</Button>
-      <button type="button" class="ds-btn ds-btn--secondary" data-quote-trigger>Get a custom quote</button>
+
+    <div id="cartRoot" class="cart">
+      <p class="empty" id="emptyState">Your cart is empty. <a href="/shop/">Browse the store</a>.</p>
+      <ul class="lines" id="lineList" hidden></ul>
+      <div class="summary" id="summary" hidden>
+        <p class="total">Subtotal: <strong id="subtotal">$0.00</strong></p>
+        <label class="same-day" id="sameDayRow" hidden>
+          <input type="checkbox" id="sameDay" />
+          Request same-day (local eligible items / LA ZIPs only — confirmed after address)
+        </label>
+        <div class="actions">
+          <button type="button" class="ds-btn ds-btn--primary" id="checkoutBtn">Checkout</button>
+          <Button variant="ghost" href="/shop/">Continue shopping</Button>
+        </div>
+        <p class="error" id="cartError" hidden></p>
+        <p class="hint">Tax and shipping calculated at checkout. Questions? {phone}</p>
+      </div>
     </div>
   </div>
 </Layout>
 
+<script>
+  import { readCart, setQuantity, clearCart, cartCount } from '../../scripts/cart.ts';
+  import { track } from '../../scripts/analytics.ts';
+
+  type CatalogVariant = {
+    id: string;
+    name: string;
+    retailPriceCents: number;
+    lane: string;
+    product: { name: string; slug: string };
+  };
+
+  const catalog: CatalogVariant[] = [];
+
+  async function loadCatalog() {
+    const res = await fetch('/api/catalog.json');
+    if (!res.ok) return;
+    const data = (await res.json()) as { variants: CatalogVariant[] };
+    catalog.splice(0, catalog.length, ...(data.variants ?? []));
+  }
+
+  function money(cents: number) {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(cents / 100);
+  }
+
+  function render() {
+    const lines = readCart();
+    const emptyState = document.getElementById('emptyState');
+    const lineList = document.getElementById('lineList');
+    const summary = document.getElementById('summary');
+    const subtotalEl = document.getElementById('subtotal');
+    const sameDayRow = document.getElementById('sameDayRow');
+    if (!emptyState || !lineList || !summary || !subtotalEl) return;
+
+    if (!lines.length) {
+      emptyState.hidden = false;
+      lineList.hidden = true;
+      summary.hidden = true;
+      lineList.innerHTML = '';
+      return;
+    }
+
+    emptyState.hidden = true;
+    lineList.hidden = false;
+    summary.hidden = false;
+
+    let subtotal = 0;
+    let hasLocal = false;
+    lineList.innerHTML = lines
+      .map((line) => {
+        const variant = catalog.find((v) => v.id === line.variantId);
+        if (!variant) {
+          return `<li class="line">Unknown item (${line.variantId}) <button data-remove="${line.variantId}" type="button">Remove</button></li>`;
+        }
+        if (variant.lane === 'local') hasLocal = true;
+        subtotal += variant.retailPriceCents * line.quantity;
+        return `<li class="line">
+          <div>
+            <a href="/shop/${variant.product.slug}/">${variant.product.name}</a>
+            <div class="meta">${variant.name}</div>
+          </div>
+          <div class="qty">
+            <button type="button" data-dec="${variant.id}" aria-label="Decrease">−</button>
+            <span>${line.quantity}</span>
+            <button type="button" data-inc="${variant.id}" aria-label="Increase">+</button>
+          </div>
+          <div class="price">${money(variant.retailPriceCents * line.quantity)}</div>
+        </li>`;
+      })
+      .join('');
+
+    subtotalEl.textContent = money(subtotal);
+    if (sameDayRow) sameDayRow.hidden = !hasLocal;
+  }
+
+  document.getElementById('lineList')?.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    const inc = target.getAttribute('data-inc');
+    const dec = target.getAttribute('data-dec');
+    const remove = target.getAttribute('data-remove');
+    if (inc) {
+      const line = readCart().find((l) => l.variantId === inc);
+      setQuantity(inc, (line?.quantity ?? 0) + 1);
+      render();
+    } else if (dec) {
+      const line = readCart().find((l) => l.variantId === dec);
+      setQuantity(dec, (line?.quantity ?? 1) - 1);
+      render();
+    } else if (remove) {
+      setQuantity(remove, 0);
+      render();
+    }
+  });
+
+  document.getElementById('checkoutBtn')?.addEventListener('click', async () => {
+    const errorEl = document.getElementById('cartError');
+    const btn = document.getElementById('checkoutBtn');
+    if (errorEl) errorEl.hidden = true;
+    const items = readCart();
+    if (!items.length) return;
+    track('begin_checkout', { count: cartCount(items) });
+    if (btn instanceof HTMLButtonElement) {
+      btn.disabled = true;
+      btn.textContent = 'Starting checkout…';
+    }
+    try {
+      const sameDay = document.getElementById('sameDay');
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items,
+          sameDayRequested: sameDay instanceof HTMLInputElement && sameDay.checked,
+        }),
+      });
+      const data = (await res.json()) as { url?: string; error?: string };
+      if (!res.ok || !data.url) throw new Error(data.error || 'Checkout failed');
+      window.location.href = data.url;
+    } catch (err) {
+      if (errorEl) {
+        errorEl.hidden = false;
+        errorEl.textContent = err instanceof Error ? err.message : 'Checkout failed';
+      }
+      if (btn instanceof HTMLButtonElement) {
+        btn.disabled = false;
+        btn.textContent = 'Checkout';
+      }
+    }
+  });
+
+  await loadCatalog();
+  render();
+  window.addEventListener('lialvaro:cart-updated', () => render());
+</script>
+
 <style>
+  .lines {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .line {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    background: var(--white);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+  }
+  .meta {
+    font-size: var(--text-sm);
+    color: var(--mesh-text);
+  }
+  .qty {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .qty button {
+    min-width: 44px;
+    min-height: 44px;
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+  .summary {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    background: var(--white);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
+  }
   .actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
+    margin-top: 0.75rem;
   }
-
-  .actions .ds-btn--secondary {
+  .ds-btn--primary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-height: 44px;
     padding: 0.7rem 1.15rem;
-    border: 2px solid var(--ink);
+    border: 2px solid var(--print-red);
     border-radius: var(--radius-md);
-    background: var(--white);
-    color: var(--ink);
+    background: var(--print-red);
+    color: var(--white);
     font-family: var(--font-body);
     font-size: var(--text-sm);
     font-weight: 700;
     cursor: pointer;
+  }
+  .error {
+    color: var(--color-danger);
+    font-weight: 600;
+  }
+  .hint {
+    font-size: var(--text-sm);
+    color: var(--mesh-text);
+  }
+  .same-day {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    margin: 0.75rem 0;
+    font-size: var(--text-sm);
   }
 </style>

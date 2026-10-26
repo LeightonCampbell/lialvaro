@@ -1,0 +1,17 @@
+{
+  "currency": "usd",
+  "markup": {
+    "mode": "percent",
+    "percent": 40,
+    "notes": "Owner TODO: confirm live markup. Retail = vendor_cost * (1 + percent/100), rounded up to nearest cent."
+  },
+  "shipping": {
+    "mode": "provider",
+    "fallback_flat_cents": 599,
+    "notes": "Prefer Printful shipping rates at checkout when configured; else flat fallback for estimates only."
+  },
+  "tax": {
+    "stripe_automatic_tax": true,
+    "region": "US-CA"
+  }
+}
