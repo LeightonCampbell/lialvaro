@@ -68,10 +68,8 @@ const categories = [
         question: 'How long does it take to get my shirts?',
         answer: [
           turnaround,
-          rush ? `${rush.replace(/\.$/, '')} are available for an additional fee.` : null,
-          sameDay
-            ? 'Same-day service is available locally in LA. Call to confirm.'
-            : null,
+          rush,
+          sameDay ? 'Same-day service is available locally in LA.' : null,
         ]
           .filter(Boolean)
           .join(' '),
