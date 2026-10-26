@@ -15,7 +15,7 @@ const turnaround = claimText('turnaround-standard-5-7');
 const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
 
 const steps = [
-  { title: 'Choose your path', body: 'Design online or request a quote.' },
+  { title: 'Start Designing', body: 'Open Design Studio, pick a product, and add your art.' },
   { title: 'Approve art & pricing', body: 'Confirm the proof and total before we print.' },
   { title: 'We print & deliver', body: 'We print and get it to you.' },
 ];
@@ -40,9 +40,9 @@ const reviews = [
 const faqItems = [
   {
     id: 'shop-vs-quote',
-    question: 'Shop vs quote?',
+    question: 'Design Studio vs quote?',
     answer:
-      'Shop is for standard products with listed prices. A quote is for bulk, specialty garments, or projects that need a custom plan.',
+      'Design Studio is for orders you are ready to place. A quote is for bulk, specialty garments, or projects that need a custom plan.',
   },
   {
     id: 'minimums',
@@ -93,17 +93,15 @@ const faqPageLd = {
 >
   <section class="home-hero">
     <div class="home-hero__copy">
-      <p class="eyebrow">Los Angeles{methods ? ` · ${methods}` : ''}</p>
-      <h1>LiAlvaro T-Shirt Printing</h1>
-      <p class="home-hero__headline">Custom printed apparel. Clear process.</p>
+      <p class="eyebrow">LiAlvaro · Los Angeles{methods ? ` · ${methods}` : ''}</p>
+      <h1>Fast, Easy, High-Quality Custom Apparel Printing</h1>
       <p class="home-hero__sub">
-        Design online and checkout, or request a quote for custom and bulk work.
+        Start Designing in our Design Studio, or get a free quote for custom and bulk work.
         {sameDay ? ` ${sameDay}` : ''}
       </p>
       <div class="home-hero__ctas">
-        <Button href="/design/">Design a shirt →</Button>
-        <button type="button" class="ds-btn ds-btn--secondary" data-quote-trigger>Get a free quote →</button>
-        <Button variant="ghost" href="tel:3109042655">{phone}</Button>
+        <Button href="/design/">Start Designing</Button>
+        <button type="button" class="ds-btn ds-btn--secondary" data-quote-trigger>Get a free quote</button>
       </div>
     </div>
     <div class="home-hero__visual" role="img" aria-label="Custom apparel printing">
@@ -122,35 +120,35 @@ const faqPageLd = {
     <Section eyebrow="How it works" title="Three steps. No runaround.">
       <StepList steps={steps} />
       <div class="section-cta">
-        <Button href="/design/">Start your design →</Button>
-        <Button variant="ghost" href="/custom-printing/">Get a quote</Button>
+        <Button href="/design/">Start Designing</Button>
+        <button type="button" class="linkish" data-quote-trigger>Get a quote</button>
       </div>
     </Section>
 
-    <Section eyebrow="Shop" title="Standard products with clear pricing.">
+    <Section eyebrow="Store" title="Standard products with clear pricing.">
       <p slot="lede">Browse ready-to-order items. Custom and bulk jobs use a quote instead.</p>
       <div class="product-grid">
         <ProductCard empty />
       </div>
       <div class="section-cta">
-        <Button href="/shop/">Shop products →</Button>
+        <Button href="/shop/">Browse the store →</Button>
       </div>
     </Section>
 
-    <Section eyebrow="Custom printing" title="The right method for the job.">
+    <Section eyebrow="Services" title="The right method for the job." id="services">
       <p slot="lede">
         {methods
           ? `${methods} Tell us about quantity, garment, and timing — we’ll recommend a path.`
           : 'Tell us about quantity, garment, and timing — we’ll recommend a path.'}
       </p>
       <div class="method-grid">
-        <div class="method-card">Screen Printing</div>
-        <div class="method-card">DTG</div>
-        <div class="method-card">DTF</div>
-        <div class="method-card">Embroidery</div>
+        <button type="button" class="method-card" data-quote-trigger data-quote-service="Screen Printing">Screen Printing</button>
+        <button type="button" class="method-card" data-quote-trigger data-quote-service="Direct to Garment">DTG</button>
+        <button type="button" class="method-card" data-quote-trigger data-quote-service="Direct to Film">DTF</button>
+        <button type="button" class="method-card" data-quote-trigger data-quote-service="Embroidery">Embroidery</button>
       </div>
       <div class="section-cta">
-        <Button href="/custom-printing/">Get a custom quote →</Button>
+        <button type="button" class="ds-btn ds-btn--primary" data-quote-trigger>Get a custom quote →</button>
       </div>
     </Section>
 
@@ -207,17 +205,11 @@ const faqPageLd = {
   .home-hero h1 {
     margin: 0;
     font-family: var(--font-display);
-    font-size: clamp(2.6rem, 7vw, 4.4rem);
+    font-size: clamp(2.2rem, 5.5vw, 3.6rem);
     font-weight: 400;
     letter-spacing: 0.02em;
     text-transform: uppercase;
     line-height: 0.98;
-  }
-
-  .home-hero__headline {
-    margin: 0;
-    font-size: clamp(1.15rem, 2.4vw, 1.5rem);
-    font-weight: 700;
   }
 
   .home-hero__sub {
@@ -299,8 +291,48 @@ const faqPageLd = {
     background: var(--white);
     border-radius: var(--radius-md);
     padding: 1.25rem 1rem;
+    font: inherit;
     font-weight: 700;
     text-align: center;
+    cursor: pointer;
+    color: inherit;
+    min-height: 44px;
+  }
+
+  .method-card:hover {
+    border-color: var(--print-red);
+  }
+
+  .method-card:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .linkish {
+    background: none;
+    border: none;
+    color: var(--print-red);
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  .section-cta .ds-btn--primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.7rem 1.15rem;
+    border: 2px solid var(--print-red);
+    border-radius: var(--radius-md);
+    background: var(--print-red);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    cursor: pointer;
   }
 
   .final-cta {

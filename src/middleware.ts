@@ -25,6 +25,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		return Response.redirect(redirectUrl.toString(), 301);
 	}
 
+	// Owner lock (docs/OWNER_LOCKS.md): kill `/custom-printing/` → home + open quote modal.
+	if (pathname === '/custom-printing' || pathname === '/custom-printing/') {
+		const redirectUrl = new URL('/', url);
+		redirectUrl.searchParams.set('quote', '1');
+		if (url.hostname === 'lialvaro.com') {
+			redirectUrl.hostname = CANONICAL_HOST;
+		}
+		return Response.redirect(redirectUrl.toString(), 301);
+	}
+
 	const shouldRedirectHost = url.hostname === 'lialvaro.com';
 	const shouldRedirectSlash =
 		pathname !== '/' && !pathname.endsWith('/') && !hasFileExtension(pathname);

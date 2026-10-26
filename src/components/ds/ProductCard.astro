@@ -33,7 +33,7 @@ const {
     empty ? (
       <div class="ds-product-card__empty">
         <p>No products to show yet.</p>
-        <Button variant="secondary" href="/custom-printing/">Get a custom quote</Button>
+        <button type="button" class="ds-btn ds-btn--secondary" data-quote-trigger>Get a custom quote</button>
       </div>
     ) : (
       <>
@@ -132,5 +132,22 @@ const {
 
   .ds-product-card__empty p {
     margin: 0;
+  }
+
+  .ds-product-card__empty .ds-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.7rem 1.15rem;
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    cursor: pointer;
+    justify-self: center;
   }
 </style>

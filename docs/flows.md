@@ -51,7 +51,7 @@
 **Audience:** A2  
 **Happy path**
 
-1. `/` hero **Design a shirt** or nav Design → `/design/`  
+1. `/` hero **Start Designing** or nav Design Studio → `/design/`  
 2. Choose product / color / side  
 3. Upload art and/or add text; edit layers  
 4. Preflight warnings (DPI, size, transparency) — warn, don’t silently fail  
@@ -74,11 +74,11 @@
 ## 3. Request quote (custom / bulk / specialty)
 
 **Audience:** A1, A3  
-**Entry points:** Header/footer Get a quote · `/custom-printing/` · homepage secondary CTA · method cards
+**Entry points:** Header/footer Get a quote · `/?quote=1` (legacy `/custom-printing/` 301) · homepage secondary CTA · method cards
 
 **Happy path (aligns with current modal + Stage 8 rebuild)**
 
-1. Open quote modal *or* start on `/custom-printing/`  
+1. Open quote modal (no `/custom-printing/` page — owner lock) 
 2. Step 1 — Service (optional): Screen / DTG / DTF / Embroidery  
 3. Step 2 — Design types, colors (when shown), piece count  
 4. Step 3 — Providing blanks? · material · file upload · notes  

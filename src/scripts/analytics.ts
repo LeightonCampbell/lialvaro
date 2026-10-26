@@ -29,8 +29,6 @@ declare global {
 export function track(event: AnalyticsEvent | string, props: Record<string, unknown> = {}): void {
   if (typeof window === 'undefined') return;
 
-  window.lialvaroAnalytics?.track(event, props);
-
   // GA4 (when configured)
   if (typeof window.gtag === 'function') {
     window.gtag('event', event, props);
@@ -50,5 +48,6 @@ export function track(event: AnalyticsEvent | string, props: Record<string, unkn
 
 export function initAnalyticsScaffold(): void {
   if (typeof window === 'undefined') return;
+  // Public API surface for pages/components — must not call itself from `track`.
   window.lialvaroAnalytics = { track };
 }

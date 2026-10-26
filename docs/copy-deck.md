@@ -14,10 +14,11 @@
 |---|---|
 | Logo / aria home | LiAlvaro |
 | Document title pattern | `{Page} \| LiAlvaro T-Shirt Printing` |
-| Topbar | `[claim:same-day-printing]` · Call `[claim:phone-310-904-2655]` |
-| Nav | Shop · Design · Custom Printing · About · FAQ |
-| Nav primary button | Shop now → `/shop/` |
-| Nav secondary | Get a quote → `/custom-printing/` |
+| Topbar left | `[claim:same-day-printing]` · Call `[claim:phone-310-904-2655]` |
+| Topbar right | Cart · Sign in |
+| Nav | Services · Store · Design Studio · FAQs |
+| Nav primary button | Get a quote → quote modal |
+| *(locked)* | See `docs/OWNER_LOCKS.md` — do not restore Shop now / Custom Printing nav |
 | Footer tagline | Custom apparel printing in Los Angeles — design online or request a quote. |
 | Footer copyright | © {year} LiAlvaro T-Shirt Printing. All rights reserved. Los Angeles, CA. |
 | Footer legal | Privacy Policy · Terms of Service *(real routes, never `#`)* |
@@ -29,14 +30,13 @@
 ### Hero
 | Slot | Copy |
 |---|---|
-| Eyebrow | Los Angeles · `[claim:methods-screen-dtg-dtf-embroidery]` |
-| Brand / H1 | LiAlvaro T-Shirt Printing |
-| Supporting headline | Custom printed apparel. Clear process. |
-| Subhead (with same-day) | Design online and checkout, or request a quote for custom and bulk work. `[claim:same-day-printing]` |
-| Subhead (fallback if same-day unconfirmed) | Design online and checkout, or request a quote for custom and bulk work. |
-| Primary CTA | Design a shirt → |
-| Secondary CTA | Get a free quote → `[claim:free-quote]` |
-| Tertiary | Call `[claim:phone-310-904-2655]` |
+| Eyebrow / brand | LiAlvaro · Los Angeles · `[claim:methods-screen-dtg-dtf-embroidery]` |
+| H1 | Fast, Easy, High-Quality Custom Apparel Printing |
+| Subhead (with same-day) | Start Designing in our Design Studio, or get a free quote for custom and bulk work. `[claim:same-day-printing]` |
+| Subhead (fallback if same-day unconfirmed) | Start Designing in our Design Studio, or get a free quote for custom and bulk work. |
+| Primary CTA | Start Designing → `/design/` |
+| Secondary CTA | Get a free quote → quote modal `[claim:free-quote]` |
+| Tertiary | *(removed from hero — phone stays in top bar)* |
 
 ### How it works
 | Slot | Copy |
@@ -138,10 +138,10 @@ Use answers only after related claims are confirmed.
 
 | Slot | Copy |
 |---|---|
-| Meta title | Design a shirt \| LiAlvaro T-Shirt Printing |
-| H1 | Design a shirt |
-| Subhead | Upload art, add text, preview, then checkout. |
-| Primary CTA | Start designing |
+| Meta title | Design Studio \| LiAlvaro T-Shirt Printing |
+| H1 | Design Studio |
+| Subhead | Ready to order? Choose a product, add your design, and place your order. |
+| Primary CTA | Start Designing |
 | Guest note | You can design now and save the design to an account when you sign in. |
 | Upload CTA | Upload image |
 | Upload help | PNG, JPG, or SVG. We’ll flag quality issues before you pay. |
@@ -163,17 +163,9 @@ Use answers only after related claims are confirmed.
 
 ---
 
-## Custom Printing (`/custom-printing/`)
+## Custom Printing page — REMOVED
 
-| Slot | Copy |
-|---|---|
-| Meta title | Custom printing & quotes \| LiAlvaro T-Shirt Printing |
-| H1 | Custom printing & bulk orders |
-| Subhead | Screen printing, DTG, DTF, and embroidery — tell us what you need and we’ll follow up with pricing. `[claim:methods-screen-dtg-dtf-embroidery]` |
-| Response expectation | `[claim:quote-response-1-business-hour]` |
-| Primary CTA | Request a quote |
-| Secondary | Shop standard products → |
-| Method cards CTA | Same as page primary (one CTA type: request quote) |
+**Owner lock 2026-10-26:** `/custom-printing/` is deleted. All non–Design Studio orders/inquiries use the **quote modal**. Do not recreate this page in later stages. Legacy URL **301 → `/?quote=1`**.
 
 ### Quote form (aligned with current modal steps)
 

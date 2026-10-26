@@ -385,13 +385,27 @@
     window.openModal = openModal;
     window.closeModal = closeModal;
 
-    document.querySelectorAll('[data-quote-trigger]').forEach(function (el) {
-      el.addEventListener('click', function (event) {
-        if (el.tagName === 'A') event.preventDefault();
-        var service = el.getAttribute('data-quote-service') || undefined;
-        openModal(service);
-      });
+    document.addEventListener('click', function (event) {
+      var el = event.target && event.target.closest && event.target.closest('[data-quote-trigger]');
+      if (!el) return;
+      if (el.tagName === 'A') event.preventDefault();
+      var service = el.getAttribute('data-quote-service') || undefined;
+      openModal(service);
     });
+
+    // Owner lock: `/custom-printing/` 301s to `/?quote=1` — open modal on landing.
+    try {
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('quote') === '1') {
+        openModal(params.get('service') || undefined);
+        params.delete('quote');
+        params.delete('service');
+        var next = window.location.pathname + (params.toString() ? '?' + params.toString() : '') + window.location.hash;
+        window.history.replaceState({}, '', next);
+      }
+    } catch (_) {
+      /* ignore */
+    }
 
     modalClose?.addEventListener('click', closeModal);
     successClose?.addEventListener('click', closeModal);

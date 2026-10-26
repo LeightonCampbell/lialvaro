@@ -1,130 +1,149 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Button from '../../components/ds/Button.astro';
+import Section from '../../components/ds/Section.astro';
+import StepList from '../../components/ds/StepList.astro';
 import Field from '../../components/ds/Field.astro';
 import { claimText } from '../../lib/claims';
 
 const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
-const quoteHour = claimText('quote-response-1-business-hour');
+const sameDay = claimText('same-day-printing');
+
+const products = [
+  { id: 't-shirts', label: 'T-Shirts', blurb: 'Everyday tees for teams, events, and brands.' },
+  { id: 'hoodies', label: 'Hoodies & sweatshirts', blurb: 'Warm layers with room for bold art.' },
+  { id: 'polos', label: 'Polos', blurb: 'Clean looks for staff and uniforms.' },
+  { id: 'hats', label: 'Hats', blurb: 'Caps and headwear for logos that last.' },
+  { id: 'bags', label: 'Bags', blurb: 'Totes and bags that carry your brand.' },
+  { id: 'other', label: 'Other apparel', blurb: 'Tell us the garment — we’ll help you order.' },
+];
+
+const steps = [
+  { title: 'Choose a product', body: 'Pick the garment you want to order.' },
+  { title: 'Add your design', body: 'Upload artwork or describe what you need printed.' },
+  { title: 'Place your order', body: 'Share sizes and contact details — we confirm pricing and print.' },
+];
 ---
 
 <Layout
-  title="Design a shirt"
-  description="Design a shirt with LiAlvaro T-Shirt Printing. Upload art, share project details, and get a clear next step."
+  title="Design Studio"
+  description="Design Studio at LiAlvaro T-Shirt Printing. Choose a product, add your design, and place your order."
 >
   <div class="page-shell">
-    <header class="page-hero">
-      <p class="eyebrow">Design</p>
-      <h1>Design a shirt</h1>
+    <header class="page-hero studio-hero">
+      <p class="eyebrow">Design Studio</p>
+      <h1>Design Studio</h1>
       <p>
-        Upload art, add details, and we’ll follow up with pricing and a production plan. Full Design Studio canvas ships
-        in a later stage — this intake keeps your project moving now.
+        Ready to order? Choose a product, add your design, and we’ll get your apparel printed.
+        {sameDay ? ` ${sameDay}` : ''}
       </p>
       <div class="hero-actions">
-        <Button href="#design-form">Start designing</Button>
-        <button type="button" class="ghost" data-quote-trigger>Prefer a quote form?</button>
+        <Button href="#products">Start Designing</Button>
+        <button type="button" class="ghost" data-quote-trigger>Need a custom quote instead?</button>
       </div>
     </header>
 
-    <div class="layout-grid">
-      <article class="panel" id="design-form">
-        <h2>Project request</h2>
-        <p class="lede">
-          Share your vision, quantities, and timeline.
-          {quoteHour ? ` ${quoteHour}` : ''}
-        </p>
+    <Section eyebrow="3 easy steps" title="From idea to order.">
+      <StepList steps={steps} />
+    </Section>
 
-        <form id="designRequestForm" class="form" action="https://formspree.io/f/xnjoaoyw" method="POST">
-          <input type="hidden" name="_subject" value="New Project Request — LiAlvaro T-Shirt Printing" />
-          <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
+    <Section eyebrow="Choose a product" title="Start your order by selecting a product." id="products">
+      <p slot="lede">Tap a product to start designing. Full canvas editing ships in a later stage — your order still starts here.</p>
+      <div class="product-grid">
+        {
+          products.map((product) => (
+            <button type="button" class="product-tile" data-product={product.id} data-product-label={product.label}>
+              <span class="product-tile__name">{product.label}</span>
+              <span class="product-tile__blurb">{product.blurb}</span>
+              <span class="product-tile__cta">Start Designing →</span>
+            </button>
+          ))
+        }
+      </div>
+    </Section>
 
-          <div class="row">
-            <Field id="design-name" name="name" label="Full name" required />
-            <Field id="design-email" name="email" type="email" label="Email" required />
-          </div>
-          <div class="row">
-            <Field id="design-phone" name="phone" type="tel" label="Phone" placeholder="(310) 000-0000" />
-            <Field id="design-brand" name="brand" label="Business / brand name" />
-          </div>
+    <section class="order-panel" id="order-form" aria-labelledby="order-heading">
+      <h2 id="order-heading">Place your Design Studio order</h2>
+      <p class="lede">
+        You’re on the order path — not a broker quote. Share art and quantities; we’ll confirm price and production next.
+      </p>
 
-          <fieldset class="checks">
-            <legend>What would you like to design?</legend>
-            <label><input type="checkbox" name="items" value="T-Shirts" /> T-Shirts</label>
-            <label><input type="checkbox" name="items" value="Hoodies" /> Hoodies</label>
-            <label><input type="checkbox" name="items" value="Hats" /> Hats</label>
-            <label><input type="checkbox" name="items" value="Other" /> Other</label>
-          </fieldset>
+      <form id="designStudioForm" class="form" action="https://formspree.io/f/xnjoaoyw" method="POST">
+        <input type="hidden" name="_subject" value="New Design Studio Order — LiAlvaro T-Shirt Printing" />
+        <input type="hidden" name="product" id="orderProduct" value="" />
+        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
 
-          <div class="row">
-            <Field
-              id="design-method"
-              name="method"
-              label="Preferred print method"
-              as="select"
-              placeholder="Select one"
-              options={[
-                { value: 'Screen Printing', label: 'Screen Printing' },
-                { value: 'Direct To Garment (DTG)', label: 'Direct To Garment (DTG)' },
-                { value: 'Direct To Film (DTF)', label: 'Direct To Film (DTF)' },
-                { value: 'Embroidery', label: 'Embroidery' },
-                { value: 'Not sure yet', label: 'Not sure yet' },
-              ]}
-            />
-            <Field
-              id="design-qty"
-              name="quantity"
-              label="Estimated quantity"
-              as="select"
-              placeholder="Select one"
-              options={[
-                { value: '1-11 pieces', label: '1-11 pieces' },
-                { value: '12-24 pieces', label: '12-24 pieces' },
-                { value: '25-49 pieces', label: '25-49 pieces' },
-                { value: '50-99 pieces', label: '50-99 pieces' },
-                { value: '100+ pieces', label: '100+ pieces' },
-              ]}
-            />
-          </div>
+        <p class="selected-product" id="selectedProductLabel" hidden></p>
 
+        <div class="row">
+          <Field id="studio-name" name="name" label="Full name" required />
+          <Field id="studio-email" name="email" type="email" label="Email" required />
+        </div>
+        <div class="row">
+          <Field id="studio-phone" name="phone" type="tel" label="Phone" placeholder="(310) 000-0000" />
           <Field
-            id="design-details"
-            name="details"
-            label="Project details"
-            as="textarea"
+            id="studio-qty"
+            name="quantity"
+            label="Quantity"
+            as="select"
+            placeholder="Select one"
             required
-            placeholder="Design goals, garment preferences, sizing, placements, and notes."
+            options={[
+              { value: '1-11 pieces', label: '1-11 pieces' },
+              { value: '12-24 pieces', label: '12-24 pieces' },
+              { value: '25-49 pieces', label: '25-49 pieces' },
+              { value: '50-99 pieces', label: '50-99 pieces' },
+              { value: '100+ pieces', label: '100+ pieces' },
+            ]}
           />
+        </div>
 
-          <Button type="submit">Submit design request</Button>
-          <p class="success" id="successMsg" hidden>Thanks — your request is in. We’ll contact you shortly.</p>
-          <p class="error" id="errorMsg" hidden>Submission failed. Please try again or {phone}</p>
-        </form>
-      </article>
+        <Field
+          id="studio-details"
+          name="details"
+          label="Design & order details"
+          as="textarea"
+          required
+          placeholder="Artwork notes, colors, placements, sizes, and deadline."
+        />
 
-      <aside class="panel side">
-        <h2>What happens next?</h2>
-        <ul>
-          <li>Method recommendation</li>
-          <li>Artwork prep guidance</li>
-          <li>Timeline and production plan</li>
-          <li>Clear quote — no obligation</li>
-        </ul>
-        <p class="note">Need it fast? Ask about same-day and rush options for eligible Los Angeles orders.</p>
-        <Button variant="secondary" href="tel:3109042655">{phone}</Button>
-      </aside>
-    </div>
+        <Button type="submit">Submit order request</Button>
+        <p class="success" id="successMsg" hidden>Thanks — your Design Studio order is in. We’ll confirm pricing and next steps shortly.</p>
+        <p class="error" id="errorMsg" hidden>Submission failed. Please try again or {phone}</p>
+      </form>
+    </section>
   </div>
 </Layout>
 
 <script>
   import { track } from '../../scripts/analytics.ts';
 
-  const form = document.getElementById('designRequestForm');
+  const form = document.getElementById('designStudioForm');
   const successMsg = document.getElementById('successMsg');
   const errorMsg = document.getElementById('errorMsg');
   const submitBtn = form?.querySelector('button[type="submit"]');
+  const productInput = document.getElementById('orderProduct');
+  const selectedLabel = document.getElementById('selectedProductLabel');
+  const orderForm = document.getElementById('order-form');
 
-  track('design_started', { source: 'design_page' });
+  track('design_started', { source: 'design_studio' });
+
+  document.querySelectorAll('[data-product]').forEach((tile) => {
+    tile.addEventListener('click', () => {
+      if (!(tile instanceof HTMLElement)) return;
+      const id = tile.dataset.product ?? '';
+      const label = tile.dataset.productLabel ?? id;
+      if (productInput instanceof HTMLInputElement) productInput.value = label;
+      if (selectedLabel) {
+        selectedLabel.hidden = false;
+        selectedLabel.textContent = `Selected product: ${label}`;
+      }
+      document.querySelectorAll('.product-tile').forEach((el) => el.classList.remove('is-selected'));
+      tile.classList.add('is-selected');
+      orderForm?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      track('design_started', { source: 'product_tile', product: id });
+    });
+  });
 
   form?.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -141,19 +160,25 @@ const quoteHour = claimText('quote-response-1-business-hour');
       if (!response.ok) throw new Error('Request failed');
       successMsg?.removeAttribute('hidden');
       form.reset();
+      if (productInput instanceof HTMLInputElement) productInput.value = '';
+      if (selectedLabel) {
+        selectedLabel.hidden = true;
+        selectedLabel.textContent = '';
+      }
+      document.querySelectorAll('.product-tile').forEach((el) => el.classList.remove('is-selected'));
     } catch {
       errorMsg?.removeAttribute('hidden');
     } finally {
       if (submitBtn instanceof HTMLButtonElement) {
         submitBtn.disabled = false;
-        submitBtn.textContent = submitBtn.dataset.originalText || 'Submit design request';
+        submitBtn.textContent = submitBtn.dataset.originalText || 'Submit order request';
       }
     }
   });
 </script>
 
 <style>
-  .hero-actions {
+  .studio-hero .hero-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
@@ -171,34 +196,90 @@ const quoteHour = claimText('quote-response-1-business-hour');
     min-height: 44px;
   }
 
-  .layout-grid {
+  .product-grid {
     display: grid;
     gap: 1rem;
   }
 
-  @media (min-width: 900px) {
-    .layout-grid {
-      grid-template-columns: 1.35fr 0.65fr;
-      align-items: start;
+  @media (min-width: 640px) {
+    .product-grid {
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  .panel {
+  @media (min-width: 960px) {
+    .product-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .product-tile {
+    display: grid;
+    gap: 0.35rem;
+    text-align: left;
+    padding: 1.25rem 1rem;
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    min-height: 44px;
+  }
+
+  .product-tile:hover,
+  .product-tile.is-selected {
+    border-color: var(--print-red);
+    background: color-mix(in srgb, var(--print-red) 6%, var(--white));
+  }
+
+  .product-tile:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .product-tile__name {
+    font-weight: 800;
+    font-size: var(--text-lg);
+  }
+
+  .product-tile__blurb {
+    font-size: var(--text-sm);
+    color: color-mix(in srgb, var(--ink) 80%, var(--mesh-grey));
+  }
+
+  .product-tile__cta {
+    margin-top: 0.5rem;
+    font-weight: 700;
+    color: var(--print-red);
+    font-size: var(--text-sm);
+  }
+
+  .order-panel {
+    margin: 2.5rem 0 1rem;
+    padding: 1.5rem;
     background: var(--white);
     border: 1px solid var(--color-border-strong);
     border-radius: var(--radius-lg);
-    padding: 1.5rem;
   }
 
-  .panel h2 {
+  .order-panel h2 {
     margin: 0 0 0.5rem;
-    font-size: var(--text-xl);
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 400;
+    text-transform: uppercase;
   }
 
-  .lede,
-  .note {
+  .lede {
     margin: 0 0 1rem;
     color: color-mix(in srgb, var(--ink) 80%, var(--mesh-grey));
+  }
+
+  .selected-product {
+    margin: 0 0 0.5rem;
+    font-weight: 700;
+    color: var(--print-red);
   }
 
   .form {
@@ -215,33 +296,6 @@ const quoteHour = claimText('quote-response-1-business-hour');
     .row {
       grid-template-columns: 1fr 1fr;
     }
-  }
-
-  .checks {
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: 0.75rem 1rem;
-    display: grid;
-    gap: 0.5rem;
-  }
-
-  .checks legend {
-    font-weight: 700;
-    padding: 0 0.25rem;
-  }
-
-  .checks label {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    min-height: 44px;
-  }
-
-  .side ul {
-    margin: 0 0 1rem;
-    padding-left: 1.1rem;
-    display: grid;
-    gap: 0.4rem;
   }
 
   .success {

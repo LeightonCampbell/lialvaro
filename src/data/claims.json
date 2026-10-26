@@ -13,21 +13,21 @@
       "text": "Same-day printing available for select orders in Los Angeles. Call to confirm.",
       "confirmed": true,
       "notes": "Owner confirmed 2026-10-21. Public wording locked by BUILD_PLAN. Eligibility (products, ZIPs, cutoff) will live in same-day.json later. Never imply in-house production.",
-      "surfaces": ["home", "shop", "custom-printing", "faq", "seo"]
+      "surfaces": ["home", "shop", "quote-modal", "faq", "seo"]
     },
     {
       "id": "no-minimums",
       "text": "No minimum order quantity.",
       "confirmed": true,
       "notes": "Owner confirmed 2026-10-21. Bulk pricing for screen printing may still benefit at higher quantities — do not invent thresholds unless added as a separate claim.",
-      "surfaces": ["home", "shop", "design", "custom-printing", "faq"]
+      "surfaces": ["home", "shop", "design", "quote-modal", "faq"]
     },
     {
       "id": "free-quote",
       "text": "Free quote — no obligation.",
       "confirmed": true,
       "notes": "Owner confirmed 2026-10-21.",
-      "surfaces": ["home", "custom-printing", "header", "footer"]
+      "surfaces": ["home", "quote-modal", "header", "footer"]
     },
     {
       "id": "support-24-7",
@@ -41,28 +41,28 @@
       "text": "We typically respond to quote requests within one business hour.",
       "confirmed": true,
       "notes": "Owner confirmed 2026-10-21.",
-      "surfaces": ["home", "custom-printing", "faq"]
+      "surfaces": ["home", "quote-modal", "faq"]
     },
     {
       "id": "turnaround-standard-5-7",
       "text": "Standard turnaround is 5–7 business days after artwork approval and payment.",
       "confirmed": true,
       "notes": "Owner confirmed 2026-10-21.",
-      "surfaces": ["home", "faq", "custom-printing", "shop"]
+      "surfaces": ["home", "faq", "quote-modal", "shop"]
     },
     {
       "id": "turnaround-rush-4",
       "text": "Rush orders (about 4 business days) are available for an additional fee.",
       "confirmed": true,
       "notes": "Owner confirmed 2026-10-21. Do not invent the fee amount until pricing.json exists.",
-      "surfaces": ["faq", "custom-printing"]
+      "surfaces": ["faq", "quote-modal"]
     },
     {
       "id": "la-local-delivery",
       "text": "Local delivery options are available in the Los Angeles area.",
       "confirmed": true,
       "notes": "Owner confirmed 2026-10-21. Exact pricing depends on order — do not invent rates.",
-      "surfaces": ["faq", "contact", "custom-printing"]
+      "surfaces": ["faq", "contact", "quote-modal"]
     },
     {
       "id": "phone-310-904-2655",
@@ -83,7 +83,7 @@
       "text": "We offer screen printing, direct-to-garment (DTG), direct-to-film (DTF), and embroidery.",
       "confirmed": true,
       "notes": "Owner confirmed 2026-10-21.",
-      "surfaces": ["home", "custom-printing", "seo"]
+      "surfaces": ["home", "quote-modal", "seo"]
     },
     {
       "id": "los-angeles",

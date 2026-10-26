@@ -1,6 +1,4 @@
 ---
-import Button from './Button.astro';
-
 interface NavItem {
   label: string;
   href: string;
@@ -8,19 +6,16 @@ interface NavItem {
 
 interface Props {
   items?: NavItem[];
-  cartCount?: number;
   class?: string;
 }
 
 const {
   items = [
-    { label: 'Shop', href: '/shop/' },
-    { label: 'Design', href: '/design/' },
-    { label: 'Custom Printing', href: '/custom-printing/' },
-    { label: 'About', href: '/about/' },
-    { label: 'FAQ', href: '/faq/' },
+    { label: 'Services', href: '/#services' },
+    { label: 'Store', href: '/shop/' },
+    { label: 'Design Studio', href: '/design/' },
+    { label: 'FAQs', href: '/faq/' },
   ],
-  cartCount = 0,
   class: className = '',
 } = Astro.props;
 ---
@@ -44,10 +39,7 @@ const {
     </nav>
 
     <div class="ds-header__actions">
-      <a class="ds-header__util" href="/cart/">Cart ({cartCount})</a>
-      <a class="ds-header__util" href="/account/">Sign in</a>
       <button type="button" class="ds-btn ds-btn--secondary" data-quote-trigger>Get a quote</button>
-      <Button href="/shop/">Shop now</Button>
       <button class="ds-header__menu-btn" type="button" aria-expanded="false" aria-controls="ds-mobile-menu" data-ds-menu-toggle>
         Menu
       </button>
@@ -64,10 +56,7 @@ const {
             </li>
           ))
         }
-        <li><a href="/cart/">Cart ({cartCount})</a></li>
-        <li><a href="/account/">Sign in</a></li>
         <li><button type="button" data-quote-trigger>Get a quote</button></li>
-        <li><a href="/shop/">Shop now</a></li>
       </ul>
     </nav>
   </div>
@@ -166,20 +155,24 @@ const {
     gap: var(--space-2);
   }
 
-  .ds-header__util {
-    font-size: var(--text-sm);
-    color: var(--ink);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    min-height: 44px;
+  .ds-header__actions .ds-btn {
     display: inline-flex;
     align-items: center;
-    padding: 0 var(--space-2);
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.7rem 1.15rem;
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    cursor: pointer;
   }
 
-  .ds-header__util:focus-visible {
-    outline: 3px solid var(--color-focus);
-    outline-offset: 2px;
+  .ds-header__actions .ds-btn:hover {
+    background: color-mix(in srgb, var(--canvas) 70%, var(--white));
   }
 
   .ds-header__menu-btn {
@@ -231,26 +224,5 @@ const {
   .ds-mobile-menu__list button:focus-visible {
     outline: 3px solid var(--color-focus);
     outline-offset: 2px;
-  }
-
-  /* Match DS button look for quote trigger in header actions */
-  .ds-header__actions .ds-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    padding: 0.7rem 1.15rem;
-    border: 2px solid var(--ink);
-    border-radius: var(--radius-md);
-    background: var(--white);
-    color: var(--ink);
-    font-family: var(--font-body);
-    font-size: var(--text-sm);
-    font-weight: 700;
-    cursor: pointer;
-  }
-
-  .ds-header__actions .ds-btn:hover {
-    background: color-mix(in srgb, var(--canvas) 70%, var(--white));
   }
 </style>

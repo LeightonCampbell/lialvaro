@@ -22,18 +22,18 @@ const year = new Date().getFullYear();
     <div>
       <p class="ds-footer__heading">Shop</p>
       <ul>
-        <li><a href="/shop/">Shop</a></li>
-        <li><a href="/design/">Design</a></li>
+        <li><a href="/shop/">Store</a></li>
+        <li><a href="/design/">Design Studio</a></li>
       </ul>
     </div>
 
     <div>
       <p class="ds-footer__heading">Services</p>
       <ul>
-        <li><a href="/custom-printing/">Screen Printing</a></li>
-        <li><a href="/custom-printing/">DTG</a></li>
-        <li><a href="/custom-printing/">DTF</a></li>
-        <li><a href="/custom-printing/">Embroidery</a></li>
+        <li><button type="button" data-quote-trigger data-quote-service="Screen Printing">Screen Printing</button></li>
+        <li><button type="button" data-quote-trigger data-quote-service="Direct to Garment">DTG</button></li>
+        <li><button type="button" data-quote-trigger data-quote-service="Direct to Film">DTF</button></li>
+        <li><button type="button" data-quote-trigger data-quote-service="Embroidery">Embroidery</button></li>
       </ul>
     </div>
 
@@ -41,7 +41,7 @@ const year = new Date().getFullYear();
       <p class="ds-footer__heading">Company</p>
       <ul>
         <li><a href="/about/">About</a></li>
-        <li><a href="/faq/">FAQ</a></li>
+        <li><a href="/faq/">FAQs</a></li>
         <li><a href="/articles/">Articles</a></li>
         <li><a href="/contact/">Contact</a></li>
         <li><a href="/privacy/">Privacy Policy</a></li>
@@ -108,17 +108,26 @@ const year = new Date().getFullYear();
     gap: 0.35rem;
   }
 
-  .ds-footer a {
+  .ds-footer a,
+  .ds-footer button {
     color: inherit;
     text-decoration: underline;
     text-underline-offset: 3px;
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    text-align: left;
   }
 
-  .ds-footer a:hover {
+  .ds-footer a:hover,
+  .ds-footer button:hover {
     color: var(--gold);
   }
 
-  .ds-footer a:focus-visible {
+  .ds-footer a:focus-visible,
+  .ds-footer button:focus-visible {
     outline: 3px solid var(--gold);
     outline-offset: 2px;
   }

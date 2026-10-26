@@ -1,6 +1,6 @@
 # LiAlvaro redirect map (proposed)
 
-**Status:** Stage 4 implementation in progress (2026-10-26). Host + trailing-slash + `/design-your-apparel/` → `/design/` enforced in `src/middleware.ts`.  
+**Status:** Stage 4 + owner locks (2026-10-26). Host + trailing-slash + `/design-your-apparel/` → `/design/` + `/custom-printing/` → `/?quote=1` enforced in `src/middleware.ts`. See `docs/OWNER_LOCKS.md`.  
 **Canonical host (locked):** `https://www.lialvaro.com`  
 **URL style (recommended):** trailing slash on all non-file paths (matches live 307 behavior and Astro `Layout` canonical normalization).
 
@@ -68,12 +68,12 @@ Apply only once the destination page exists (Stage 4/6 for Design Studio).
 
 | Legacy / interim | Future | Code | Status |
 |---|---|---|---|
-| `/design-your-apparel` | `https://www.lialvaro.com/design/` | **301** | **Implemented Stage 4** (middleware) |
-| `/design-your-apparel/` | `https://www.lialvaro.com/design/` | **301** | **Implemented Stage 4** (middleware) |
-| Homepage service CTAs / footer service links → `/design-your-apparel/` | `/custom-printing/` and/or `/shop/` (link updates) | n/a until those routes ship | Pending Stage 2 IA |
+| `/design-your-apparel` | `https://www.lialvaro.com/design/` | **301** | **Implemented** (middleware) |
+| `/design-your-apparel/` | `https://www.lialvaro.com/design/` | **301** | **Implemented** (middleware) |
+| `/custom-printing` | `https://www.lialvaro.com/?quote=1` | **301** | **Implemented** — opens quote modal (owner lock) |
+| `/custom-printing/` | `https://www.lialvaro.com/?quote=1` | **301** | **Implemented** — opens quote modal (owner lock) |
+| Homepage / footer service links | Quote modal (`data-quote-trigger`) | n/a | **Implemented** — do not recreate `/custom-printing/` |
 | *(none today)* | `/shop/`, `/cart/`, `/track/`, `/stores/[slug]/`, `/account/*`, `/admin/*` | n/a | New; no legacy |
-
-Until `/design/` is live, keep serving `/design-your-apparel/` (200). On cutover: add the 301s above and remove or stub the old page.
 
 ---
 
@@ -82,7 +82,7 @@ Until `/design/` is live, keep serving `/design-your-apparel/` (200). On cutover
 | From | Behavior |
 |---|---|
 | `/#faq` or `/faq#…` | Prefer dedicated `/faq/`; homepage FAQ section may remain as `#faq` for deep links |
-| Quote modal | Not a URL — keep JS trigger; Stage 8 also exposes `/custom-printing/` |
+| Quote modal | Not a URL — keep JS trigger; `/?quote=1` auto-opens; Stage 8 rebuilds modal (+ admin) only — **no** `/custom-printing/` page |
 
 ---
 
@@ -100,7 +100,8 @@ Until `/design/` is live, keep serving `/design-your-apparel/` (200). On cutover
 | Topic | Decision | Date |
 |---|---|---|
 | Canonical host | **www.lialvaro.com** | 2026-10-21 |
-| `/design-your-apparel/` | **301 → `/design/`** when Design Studio ships | 2026-10-21 |
+| `/design-your-apparel/` | **301 → `/design/`** | 2026-10-21 |
+| `/custom-printing/` | **Removed; 301 → `/?quote=1`** | 2026-10-26 |
 | Convert live **307** slash redirects to **301** | Still recommended; not explicitly confirmed | Pending |
 
 Brand for titles/copy: **LiAlvaro T-Shirt Printing** (see `docs/audit.md`).

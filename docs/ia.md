@@ -4,7 +4,7 @@
 **Canonical:** `https://www.lialvaro.com`  
 **Date:** 2026-10-21  
 **Depends on:** Stage 0 audit/redirects, Stage 1 strategy + copy + claims  
-**Status:** Draft for owner wireframe gate (structure only — no visual design system)
+**Status:** Superseded in part by owner locks 2026-10-26 — see `docs/OWNER_LOCKS.md` (nav, hero, Design Studio vs quote, `/custom-printing/` removed).
 
 ---
 
@@ -12,25 +12,25 @@
 
 1. Stage 2 locks *structure* — sitemap, flows, and low-fi wireframes — before styleguide or real pages.
 2. Customers see one storefront; `local` / `pod` / `broker` lanes stay internal.
-3. Two commercial paths stay primary: **Design a shirt** (`/design/`) and **Get a quote** (`/custom-printing/` + quote modal).
-4. Existing keep-pages (`/about/`, `/faq/`, `/articles/`, `/contact/`, article URLs) remain; `/design-your-apparel/` 301s → `/design/` when Design ships.
+3. Two commercial paths stay primary: **Design Studio** (`/design/` — order-ready) and **Get a quote** (**quote modal only**).
+4. Existing keep-pages (`/about/`, `/faq/`, `/articles/`, `/contact/`, article URLs) remain; `/design-your-apparel/` 301s → `/design/`; `/custom-printing/` 301s → `/?quote=1`.
 5. Wireframes are layout boxes only (no brand styling); owner reviews screenshots, not code.
 
 ### Assumptions
 
 - Trailing-slash URLs on all non-file paths (matches Stage 0 redirect map).
-- Nav labels from copy deck: Shop · Design · Custom Printing · About · FAQ; primary chrome CTA Shop; secondary Get a quote.
+- **Locked nav:** Services · Store · Design Studio · FAQs; chrome CTA **Get a quote**; Cart + Sign in in top bar (see `OWNER_LOCKS.md`).
 - Account and admin exist in the sitemap but ship in later stages; wireframes cover overview shells only.
 - Client stores are public or unlisted under `/stores/[client-slug]/` (Stage 7).
 - Same-day is not a standalone marketing page; eligibility surfaces on eligible PDP/cart and via call/quote (BUILD_PLAN public wording).
 
-### Non-blocking questions (answer with Stage 2 gate)
+### Owner-resolved (2026-10-26)
 
-1. Approve section order on the homepage wireframe (hero → how it works → featured → methods → reviews → FAQ → final CTA).
-2. Confirm Shop nav is acceptable as the header primary button (copy deck) vs Design (hero primary) — both kept; chrome vs hero roles differ.
-3. Prefer quote entry as page `/custom-printing/` *and* global modal (recommended) vs page-only.
-4. Account: magic-link later — is an early “Sign in” nav item OK as a placeholder shell, or hide until Stage 7?
-5. Optional: public `/same-day/` landing — **not** proposed (keeps same-day as claim + eligibility UX only).
+1. Homepage section order kept (hero → how it works → store → services → reviews → FAQ → final CTA).
+2. Header primary CTA is **Get a quote** (not Shop now).
+3. Quote entry is **modal only** — no `/custom-printing/` page.
+4. Sign in + Cart live in the **top bar** (right), not main header.
+5. No public `/same-day/` landing.
 
 ---
 
@@ -59,9 +59,9 @@ Legend: **Keep** = live today · **New** = planned · **Redirect** = Stage 0 own
 | `/shop/` | Catalog index | New (Stage 5) |
 | `/shop/[category]/` | Category listing | New (Stage 5) |
 | `/shop/[slug]/` | Product detail (PDP) | New (Stage 5) |
-| `/design/` | Design Studio | New (Stage 6); **301 target** for legacy design URL |
-| `/design-your-apparel/` | Legacy design intake | Keep until cutover → **301 → `/design/`** |
-| `/custom-printing/` | Custom / bulk + quote entry | New (Stage 4 shell / Stage 8 quote rebuild) |
+| `/design/` | Design Studio (order-ready) | Live foundation; canvas Stage 6; **301 target** for legacy design URL |
+| `/design-your-apparel/` | Legacy design intake | **301 → `/design/`** |
+| `/custom-printing/` | *(removed)* | **301 → `/?quote=1`** — quote modal only (owner lock) |
 | `/cart/` | Cart | New (Stage 5) |
 | `/order-confirmed/` | Post-checkout confirmation | New (Stage 5) |
 | `/track/` | Order tracking (carrier + our status) | New (Stage 5) |
@@ -104,26 +104,31 @@ Legend: **Keep** = live today · **New** = planned · **Redirect** = Stage 0 own
 
 ## 3. Navigation model
 
+### Top bar
+
+| Slot | Content |
+|---|---|
+| Left | Same-day + phone announcement (left-aligned) |
+| Right | Cart · Sign in |
+
 ### Global header
 
 | Slot | Content |
 |---|---|
 | Brand | LiAlvaro → `/` |
-| Primary links | Shop · Design · Custom Printing · About · FAQ |
-| Utility | Cart (count) · Sign in *(placeholder until Stage 7)* |
-| Primary button | Shop now → `/shop/` |
-| Secondary | Get a quote → opens quote modal *or* `/custom-printing/` |
+| Primary links | Services (`/#services`) · Store (`/shop/`) · Design Studio (`/design/`) · FAQs (`/faq/`) |
+| Primary button | Get a quote → opens quote modal |
 
-Mobile: hamburger → same links; quote + call sticky or in drawer.
+Mobile: hamburger → same links + Get a quote.
 
 ### Footer
 
 | Column | Links |
 |---|---|
 | Brand | Tagline; phone; email |
-| Shop | `/shop/`, featured categories (when live) |
-| Services | Screen / DTG / DTF / Embroidery → `/custom-printing/` (not all → design URL) |
-| Company | About, FAQ, Articles, Contact |
+| Shop | Store `/shop/`, Design Studio `/design/` |
+| Services | Screen / DTG / DTF / Embroidery → **quote modal** (preselected service) |
+| Company | About, FAQs, Articles, Contact |
 | Legal | Privacy, Terms (real routes) |
 
 ---
@@ -134,16 +139,16 @@ Aligned with Stage 1 strategy + BUILD_PLAN Stage 2 homepage structure. **One pri
 
 | # | Section | Content slots | Primary CTA |
 |---|---|---|---|
-| 1 | Hero | Brand (hero-level) · headline · short subhead · CTA group · dominant full-bleed visual plane | Design a shirt → `/design/` |
-| 2 | How it works | H2 · 3 steps | Start your design → `/design/` (text link: Get a quote) |
-| 3 | Featured products | H2 · 3–4 product cards · empty state if no catalog | Shop products → `/shop/` |
-| 4 | Print methods | H2 · 4 method slots (names only; no production-floor imagery captions) | Get a custom quote → `/custom-printing/` |
+| 1 | Hero | Brand (eyebrow) · **H1: Fast, Easy, High-Quality Custom Apparel Printing** · short subhead · CTA group · dominant visual | **Start Designing** → `/design/` |
+| 2 | How it works | H2 · 3 steps | Start Designing → `/design/` (text: Get a quote) |
+| 3 | Featured products | H2 · 3–4 product cards · empty state if no catalog | Browse the store → `/shop/` |
+| 4 | Services | H2 · 4 method slots → quote modal with service | Get a custom quote → modal |
 | 5 | Reviews | H2 · real quotes only · no invented star count | *(none)* |
 | 6 | Short FAQ | 3–4 Q&As from copy deck | View FAQ → `/faq/` |
 | 7 | Final CTA band | H2 · body · CTA group | Get a free quote |
 | — | Footer | As above | — |
 
-Hero secondary: Get a free quote. Tertiary: Call (claim-confirmed phone).
+Hero secondary: Get a free quote. Phone **not** in hero CTA group (owner lock).
 
 ---
 
@@ -153,8 +158,8 @@ Hero secondary: Get a free quote. Tertiary: Call (claim-confirmed phone).
 |---|---|---|---|
 | `/` | Quote / call | Design | Quote |
 | `/shop/*` | Browse standards | Buy blanks/standards | Secondary |
-| `/design/` | Secondary | **Primary** | Secondary |
-| `/custom-printing/` | **Primary** | Secondary | **Primary** |
+| `/design/` | Secondary | **Primary** (order-ready) | Secondary |
+| Quote modal | **Primary** | Secondary | **Primary** |
 | `/stores/[slug]/` | Org buyers | — | Client programs |
 | `/track/`, `/account/*` | Post-purchase | Post-purchase | Post-purchase |
 
@@ -168,8 +173,9 @@ From Stage 0 `docs/redirects.md` (do not implement until destinations exist):
 |---|---|
 | Apex → www | 301 |
 | Trailing slash | 301 preferred |
-| `/design-your-apparel/` → `/design/` | 301 at Design cutover |
-| Footer Services | Point to `/custom-printing/` (and anchors later), not only design URL |
+| `/design-your-apparel/` → `/design/` | 301 (implemented) |
+| `/custom-printing/` → `/?quote=1` | 301 (owner lock) |
+| Footer Services | Open quote modal with service preselected |
 | Privacy / Terms | Real pages; never `#` |
 
 ---

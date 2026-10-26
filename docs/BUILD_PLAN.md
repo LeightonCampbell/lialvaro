@@ -30,6 +30,8 @@ Save as `docs/BUILD_PLAN.md`. To run a stage, tell Cursor:
 
 **Quality bars.** WCAG 2.2 AA, mobile-first, keyboard-navigable, `prefers-reduced-motion` respected. TypeScript strict. No `any` without a comment. No dead links (`#` is not a page).
 
+**Owner locks (mandatory).** Before implementing any stage, read `docs/OWNER_LOCKS.md`. Owner-approved chrome, hero, Design Studio vs quote split, and the removal of `/custom-printing/` **must not be reverted** by later stages. If this plan conflicts with `OWNER_LOCKS.md`, follow the locks and note the override in the stage report.
+
 ---
 
 ## B. Business model (reference for all stages)
@@ -73,10 +75,10 @@ One catalog, one cart, one order record. Each `order_item` carries a `lane`. Rou
 ### Stage 2: Information architecture, flows, wireframes
 **Goal:** structure before pixels.
 **Do:**
-- Sitemap: `/`, `/shop`, `/shop/[category]`, `/shop/[slug]`, `/stores/[client-slug]`, `/design`, `/custom-printing`, `/cart`, `/order-confirmed`, `/track`, `/account/*`, `/admin/*`, plus existing pages.
-- User flows for: browse -> buy; design -> buy; request quote; reorder; client store purchase; same-day inquiry.
+- Sitemap: `/`, `/shop`, `/shop/[category]`, `/shop/[slug]`, `/stores/[client-slug]`, `/design`, `/cart`, `/order-confirmed`, `/track`, `/account/*`, `/admin/*`, plus existing pages. **Do not add `/custom-printing`** (owner lock — quote modal only; 301 legacy URL).
+- User flows for: browse -> buy; design -> buy; request quote (modal); reorder; client store purchase; same-day inquiry.
 - Low-fidelity wireframes as plain HTML/CSS with no styling beyond layout (at 375 and 1280), one per key page: section order, content slots, CTA placement.
-- Homepage structure: value proposition; two paths ("Design a shirt" primary, "Get a quote" secondary); review proof with real count/link; featured products; 3-step "how it works"; client-stores strip; short FAQ; footer. One primary CTA per section.
+- Homepage structure: value proposition; two paths ("Start Designing" primary → Design Studio, "Get a free quote" secondary → modal); review proof with real count/link; featured products; 3-step "how it works"; client-stores strip; short FAQ; footer. One primary CTA per section. See `docs/OWNER_LOCKS.md` for locked hero H1 and nav.
 **Deliverable:** `docs/ia.md`, `docs/flows.md`, `/_preview/wireframes/*` (noindex), screenshots.
 **Gate:** owner approves wireframes.
 
@@ -138,7 +140,7 @@ One catalog, one cart, one order record. Each `order_item` carries a `lane`. Rou
 
 ### Stage 8: Broker lane and quote flow
 **Do:**
-- Rebuild the existing multi-step quote modal's steps (service, category, quantity, blanks, upload, notes, contact) on `/custom-printing` and as a modal, storing submissions in D1 and emailing the owner.
+- Rebuild the existing multi-step quote modal's steps (service, category, quantity, blanks, upload, notes, contact) as a **global modal only** (no `/custom-printing` page — owner lock), storing submissions in D1 and emailing the owner.
 - Admin quote builder: line items, partner cost, markup, deposit, send a Stripe payment link; customer-facing quote page; status tracking.
 **Gate:** full broker test (request -> quote -> pay -> tracked -> delivered status); quote step analytics visible.
 
