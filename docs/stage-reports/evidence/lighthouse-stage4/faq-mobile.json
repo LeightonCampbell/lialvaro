@@ -1,0 +1,56 @@
+{
+  "requestedUrl": "http://127.0.0.1:4322/faq/",
+  "finalUrl": "http://127.0.0.1:4322/faq/",
+  "fetchTime": "2026-10-26T17:22:12.513Z",
+  "categories": {
+    "performance": {
+      "score": 1
+    },
+    "accessibility": {
+      "score": 1
+    },
+    "best-practices": {
+      "score": 1
+    },
+    "seo": {
+      "score": 1
+    }
+  },
+  "audits": {
+    "largest-contentful-paint": {
+      "score": 0.99,
+      "numericValue": 1653.5577,
+      "displayValue": "1.7 s"
+    },
+    "cumulative-layout-shift": {
+      "score": 1,
+      "numericValue": 0,
+      "displayValue": "0"
+    },
+    "link-text": {
+      "score": 1,
+      "details": {
+        "type": "table",
+        "headings": [
+          {
+            "key": "href",
+            "valueType": "url",
+            "label": "Link destination"
+          },
+          {
+            "key": "text",
+            "valueType": "text",
+            "label": "Link Text"
+          }
+        ],
+        "items": []
+      }
+    },
+    "meta-description": {
+      "score": 1
+    },
+    "document-title": {
+      "score": 1
+    }
+  }
+}

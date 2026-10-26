@@ -1,51 +1,75 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.lialvaro.com/</loc>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <changefreq>monthly</changefreq>
-    <lastmod>2026-03-24</lastmod>
+    <lastmod>2026-10-26</lastmod>
   </url>
   <url>
-    <loc>https://www.lialvaro.com/about</loc>
-    <priority>1.0</priority>
-    <changefreq>monthly</changefreq>
-    <lastmod>2026-03-24</lastmod>
+    <loc>https://www.lialvaro.com/shop/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <lastmod>2026-10-26</lastmod>
   </url>
   <url>
-    <loc>https://www.lialvaro.com/articles</loc>
-    <priority>1.0</priority>
-    <changefreq>monthly</changefreq>
-    <lastmod>2026-03-24</lastmod>
+    <loc>https://www.lialvaro.com/design/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <lastmod>2026-10-26</lastmod>
   </url>
   <url>
-    <loc>https://www.lialvaro.com/contact</loc>
-    <priority>1.0</priority>
-    <changefreq>monthly</changefreq>
-    <lastmod>2026-03-24</lastmod>
+    <loc>https://www.lialvaro.com/custom-printing/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <lastmod>2026-10-26</lastmod>
   </url>
   <url>
-    <loc>https://www.lialvaro.com/design-your-apparel</loc>
-    <priority>1.0</priority>
+    <loc>https://www.lialvaro.com/about/</loc>
     <changefreq>monthly</changefreq>
-    <lastmod>2026-03-24</lastmod>
+    <priority>0.7</priority>
+    <lastmod>2026-10-26</lastmod>
   </url>
   <url>
-    <loc>https://www.lialvaro.com/faq</loc>
-    <priority>1.0</priority>
+    <loc>https://www.lialvaro.com/faq/</loc>
     <changefreq>monthly</changefreq>
-    <lastmod>2026-03-24</lastmod>
-  </url>
-  <url>
-    <loc>https://www.lialvaro.com/best-affordable-custom-t-shirt-printing-in-los-angeles-2026-local-guide</loc>
     <priority>0.8</priority>
-    <changefreq>monthly</changefreq>
-    <lastmod>2026-03-24</lastmod>
+    <lastmod>2026-10-26</lastmod>
   </url>
   <url>
-    <loc>https://www.lialvaro.com/the-ultimate-guide-to-finding-the-perfect-place-for-your-bulk-custom-t-shirt-event-needs</loc>
-    <priority>0.8</priority>
+    <loc>https://www.lialvaro.com/articles/</loc>
     <changefreq>monthly</changefreq>
-    <lastmod>2026-03-24</lastmod>
+    <priority>0.6</priority>
+    <lastmod>2026-10-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.lialvaro.com/contact/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <lastmod>2026-10-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.lialvaro.com/privacy/</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <lastmod>2026-10-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.lialvaro.com/terms/</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <lastmod>2026-10-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.lialvaro.com/best-affordable-custom-t-shirt-printing-in-los-angeles-2026-local-guide/</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+    <lastmod>2026-10-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.lialvaro.com/the-ultimate-guide-to-finding-the-perfect-place-for-your-bulk-custom-t-shirt-event-needs/</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+    <lastmod>2026-10-26</lastmod>
   </url>
 </urlset>

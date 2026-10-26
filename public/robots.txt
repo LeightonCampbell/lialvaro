@@ -1,4 +1,11 @@
 ﻿User-agent: *
 Allow: /
 
+Disallow: /_preview/
+Disallow: /_styleguide/
+Disallow: /styleguide/
+Disallow: /cart/
+Disallow: /account/
+Disallow: /admin/
+
 Sitemap: https://www.lialvaro.com/sitemap.xml
