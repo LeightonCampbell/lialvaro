@@ -30,8 +30,8 @@ const sameDay = claimText('same-day-printing');
     </div>
 
     <div class="actions">
-      <Button href="/custom-printing/">Get a custom quote →</Button>
-      <Button variant="ghost" href="/design/">Design a shirt</Button>
+      <button type="button" class="ds-btn ds-btn--primary" data-quote-trigger>Get a custom quote →</button>
+      <Button variant="ghost" href="/design/">Start Designing</Button>
     </div>
   </div>
 </Layout>
@@ -79,5 +79,21 @@ const sameDay = claimText('same-day-printing');
     flex-wrap: wrap;
     gap: 0.75rem;
     margin-top: 1.5rem;
+  }
+
+  .actions .ds-btn--primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.7rem 1.15rem;
+    border: 2px solid var(--print-red);
+    border-radius: var(--radius-md);
+    background: var(--print-red);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    cursor: pointer;
   }
 </style>

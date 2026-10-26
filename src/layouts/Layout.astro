@@ -70,10 +70,14 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 	</head>
 	<body class="site-body">
 		<div class="topbar">
-			<p>
+			<p class="topbar__announce">
 				{sameDay ? <>{sameDay}&nbsp;·&nbsp;</> : null}
 				<a href="tel:3109042655">{phone.replace(/^Call\s+/i, '')}</a>
 			</p>
+			<div class="topbar__utils">
+				<a href="/cart/">Cart</a>
+				<a href="/account/">Sign in</a>
+			</div>
 		</div>
 		<Header />
 		<main id="main">
@@ -134,12 +138,28 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 		background: var(--ink);
 		color: var(--white);
 		padding: 0.55rem 1rem;
-		text-align: center;
 		font-size: 0.8rem;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem 1rem;
 	}
 
-	.topbar p {
+	.topbar__announce {
 		margin: 0;
+		text-align: left;
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	.topbar__utils {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.75rem;
+		margin-left: auto;
+		flex-shrink: 0;
 	}
 
 	.topbar a {

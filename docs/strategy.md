@@ -20,8 +20,8 @@ Claims used in messaging must exist in `src/data/claims.json` with `"confirmed":
 ### Assumptions
 
 - Three fulfilment lanes (local / pod / broker) stay internal; customers see one storefront.
-- Primary paths later: Design Studio (`/design/`), Shop, Custom Printing / quote.
-- `/design-your-apparel/` will 301 → `/design/` when Design Studio ships (Stage 0 decision).
+- Primary paths: Design Studio (`/design/` — order-ready), Store (`/shop/`), quote modal for non-studio work.
+- `/design-your-apparel/` 301 → `/design/`; `/custom-printing/` removed (301 → `/?quote=1`). See `docs/OWNER_LOCKS.md`.
 - Phone `(310) 904-2655` and `help@lialvaro.com` remain the public contacts once confirmed in `claims.json`.
 - No Google review count or rating average is published until the owner supplies a verifiable source.
 
@@ -64,7 +64,8 @@ Claims used in messaging must exist in `src/data/claims.json` with `"confirmed":
 3. Checkout with confidence (tracking later).
 4. Reorder the same design later (account — later stage).
 
-**Primary CTA:** Design a shirt  
+**Primary CTA:** Start Designing  
+ 
 **Secondary:** Shop standard products
 
 **Success looks like:** Design started → export → cart; quote modal is *not* the default path for them.
@@ -98,14 +99,14 @@ Claims used in messaging must exist in `src/data/claims.json` with `"confirmed":
 | **Headline** | Custom printed apparel. Clear process. Los Angeles. | Avoid “premier” / unverified superlatives |
 | **Subhead** | Design online and checkout, or request a quote for custom and bulk work. Same-day printing available for select orders in Los Angeles — call to confirm. | Same-day line only if claim `same-day-printing` is confirmed; otherwise drop the same-day sentence |
 | **Proof** | Real customer quotes (Leighton C., Mark L., Richard L., etc.) — no star-count inventing | Fix known typo “gad”→“had” when publishing; do not invent “LTP” expansion in the quote |
-| **Primary commercial CTA (hero)** | Design a shirt → `/design/` | Aligns with A2 and future IA |
+| **Primary commercial CTA (hero)** | Start Designing → `/design/` | Owner lock 2026-10-26 |
 | **Secondary CTA (hero)** | Get a free quote → custom printing / quote flow | Aligns with A1/A3; only if `free-quote` confirmed |
 
 ### Section order & one primary CTA each
 
 | Section | Purpose | Primary CTA |
 |---|---|---|
-| Hero | Brand + two paths | Design a shirt |
+| Hero | Brand + H1 “Fast, Top-Quality…” | Start Designing |
 | How it works (3 steps) | Reduce anxiety | Start your design **or** Get a quote (pick one primary in build; secondary text link) |
 | Featured products | Shop path | Shop products |
 | Print methods | Educate A1/A3 | Get a custom quote |

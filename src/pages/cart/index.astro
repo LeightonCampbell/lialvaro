@@ -16,7 +16,7 @@ import Button from '../../components/ds/Button.astro';
     </header>
     <div class="actions">
       <Button href="/shop/">Browse products</Button>
-      <Button variant="secondary" href="/custom-printing/">Get a custom quote</Button>
+      <button type="button" class="ds-btn ds-btn--secondary" data-quote-trigger>Get a custom quote</button>
     </div>
   </div>
 </Layout>
@@ -26,5 +26,21 @@ import Button from '../../components/ds/Button.astro';
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
+  }
+
+  .actions .ds-btn--secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.7rem 1.15rem;
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    cursor: pointer;
   }
 </style>

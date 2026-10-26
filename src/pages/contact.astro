@@ -35,7 +35,7 @@ const losAngeles = claimText('los-angeles');
         <h2>Los Angeles</h2>
         <p>{losAngeles ?? 'Serving customers from Los Angeles, California.'}</p>
         {sameDay ? <p class="note">{sameDay}</p> : null}
-        <Button variant="ghost" href="/custom-printing/">Custom printing →</Button>
+        <button type="button" class="linkish" data-quote-trigger>Get a free quote →</button>
       </article>
     </div>
 
@@ -117,5 +117,18 @@ const losAngeles = claimText('los-angeles');
     font-size: var(--text-sm);
     font-weight: 700;
     cursor: pointer;
+  }
+
+  .linkish {
+    background: none;
+    border: none;
+    color: var(--print-red);
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+    min-height: 44px;
+    justify-self: start;
+    padding: 0;
   }
 </style>
