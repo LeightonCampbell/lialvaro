@@ -139,7 +139,7 @@ Aligned with Stage 1 strategy + BUILD_PLAN Stage 2 homepage structure. **One pri
 
 | # | Section | Content slots | Primary CTA |
 |---|---|---|---|
-| 1 | Hero | Brand (eyebrow) · **H1: Fast, Top-Quality Custom Apparel Printing.** · short subhead · CTA group · dominant visual | **Start Designing** → `/design/` |
+| 1 | Hero | Brand (eyebrow) · **H1: Fast, Easy, High-Quality Custom Apparel Printing** · short subhead · CTA group · dominant visual | **Start Designing** → `/design/` |
 | 2 | How it works | H2 · 3 steps | Start Designing → `/design/` (text: Get a quote) |
 | 3 | Featured products | H2 · 3–4 product cards · empty state if no catalog | Browse the store → `/shop/` |
 | 4 | Services | H2 · 4 method slots → quote modal with service | Get a custom quote → modal |

@@ -106,7 +106,7 @@ Claims used in messaging must exist in `src/data/claims.json` with `"confirmed":
 
 | Section | Purpose | Primary CTA |
 |---|---|---|
-| Hero | Brand + H1 “Fast, Top-Quality…” | Start Designing |
+| Hero | Brand + H1 “Fast, Easy, High-Quality…” | Start Designing |
 | How it works (3 steps) | Reduce anxiety | Start your design **or** Get a quote (pick one primary in build; secondary text link) |
 | Featured products | Shop path | Shop products |
 | Print methods | Educate A1/A3 | Get a custom quote |

@@ -30,7 +30,7 @@
 | Slot | Locked value |
 |---|---|
 | Brand signal | **LiAlvaro** (eyebrow / brand line — keep hero-level brand presence) |
-| H1 | **Fast, Top-Quality Custom Apparel Printing.** |
+| H1 | **Fast, Easy, High-Quality Custom Apparel Printing** |
 | Primary CTA | **Start Designing** → `/design/` |
 | Secondary CTA | **Get a free quote** → quote modal |
 | Phone in hero CTA group | **Removed** (phone stays in top bar / footer / final CTA as needed) |

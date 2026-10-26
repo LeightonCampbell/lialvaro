@@ -10,30 +10,31 @@ const rush = claimText('turnaround-rush-4');
 const sameDay = claimText('same-day-printing');
 const delivery = claimText('la-local-delivery');
 const quoteHour = claimText('quote-response-1-business-hour');
-const methods = claimText('methods-screen-dtg-dtf-embroidery');
 const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
+const phoneBare = phone.replace(/^Call\s+/i, '').replace(/\.$/, '');
 
 const categories = [
   {
     id: 'orders',
     title: 'Orders & quotes',
+    lede: 'How to get pricing, place an order, and what to expect on quantity.',
     items: [
       {
         id: 'quote',
         question: 'How can I get a price quote?',
-        answer: `Click any “Get a Quote” button on the site and complete the quick form. You can also ${phone.replace(/\.$/, '')} for a fast estimate${quoteHour ? ` — ${quoteHour}` : ''}.`,
+        answer: `Click any “Get a Quote” button on the site and complete the quick form. You can also call us at ${phoneBare} for a fast estimate${quoteHour ? ` — ${quoteHour.replace(/\.$/, '')}` : ''}.`,
       },
       {
         id: 'order',
         question: 'How do I order a custom shirt?',
         answer:
-          'Start Designing in Design Studio when you are ready to order, or request a quote for custom and bulk work. Our team can guide you through garment, art, and placement.',
+          'Ordering starts with selecting your garment, creating or uploading your design, and choosing placement. Our team guides you through the entire process from start to finish.',
       },
       {
         id: 'minimum',
         question: "What's the minimum order quantity?",
         answer: noMinimums
-          ? `${noMinimums} Bulk pricing for screen printing may still benefit at higher quantities — ask us for your project.`
+          ? `${noMinimums} You can order a single shirt! That said, you benefit significantly at 12+ pieces due to bulk pricing on screen printing.`
           : 'Ask us about quantity for your project.',
       },
     ],
@@ -41,49 +42,59 @@ const categories = [
   {
     id: 'garments',
     title: 'Garments & artwork',
+    lede: 'Shirt options, file formats, and help with your design.',
     items: [
       {
         id: 'shirt-type',
         question: 'What type of shirt can I choose?',
         answer:
-          'You have many brand and material options — cotton, polyester, blends, and more — as well as weight, size, and fit preferences. You may also provide blanks for some projects.',
+          'You have many brand and material options — cotton, polyester, blends, and more — as well as weight, size, and gender preferences. You may also bring your own shirts to print on.',
       },
       {
         id: 'design-help',
         question: 'Do I need to create my own design?',
         answer:
-          'Not at all. We accept high-resolution files (PNG, JPG, SVG, and similar). We can also help refine artwork — ask when you request a quote.',
+          'Not at all. We accept high-resolution files in .ai, .png, .jpg, or .svg formats. We can also edit your existing design or create a custom design for you at a small cost.',
       },
     ],
   },
   {
     id: 'production',
     title: 'Production & methods',
+    lede: 'Turnaround times and choosing the right print process.',
     items: [
       {
         id: 'turnaround',
         question: 'How long does it take to get my shirts?',
-        answer: [turnaround, rush, sameDay].filter(Boolean).join(' '),
+        answer: [
+          turnaround,
+          rush ? `${rush.replace(/\.$/, '')} are available for an additional fee.` : null,
+          sameDay
+            ? 'Same-day service is available locally in LA. Call to confirm.'
+            : null,
+        ]
+          .filter(Boolean)
+          .join(' '),
       },
       {
         id: 'method',
         question: 'What printing method is right for me?',
-        answer: methods
-          ? `${methods} For bulk and simple designs: screen printing. For photo-quality or small batches: DTG. For versatility across fabrics: DTF. For premium branded items: embroidery. We’ll help you choose.`
-          : 'We’ll help you choose the right method for quantity, fabric, and design.',
+        answer:
+          'For bulk and simple designs: screen printing. For photo-quality or small batches: DTG. For versatility across fabrics: DTF. For premium branded items: embroidery. We’ll help you choose.',
       },
     ],
   },
   {
     id: 'delivery',
     title: 'Delivery & logistics',
+    lede: 'Shipping, pickup, and delivery in the Los Angeles area.',
     items: [
       {
         id: 'delivery-cost',
         question: 'How much is delivery?',
         answer: delivery
           ? `${delivery} Final delivery cost depends on order size and location. Contact us for an exact quote including delivery.`
-          : 'Contact us for delivery options and pricing for your order.',
+          : 'Local delivery options are available in the Los Angeles area. Final delivery cost depends on order size and location. Contact us for an exact quote including delivery.',
       },
     ],
   },
@@ -111,13 +122,17 @@ const faqLd = {
     <header class="page-hero">
       <p class="eyebrow">Support</p>
       <h1>Questions, answered.</h1>
-      <p>Everything you need to know about ordering custom apparel with LiAlvaro — organized by topic.</p>
+      <p>
+        Everything you need to know about ordering custom apparel with LiAlvaro — organized by topic so you can find
+        answers fast.
+      </p>
     </header>
 
     {
       categories.map((cat) => (
         <section class="faq-cat" id={cat.id}>
           <h2>{cat.title}</h2>
+          {cat.lede ? <p class="faq-cat__lede">{cat.lede}</p> : null}
           <Accordion items={cat.items} />
         </section>
       ))
@@ -125,7 +140,7 @@ const faqLd = {
 
     <section class="faq-cta">
       <h2>Ready to start?</h2>
-      <p>Share the project details — get a no-obligation quote.</p>
+      <p>Share the project details with us — get a no-obligation quote.</p>
       <div class="actions">
         <button type="button" class="ds-btn ds-btn--primary" data-quote-trigger>Get a free quote</button>
         <Button variant="secondary" href="tel:3109042655">{phone}</Button>
@@ -140,11 +155,17 @@ const faqLd = {
   }
 
   .faq-cat h2 {
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.35rem;
     font-family: var(--font-display);
     font-size: var(--text-2xl);
     font-weight: 400;
     text-transform: uppercase;
+  }
+
+  .faq-cat__lede {
+    margin: 0 0 0.75rem;
+    color: color-mix(in srgb, var(--ink) 80%, var(--mesh-grey));
+    max-width: 40rem;
   }
 
   .faq-cta {
