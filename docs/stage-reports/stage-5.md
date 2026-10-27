@@ -40,6 +40,6 @@
 4. Vendor cut **20%** + sample catalog kept — **done** (owner 2026-10-27)  
 5. Same-day: **≤12 pieces**, cutoff **11:00** PT, existing LA ZIP allowlist — **done** (owner 2026-10-27)  
 
-## STOP
+## STOP / acceptance
 
-Revised Stage 5 ready for review. Do not reintroduce Printful. Do not start Stage 6 until owner accepts.
+**Owner accepted Stage 5** (2026-10-27 America/Los_Angeles). Production Cloudflare Worker secrets deferred until full launch. Proceed to Stage 6. Do not reintroduce Printful.

@@ -87,15 +87,18 @@ const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
           return `<li class="line">Unknown item (${line.variantId}) <button data-remove="${line.variantId}" type="button">Remove</button></li>`;
         }
         subtotal += variant.retailPriceCents * line.quantity;
+        const designAttr = line.designId ? ` data-design="${line.designId}"` : '';
+        const designMeta = line.designId ? `<div class="meta">Custom design ${line.designId.slice(0, 12)}…</div>` : '';
         return `<li class="line">
           <div>
             <a href="/shop/${variant.product.slug}/">${variant.product.name}</a>
             <div class="meta">${variant.name}</div>
+            ${designMeta}
           </div>
           <div class="qty">
-            <button type="button" data-dec="${variant.id}" aria-label="Decrease">−</button>
+            <button type="button" data-dec="${variant.id}"${designAttr} aria-label="Decrease">−</button>
             <span>${line.quantity}</span>
-            <button type="button" data-inc="${variant.id}" aria-label="Increase">+</button>
+            <button type="button" data-inc="${variant.id}"${designAttr} aria-label="Increase">+</button>
           </div>
           <div class="price">${money(variant.retailPriceCents * line.quantity)}</div>
         </li>`;
@@ -125,16 +128,17 @@ const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
     const inc = target.getAttribute('data-inc');
     const dec = target.getAttribute('data-dec');
     const remove = target.getAttribute('data-remove');
+    const designId = target.getAttribute('data-design') || undefined;
     if (inc) {
-      const line = readCart().find((l) => l.variantId === inc);
-      setQuantity(inc, (line?.quantity ?? 0) + 1);
+      const line = readCart().find((l) => l.variantId === inc && (l.designId || undefined) === designId);
+      setQuantity(inc, (line?.quantity ?? 0) + 1, designId);
       render();
     } else if (dec) {
-      const line = readCart().find((l) => l.variantId === dec);
-      setQuantity(dec, (line?.quantity ?? 1) - 1);
+      const line = readCart().find((l) => l.variantId === dec && (l.designId || undefined) === designId);
+      setQuantity(dec, (line?.quantity ?? 1) - 1, designId);
       render();
     } else if (remove) {
-      setQuantity(remove, 0);
+      setQuantity(remove, 0, designId);
       render();
     }
   });

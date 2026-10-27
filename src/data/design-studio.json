@@ -1,0 +1,83 @@
+{
+  "notes": "Owner-fulfilled Design Studio blanks. Print boxes are inches at 300 DPI export; canvas displays at displayScale.",
+  "dpi": 300,
+  "displayScale": 0.2,
+  "maxUploadBytes": 8000000,
+  "fonts": [
+    { "id": "poppins", "label": "Poppins", "stack": "Poppins, sans-serif" },
+    { "id": "inter", "label": "Inter", "stack": "Inter, sans-serif" },
+    { "id": "anton", "label": "Anton", "stack": "Anton, Impact, sans-serif" }
+  ],
+  "products": [
+    {
+      "id": "studio_tee",
+      "label": "Classic Tee",
+      "blurb": "Soft everyday tee — front and back print areas.",
+      "variantId": "var_sunrise_m_white",
+      "colors": [
+        { "id": "white", "label": "White", "hex": "#f5f5f5" },
+        { "id": "black", "label": "Black", "hex": "#1b2233" },
+        { "id": "navy", "label": "Navy", "hex": "#1e3a5f" },
+        { "id": "red", "label": "Print Red", "hex": "#c8102e" }
+      ],
+      "placements": {
+        "front": {
+          "label": "Front",
+          "widthIn": 12,
+          "heightIn": 16,
+          "mockup": { "xPct": 28, "yPct": 22, "wPct": 44, "hPct": 52 }
+        },
+        "back": {
+          "label": "Back",
+          "widthIn": 12,
+          "heightIn": 16,
+          "mockup": { "xPct": 28, "yPct": 20, "wPct": 44, "hPct": 54 }
+        }
+      }
+    },
+    {
+      "id": "studio_hoodie",
+      "label": "Pullover Hoodie",
+      "blurb": "Roomy hoodie with a large front print box.",
+      "variantId": "var_block_m_navy",
+      "colors": [
+        { "id": "black", "label": "Black", "hex": "#1b2233" },
+        { "id": "grey", "label": "Heather", "hex": "#8b8b85" },
+        { "id": "navy", "label": "Navy", "hex": "#1e3a5f" }
+      ],
+      "placements": {
+        "front": {
+          "label": "Front",
+          "widthIn": 12,
+          "heightIn": 14,
+          "mockup": { "xPct": 30, "yPct": 28, "wPct": 40, "hPct": 42 }
+        },
+        "back": {
+          "label": "Back",
+          "widthIn": 12,
+          "heightIn": 14,
+          "mockup": { "xPct": 30, "yPct": 26, "wPct": 40, "hPct": 44 }
+        }
+      }
+    },
+    {
+      "id": "studio_cap",
+      "label": "Dad Cap",
+      "blurb": "Front panel logo area for caps.",
+      "variantId": "var_script_os_black",
+      "colors": [
+        { "id": "black", "label": "Black", "hex": "#1b2233" },
+        { "id": "white", "label": "White", "hex": "#f5f5f5" },
+        { "id": "khaki", "label": "Khaki", "hex": "#c4b89a" }
+      ],
+      "placements": {
+        "front": {
+          "label": "Front",
+          "widthIn": 4.5,
+          "heightIn": 2.5,
+          "mockup": { "xPct": 30, "yPct": 38, "wPct": 40, "hPct": 22 }
+        }
+      }
+    }
+  ]
+}

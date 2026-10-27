@@ -1,191 +1,114 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import Button from '../../components/ds/Button.astro';
-import Section from '../../components/ds/Section.astro';
-import StepList from '../../components/ds/StepList.astro';
-import Field from '../../components/ds/Field.astro';
 import { claimText } from '../../lib/claims';
+import { getStudioConfig, studioUnitPriceCents } from '../../lib/design-studio';
 
 const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
 const sameDay = claimText('same-day-printing');
-
-const products = [
-  { id: 't-shirts', label: 'T-Shirts', blurb: 'Everyday tees for teams, events, and brands.' },
-  { id: 'hoodies', label: 'Hoodies & sweatshirts', blurb: 'Warm layers with room for bold art.' },
-  { id: 'polos', label: 'Polos', blurb: 'Clean looks for staff and uniforms.' },
-  { id: 'hats', label: 'Hats', blurb: 'Caps and headwear for logos that last.' },
-  { id: 'bags', label: 'Bags', blurb: 'Totes and bags that carry your brand.' },
-  { id: 'other', label: 'Other apparel', blurb: 'Tell us the garment — we’ll help you order.' },
-];
-
-const steps = [
-  { title: 'Choose a product', body: 'Pick the garment you want to order.' },
-  { title: 'Add your design', body: 'Upload artwork or describe what you need printed.' },
-  { title: 'Place your order', body: 'Share sizes and contact details — we confirm pricing and print.' },
-];
+const studio = getStudioConfig();
+const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnitPriceCents(p.id)]));
 ---
 
 <Layout
   title="Design Studio"
-  description="Design Studio at LiAlvaro T-Shirt Printing. Choose a product, add your design, and place your order."
+  description="Design Studio at LiAlvaro T-Shirt Printing. Design on a blank, export print-ready art, and checkout."
 >
-  <div class="page-shell">
+  <div
+    class="page-shell studio"
+    id="designStudioRoot"
+    data-studio
+    data-price-map={JSON.stringify(priceMap)}
+  >
     <header class="page-hero studio-hero">
       <p class="eyebrow">Design Studio</p>
       <h1>Design Studio</h1>
       <p>
-        Ready to order? Choose a product, add your design, and we’ll get your apparel printed.
+        Ready to order? Pick a blank, design on front/back, export print-ready PNG, and checkout.
         {sameDay ? ` ${sameDay}` : ''}
       </p>
-      <div class="hero-actions">
-        <Button href="#products">Start Designing</Button>
-        <button type="button" class="ghost" data-quote-trigger>Need a custom quote instead?</button>
-      </div>
+      <p class="hero-note">
+        Custom / bulk / specialty jobs still use <button type="button" class="linkish" data-quote-trigger>Get a quote</button>.
+      </p>
     </header>
 
-    <Section eyebrow="3 easy steps" title="From idea to order.">
-      <StepList steps={steps} />
-    </Section>
+    <section class="studio-layout" aria-label="Design studio editor">
+      <aside class="studio-rail">
+        <h2>Product</h2>
+        <div id="productButtons" class="product-buttons"></div>
 
-    <Section eyebrow="Choose a product" title="Start your order by selecting a product." id="products">
-      <p slot="lede">Tap a product to start designing. Full canvas editing ships in a later stage — your order still starts here.</p>
-      <div class="product-grid">
-        {
-          products.map((product) => (
-            <button type="button" class="product-tile" data-product={product.id} data-product-label={product.label}>
-              <span class="product-tile__name">{product.label}</span>
-              <span class="product-tile__blurb">{product.blurb}</span>
-              <span class="product-tile__cta">Start Designing →</span>
-            </button>
-          ))
-        }
+        <h2>Color</h2>
+        <div id="colorButtons" class="swatches"></div>
+
+        <h2>Placement</h2>
+        <div id="sideButtons" class="chips"></div>
+
+        <h2>Tools</h2>
+        <div class="tools">
+          <button type="button" class="tool" id="btnUpload">Upload PNG/JPG/SVG</button>
+          <input id="fileInput" type="file" accept="image/png,image/jpeg,image/svg+xml,.png,.jpg,.jpeg,.svg" hidden />
+          <button type="button" class="tool" id="btnAddText">Add text</button>
+          <label class="color-field">
+            Text color
+            <input id="textColor" type="color" value="#c8102e" />
+          </label>
+          <div class="tool-row">
+            <button type="button" class="tool" id="btnUndo">Undo</button>
+            <button type="button" class="tool" id="btnRedo">Redo</button>
+          </div>
+          <div class="tool-row">
+            <button type="button" class="tool" id="btnForward">Layer up</button>
+            <button type="button" class="tool" id="btnBack">Layer down</button>
+          </div>
+          <button type="button" class="tool" id="btnDelete">Delete selected</button>
+        </div>
+      </aside>
+
+      <div class="studio-main">
+        <div class="studio-stage" id="studioStage">
+          <div class="studio-mockup" id="studioMockup" aria-hidden="true"></div>
+          <div class="print-frame" id="printFrame">
+            <canvas id="studioCanvas" width="360" height="480"></canvas>
+          </div>
+        </div>
+        <p class="studio-status" id="studioStatus" role="status"></p>
+        <ul class="studio-warnings" id="studioWarnings" hidden></ul>
       </div>
-    </Section>
 
-    <section class="order-panel" id="order-form" aria-labelledby="order-heading">
-      <h2 id="order-heading">Place your Design Studio order</h2>
-      <p class="lede">
-        You’re on the order path — not a broker quote. Share art and quantities; we’ll confirm price and production next.
-      </p>
-
-      <form id="designStudioForm" class="form" action="https://formspree.io/f/xnjoaoyw" method="POST">
-        <input type="hidden" name="_subject" value="New Design Studio Order — LiAlvaro T-Shirt Printing" />
-        <input type="hidden" name="product" id="orderProduct" value="" />
-        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
-
-        <p class="selected-product" id="selectedProductLabel" hidden></p>
-
-        <div class="row">
-          <Field id="studio-name" name="name" label="Full name" required />
-          <Field id="studio-email" name="email" type="email" label="Email" required />
-        </div>
-        <div class="row">
-          <Field id="studio-phone" name="phone" type="tel" label="Phone" placeholder="(310) 000-0000" />
-          <Field
-            id="studio-qty"
-            name="quantity"
-            label="Quantity"
-            as="select"
-            placeholder="Select one"
-            required
-            options={[
-              { value: '1-11 pieces', label: '1-11 pieces' },
-              { value: '12-24 pieces', label: '12-24 pieces' },
-              { value: '25-49 pieces', label: '25-49 pieces' },
-              { value: '50-99 pieces', label: '50-99 pieces' },
-              { value: '100+ pieces', label: '100+ pieces' },
-            ]}
-          />
-        </div>
-
-        <Field
-          id="studio-details"
-          name="details"
-          label="Design & order details"
-          as="textarea"
-          required
-          placeholder="Artwork notes, colors, placements, sizes, and deadline."
-        />
-
-        <Button type="submit">Submit order request</Button>
-        <p class="success" id="successMsg" hidden>Thanks — your Design Studio order is in. We’ll confirm pricing and next steps shortly.</p>
-        <p class="error" id="errorMsg" hidden>Submission failed. Please try again or {phone}</p>
-      </form>
+      <aside class="studio-checkout">
+        <h2>Order</h2>
+        <p class="price" id="studioPrice" data-cents={priceMap.studio_tee ?? 0}>—</p>
+        <p class="fine">
+          Server validates price and files at export. LiAlvaro prints and fulfills — no external POD widget.
+        </p>
+        <label class="attest">
+          <input id="ipAttest" type="checkbox" />
+          <span>
+            I confirm I own or have rights to this artwork, and I accept the
+            <a href="/terms/">Terms</a> (report misuse via Contact).
+          </span>
+        </label>
+        <button type="button" class="ds-btn ds-btn--primary" id="btnExport">Export &amp; add to cart</button>
+        <p class="fine">
+          Exports a print-ready PNG (300 DPI box) and saves your design session. Questions? {phone}
+        </p>
+        <a class="report" href="/contact/">Report / takedown request</a>
+      </aside>
     </section>
   </div>
 </Layout>
 
 <script>
-  import { track } from '../../scripts/analytics.ts';
-
-  const form = document.getElementById('designStudioForm');
-  const successMsg = document.getElementById('successMsg');
-  const errorMsg = document.getElementById('errorMsg');
-  const submitBtn = form?.querySelector('button[type="submit"]');
-  const productInput = document.getElementById('orderProduct');
-  const selectedLabel = document.getElementById('selectedProductLabel');
-  const orderForm = document.getElementById('order-form');
-
-  track('design_started', { source: 'design_studio' });
-
-  document.querySelectorAll('[data-product]').forEach((tile) => {
-    tile.addEventListener('click', () => {
-      if (!(tile instanceof HTMLElement)) return;
-      const id = tile.dataset.product ?? '';
-      const label = tile.dataset.productLabel ?? id;
-      if (productInput instanceof HTMLInputElement) productInput.value = label;
-      if (selectedLabel) {
-        selectedLabel.hidden = false;
-        selectedLabel.textContent = `Selected product: ${label}`;
-      }
-      document.querySelectorAll('.product-tile').forEach((el) => el.classList.remove('is-selected'));
-      tile.classList.add('is-selected');
-      orderForm?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      track('design_started', { source: 'product_tile', product: id });
-    });
-  });
-
-  form?.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    successMsg?.setAttribute('hidden', '');
-    errorMsg?.setAttribute('hidden', '');
-    if (submitBtn instanceof HTMLButtonElement) {
-      submitBtn.disabled = true;
-      submitBtn.dataset.originalText = submitBtn.dataset.originalText || submitBtn.textContent || '';
-      submitBtn.textContent = 'Sending...';
-    }
-    try {
-      const formData = new FormData(form);
-      const response = await fetch(form.action, { method: 'POST', body: formData });
-      if (!response.ok) throw new Error('Request failed');
-      successMsg?.removeAttribute('hidden');
-      form.reset();
-      if (productInput instanceof HTMLInputElement) productInput.value = '';
-      if (selectedLabel) {
-        selectedLabel.hidden = true;
-        selectedLabel.textContent = '';
-      }
-      document.querySelectorAll('.product-tile').forEach((el) => el.classList.remove('is-selected'));
-    } catch {
-      errorMsg?.removeAttribute('hidden');
-    } finally {
-      if (submitBtn instanceof HTMLButtonElement) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = submitBtn.dataset.originalText || 'Submit order request';
-      }
-    }
-  });
+  import { initDesignStudio } from '../../scripts/design-studio-app.ts';
+  initDesignStudio();
 </script>
 
 <style>
-  .studio-hero .hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 1rem;
+  .studio-hero .hero-note {
+    margin: 0.75rem 0 0;
+    color: color-mix(in srgb, var(--ink) 75%, var(--mesh-grey));
   }
 
-  .ghost {
+  .linkish {
     background: none;
     border: none;
     color: var(--print-red);
@@ -193,118 +116,183 @@ const steps = [
     font-weight: 700;
     text-decoration: underline;
     cursor: pointer;
-    min-height: 44px;
+    padding: 0;
   }
 
-  .product-grid {
+  .studio-layout {
     display: grid;
-    gap: 1rem;
-  }
-
-  @media (min-width: 640px) {
-    .product-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
+    gap: 1.25rem;
+    margin: 1rem 0 3rem;
   }
 
   @media (min-width: 960px) {
-    .product-grid {
-      grid-template-columns: repeat(3, 1fr);
+    .studio-layout {
+      grid-template-columns: 240px minmax(0, 1fr) 240px;
+      align-items: start;
     }
   }
 
-  .product-tile {
+  .studio-rail,
+  .studio-checkout {
     display: grid;
-    gap: 0.35rem;
-    text-align: left;
-    padding: 1.25rem 1rem;
-    border: 2px solid var(--ink);
-    border-radius: var(--radius-md);
-    background: var(--white);
-    cursor: pointer;
-    font: inherit;
-    color: inherit;
-    min-height: 44px;
-  }
-
-  .product-tile:hover,
-  .product-tile.is-selected {
-    border-color: var(--print-red);
-    background: color-mix(in srgb, var(--print-red) 6%, var(--white));
-  }
-
-  .product-tile:focus-visible {
-    outline: 3px solid var(--color-focus);
-    outline-offset: 2px;
-  }
-
-  .product-tile__name {
-    font-weight: 800;
-    font-size: var(--text-lg);
-  }
-
-  .product-tile__blurb {
-    font-size: var(--text-sm);
-    color: color-mix(in srgb, var(--ink) 80%, var(--mesh-grey));
-  }
-
-  .product-tile__cta {
-    margin-top: 0.5rem;
-    font-weight: 700;
-    color: var(--print-red);
-    font-size: var(--text-sm);
-  }
-
-  .order-panel {
-    margin: 2.5rem 0 1rem;
-    padding: 1.5rem;
+    gap: 0.65rem;
+    padding: 1rem;
     background: var(--white);
     border: 1px solid var(--color-border-strong);
     border-radius: var(--radius-lg);
   }
 
-  .order-panel h2 {
-    margin: 0 0 0.5rem;
+  .studio-rail h2,
+  .studio-checkout h2 {
+    margin: 0.35rem 0 0;
     font-family: var(--font-display);
-    font-size: var(--text-3xl);
+    font-size: var(--text-lg);
     font-weight: 600;
     text-transform: uppercase;
   }
 
-  .lede {
-    margin: 0 0 1rem;
-    color: color-mix(in srgb, var(--ink) 80%, var(--mesh-grey));
+  .product-buttons {
+    display: grid;
+    gap: 0.5rem;
   }
 
-  .selected-product {
-    margin: 0 0 0.5rem;
+  .product-chip,
+  .tool,
+  .chip {
+    display: grid;
+    gap: 0.15rem;
+    width: 100%;
+    text-align: left;
+    border: 2px solid var(--ink);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    padding: 0.65rem 0.75rem;
+    font: inherit;
+    cursor: pointer;
+    min-height: 44px;
+  }
+
+  .product-chip strong {
     font-weight: 700;
-    color: var(--print-red);
   }
 
-  .form {
+  .product-chip span {
+    font-size: 0.85rem;
+    color: color-mix(in srgb, var(--ink) 70%, var(--mesh-grey));
+  }
+
+  .product-chip.is-active,
+  .chip.is-active,
+  .tool:hover {
+    border-color: var(--print-red);
+  }
+
+  .swatches,
+  .chips,
+  .tool-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .swatch {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 2px solid var(--ink);
+    cursor: pointer;
+  }
+
+  .swatch.is-active {
+    outline: 3px solid var(--print-red);
+    outline-offset: 2px;
+  }
+
+  .chip {
+    width: auto;
+    font-weight: 700;
+  }
+
+  .tools {
     display: grid;
-    gap: 1rem;
+    gap: 0.5rem;
   }
 
-  .row {
+  .color-field {
     display: grid;
-    gap: 1rem;
-  }
-
-  @media (min-width: 640px) {
-    .row {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
-  .success {
-    color: var(--color-success);
+    gap: 0.25rem;
+    font-size: 0.85rem;
     font-weight: 600;
   }
 
-  .error {
+  .studio-main {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .studio-stage {
+    position: relative;
+    min-height: 420px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--color-border-strong);
+    background: color-mix(in srgb, var(--canvas) 70%, var(--ink));
+  }
+
+  .studio-mockup {
+    position: absolute;
+    inset: 8% 18%;
+    border-radius: 18% 18% 14% 14%;
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--ink) 25%, transparent);
+  }
+
+  .print-frame {
+    position: absolute;
+    border: 1px dashed color-mix(in srgb, var(--white) 70%, var(--print-red));
+    background: color-mix(in srgb, var(--white) 18%, transparent);
+    touch-action: none;
+  }
+
+  .print-frame :global(canvas) {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .studio-status {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .studio-warnings {
+    margin: 0;
+    padding-left: 1.1rem;
     color: var(--color-danger);
-    font-weight: 600;
+  }
+
+  .price {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xl);
+    font-weight: 700;
+  }
+
+  .fine {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: color-mix(in srgb, var(--ink) 75%, var(--mesh-grey));
+  }
+
+  .attest {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.6rem;
+    align-items: start;
+    font-size: var(--text-sm);
+  }
+
+  .report {
+    color: var(--print-red);
+    font-weight: 700;
   }
 </style>
