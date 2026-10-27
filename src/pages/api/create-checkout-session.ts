@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getVariantById, isVariantId } from '../../lib/catalog';
-import { getAppEnv } from '../../lib/env';
+import { getAppEnv, runtimeEnvFromLocals } from '../../lib/env';
 import { getStripe } from '../../lib/stripe-client';
 import { getPricingConfig } from '../../lib/pricing';
 
@@ -15,7 +15,7 @@ function json(body: unknown, status = 200) {
   });
 }
 
-export const POST: APIRoute = async ({ request, url }) => {
+export const POST: APIRoute = async ({ request, url, locals }) => {
   try {
     let payload: { items?: CartItem[]; sameDayRequested?: boolean };
     try {
@@ -51,7 +51,7 @@ export const POST: APIRoute = async ({ request, url }) => {
       };
     });
 
-    const env = await getAppEnv();
+    const env = await getAppEnv(runtimeEnvFromLocals(locals));
     if (!env.STRIPE_SECRET_KEY) {
       return json({ error: 'Stripe is not configured. Set STRIPE_SECRET_KEY.' }, 503);
     }

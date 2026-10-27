@@ -6,19 +6,24 @@ export type AppEnv = {
   DB?: D1Database;
 };
 
+type EnvBag = Record<string, unknown> | undefined | null;
+
+function asNonEmptyString(value: unknown): string | undefined {
+  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : undefined;
+}
+
 function fromProcess(name: string): string | undefined {
-  const value = process.env[name];
-  return typeof value === 'string' && value.length > 0 ? value : undefined;
+  return asNonEmptyString(process.env[name]);
 }
 
 function fromVite(name: string): string | undefined {
   const value = (import.meta.env as Record<string, string | undefined>)[name];
-  return typeof value === 'string' && value.length > 0 ? value : undefined;
+  return asNonEmptyString(value);
 }
 
-let cloudflareEnvPromise: Promise<Record<string, unknown> | undefined> | undefined;
+let cloudflareEnvPromise: Promise<EnvBag> | undefined;
 
-async function cloudflareEnv(): Promise<Record<string, unknown> | undefined> {
+async function cloudflareEnv(): Promise<EnvBag> {
   if (!cloudflareEnvPromise) {
     cloudflareEnvPromise = (async () => {
       try {
@@ -28,6 +33,8 @@ async function cloudflareEnv(): Promise<Record<string, unknown> | undefined> {
         };
         return mod.env;
       } catch {
+        // Allow a later request to retry if the module wasn't ready yet.
+        cloudflareEnvPromise = undefined;
         return undefined;
       }
     })();
@@ -35,19 +42,31 @@ async function cloudflareEnv(): Promise<Record<string, unknown> | undefined> {
   return cloudflareEnvPromise;
 }
 
-export async function readSecret(name: string): Promise<string | undefined> {
-  const fromCf = (await cloudflareEnv())?.[name];
-  const cloudflareValue = typeof fromCf === 'string' && fromCf.length > 0 ? fromCf : undefined;
-  return fromProcess(name) ?? fromVite(name) ?? cloudflareValue;
+function fromBag(bag: EnvBag, name: string): string | undefined {
+  return asNonEmptyString(bag?.[name]);
 }
 
-export async function getAppEnv(): Promise<AppEnv> {
-  const cf = await cloudflareEnv();
+export async function readSecret(name: string, runtimeEnv?: EnvBag): Promise<string | undefined> {
+  const fromCf = (await cloudflareEnv())?.[name];
+  const cloudflareValue = asNonEmptyString(fromCf);
+  return (
+    fromBag(runtimeEnv, name) ?? fromProcess(name) ?? fromVite(name) ?? cloudflareValue
+  );
+}
+
+export async function getAppEnv(runtimeEnv?: EnvBag): Promise<AppEnv> {
+  const cf = (runtimeEnv ?? (await cloudflareEnv())) as EnvBag;
   return {
-    STRIPE_SECRET_KEY: await readSecret('STRIPE_SECRET_KEY'),
-    STRIPE_WEBHOOK_SECRET: await readSecret('STRIPE_WEBHOOK_SECRET'),
-    RESEND_API_KEY: await readSecret('RESEND_API_KEY'),
-    ORDER_NOTIFICATION_EMAIL: await readSecret('ORDER_NOTIFICATION_EMAIL'),
+    STRIPE_SECRET_KEY: await readSecret('STRIPE_SECRET_KEY', runtimeEnv),
+    STRIPE_WEBHOOK_SECRET: await readSecret('STRIPE_WEBHOOK_SECRET', runtimeEnv),
+    RESEND_API_KEY: await readSecret('RESEND_API_KEY', runtimeEnv),
+    ORDER_NOTIFICATION_EMAIL: await readSecret('ORDER_NOTIFICATION_EMAIL', runtimeEnv),
     DB: cf?.DB as D1Database | undefined,
   };
+}
+
+/** Astro Cloudflare puts Worker bindings on `locals.runtime.env`. */
+export function runtimeEnvFromLocals(locals: App.Locals | Record<string, unknown>): EnvBag {
+  const runtime = (locals as { runtime?: { env?: Record<string, unknown> } }).runtime;
+  return runtime?.env;
 }

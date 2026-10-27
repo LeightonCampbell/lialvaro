@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import type Stripe from 'stripe';
 import { getDb } from '../../lib/db';
-import { getAppEnv } from '../../lib/env';
+import { getAppEnv, runtimeEnvFromLocals } from '../../lib/env';
 import { createPaidOrderFromStripe } from '../../lib/orders';
 import { sendCustomerEmail, sendOwnerEmail } from '../../lib/email';
 import { getStripe, webhookCryptoProvider } from '../../lib/stripe-client';
@@ -27,10 +27,21 @@ function shippingFrom(session: Stripe.Checkout.Session) {
   );
 }
 
-export const POST: APIRoute = async ({ request }) => {
-  const env = await getAppEnv();
+export const POST: APIRoute = async ({ request, locals }) => {
+  const env = await getAppEnv(runtimeEnvFromLocals(locals));
   if (!env.STRIPE_SECRET_KEY || !env.STRIPE_WEBHOOK_SECRET) {
-    return json({ error: 'Stripe webhook is not configured.' }, 503);
+    const missing = [
+      !env.STRIPE_SECRET_KEY ? 'STRIPE_SECRET_KEY' : null,
+      !env.STRIPE_WEBHOOK_SECRET ? 'STRIPE_WEBHOOK_SECRET' : null,
+    ].filter(Boolean);
+    return json(
+      {
+        error: 'Stripe webhook is not configured.',
+        missing,
+        hint: 'Set these in .dev.vars (local) or Wrangler secrets (deploy), then restart the dev server.',
+      },
+      503,
+    );
   }
 
   const stripe = getStripe(env.STRIPE_SECRET_KEY);
