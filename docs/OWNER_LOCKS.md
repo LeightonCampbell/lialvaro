@@ -66,3 +66,5 @@
 | Copy deck / IA older “Design a shirt” hero CTA | Superseded by **Start Designing** + locked H1 |
 | Stage 5 Printful / external POD provider | **Struck** — owner-fulfilled POD + vendor designs + vendor cuts |
 | Stage 5 “POD items never same-day” | Only if a future external lane exists; **store designs are local** and may use same-day rules when eligible |
+| Stage 5 vendor cut default | **20%** (`2000` bps); sample catalog kept until real vendors/designs provided |
+| Stage 5 same-day eligibility | **≤12 pieces**, cutoff **11:00** America/Los_Angeles, existing LA ZIP allowlist in `same-day.json` |

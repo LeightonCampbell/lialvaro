@@ -143,8 +143,9 @@
 
 1. Customer has eligible `local` product(s)  
 2. Shipping ZIP in `same-day.json` allowlist  
-3. Before cutoff time  
-4. Cart offers **same-day request** (not a silent guarantee)  
+3. Before cutoff time (**11:00** America/Los_Angeles)  
+4. Total pieces **≤ 12** (`max_pieces` in `same-day.json`)  
+5. Cart offers **same-day request** (not a silent guarantee)  
 5. If unsure → “Call to confirm” with phone claim  
 6. Order flagged `rush_local` for admin queue
 

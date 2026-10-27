@@ -7,7 +7,7 @@
   "vendorCut": {
     "mode": "bps_of_retail",
     "defaultBps": 2000,
-    "notes": "Per-design vendorCutBps overrides this default. Cut = round(retail_line_total * bps / 10000). Owner TODO: confirm default."
+    "notes": "Per-design vendorCutBps overrides this default. Cut = round(retail_line_total * bps / 10000). Owner locked default 20% (2000 bps) 2026-10-27; sample catalog kept for now."
   },
   "blankCost": {
     "notes": "blankCostCents on variants is owner cost for the garment blank (internal margin calc)."

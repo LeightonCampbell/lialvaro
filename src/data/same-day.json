@@ -1,8 +1,9 @@
 {
   "enabled": true,
   "public_claim_id": "same-day-printing",
-  "cutoff_local": "14:00",
+  "cutoff_local": "11:00",
   "timezone": "America/Los_Angeles",
+  "max_pieces": 12,
   "eligible_lanes": ["local"],
   "eligible_zips": [
     "90001",
@@ -78,5 +79,5 @@
     "90404",
     "90405"
   ],
-  "notes": "Store designs are owner-fulfilled (local). Owner TODO: confirm ZIP allowlist and cutoff."
+  "notes": "Owner locked 2026-10-27: max 12 pieces, cutoff 11:00 America/Los_Angeles, existing LA ZIP allowlist kept."
 }

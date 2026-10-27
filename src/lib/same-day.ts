@@ -11,10 +11,12 @@ export function isZipEligible(zip: string, config: SameDayConfig = sameDay): boo
   return config.eligible_zips.includes(normalized);
 }
 
-/** Returns whether same-day request UI may be offered (local lane + ZIP + before cutoff). */
+/** Returns whether same-day request may be accepted (local lane + ZIP + before cutoff + piece cap). */
 export function canRequestSameDay(opts: {
   lane: string;
   zip?: string;
+  /** Total units in the order/cart. Required for piece-cap check when configured. */
+  pieceCount?: number;
   now?: Date;
   config?: SameDayConfig;
 }): boolean {
@@ -22,6 +24,12 @@ export function canRequestSameDay(opts: {
   if (!config.enabled) return false;
   if (!config.eligible_lanes.includes(opts.lane)) return false;
   if (!opts.zip || !isZipEligible(opts.zip, config)) return false;
+
+  const maxPieces = Number((config as { max_pieces?: number }).max_pieces ?? 0);
+  if (maxPieces > 0) {
+    const pieces = opts.pieceCount ?? 0;
+    if (!Number.isFinite(pieces) || pieces < 1 || pieces > maxPieces) return false;
+  }
 
   const now = opts.now ?? new Date();
   const parts = new Intl.DateTimeFormat('en-US', {

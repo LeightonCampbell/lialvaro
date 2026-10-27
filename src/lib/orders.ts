@@ -34,11 +34,13 @@ export async function createPaidOrderFromStripe(opts: {
   });
 
   const subtotal = items.reduce((sum, i) => sum + i.variant.retailPriceCents * i.line.quantity, 0);
+  const pieceCount = items.reduce((sum, i) => sum + i.line.quantity, 0);
   const shippingJson = opts.shipping ? JSON.stringify(opts.shipping) : null;
   const zip =
     opts.shipping && typeof opts.shipping === 'object' && opts.shipping !== null
       ? String(
           (opts.shipping as { postal_code?: string; zip?: string }).postal_code ??
+            (opts.shipping as { address?: { postal_code?: string } }).address?.postal_code ??
             (opts.shipping as { zip?: string }).zip ??
             '',
         )
@@ -79,7 +81,11 @@ export async function createPaidOrderFromStripe(opts: {
       const cut = lineVendorCutCents(item.variant.product, retailLine);
       const sameDayOk =
         opts.sameDayRequested &&
-        canRequestSameDay({ lane: item.variant.lane, zip: zip || undefined });
+        canRequestSameDay({
+          lane: item.variant.lane,
+          zip: zip || undefined,
+          pieceCount,
+        });
       const orderItemId = newId('oi');
 
       await opts.db

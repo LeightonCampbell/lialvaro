@@ -21,7 +21,7 @@ const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
         <p class="total">Subtotal: <strong id="subtotal">$0.00</strong></p>
         <label class="same-day" id="sameDayRow">
           <input type="checkbox" id="sameDay" />
-          Request same-day (LA ZIPs, before cutoff — we confirm after address)
+          <span id="sameDayLabel">Request same-day (up to 12 pcs, before 11am PT, LA ZIPs — we confirm after address)</span>
         </label>
         <div class="actions">
           <button type="button" class="ds-btn ds-btn--primary" id="checkoutBtn">Checkout</button>
@@ -103,6 +103,20 @@ const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
       .join('');
 
     subtotalEl.textContent = money(subtotal);
+
+    const sameDayInput = document.getElementById('sameDay');
+    const sameDayLabel = document.getElementById('sameDayLabel');
+    const pieces = cartCount(lines);
+    const sameDayOk = pieces >= 1 && pieces <= 12;
+    if (sameDayInput instanceof HTMLInputElement) {
+      sameDayInput.disabled = !sameDayOk;
+      if (!sameDayOk) sameDayInput.checked = false;
+    }
+    if (sameDayLabel) {
+      sameDayLabel.textContent = sameDayOk
+        ? 'Request same-day (up to 12 pcs, before 11am PT, LA ZIPs — we confirm after address)'
+        : 'Same-day unavailable over 12 pieces (cutoff 11am PT, LA ZIPs)';
+    }
   }
 
   document.getElementById('lineList')?.addEventListener('click', (event) => {
