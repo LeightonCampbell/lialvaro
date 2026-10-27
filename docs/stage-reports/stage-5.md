@@ -36,7 +36,7 @@
 
 1. **D1 `database_id`:** set to `26c850ff-29cb-434b-a9fa-08b3fe577b99` (`lialvaro-commerce`). Local + **remote** migrations applied (`0001_commerce_core.sql`) — **done**.
 2. Stripe + Resend secrets — owner filled local `.dev.vars` (test Stripe + Resend + notification email); `stripe listen` for webhook secret — **local done**. Cloudflare Worker secrets for production still pending.  
-3. Stripe test checkout + webhook idempotency proof — still needed  
+3. Stripe test checkout + webhook: local `stripe listen` → `POST /api/stripe-webhook` **[200]**; Resend + owner inbox delivery **confirmed** — **done** (local). Cloudflare Worker secrets for production still pending.  
 4. Confirm default vendor cut (seed uses 20–25%) and real vendor/design catalog — still needed  
 5. Same-day ZIP/cutoff confirmation — still needed  
 
