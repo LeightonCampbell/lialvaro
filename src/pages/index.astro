@@ -97,7 +97,10 @@ const faqPageLd = {
   <section class="home-hero">
     <div class="home-hero__copy">
       <p class="eyebrow">LiAlvaro · Los Angeles{methods ? ` · ${methods}` : ''}</p>
-      <h1>Fast, Easy, High&#8209;Quality<br />Custom Apparel Printing</h1>
+      <h1>
+        <span class="home-hero__line">Fast, Easy, High&#8209;Quality</span>
+        <span class="home-hero__line">Custom Apparel Printing</span>
+      </h1>
       <p class="home-hero__sub">
         Start Designing in our Design Studio, or get a free quote for custom and bulk work.
         {sameDay ? ` ${sameDay}` : ''}
@@ -220,12 +223,27 @@ const faqPageLd = {
 
   .home-hero h1 {
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.02em;
     font-family: var(--font-display);
-    font-size: clamp(2.2rem, 5.5vw, 3.6rem);
+    font-size: clamp(1.65rem, 3.6vw, 2.85rem);
     font-weight: 700;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.01em;
     text-transform: uppercase;
-    line-height: 1.05;
+    line-height: 1.12;
+  }
+
+  .home-hero__line {
+    display: block;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 420px) {
+    .home-hero__line {
+      white-space: normal;
+    }
   }
 
   .home-hero__sub {
