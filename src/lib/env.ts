@@ -66,7 +66,8 @@ export async function getAppEnv(runtimeEnv?: EnvBag): Promise<AppEnv> {
 }
 
 /** Astro Cloudflare puts Worker bindings on `locals.runtime.env`. */
-export function runtimeEnvFromLocals(locals: App.Locals | Record<string, unknown>): EnvBag {
+export function runtimeEnvFromLocals(locals: unknown): EnvBag {
+  if (!locals || typeof locals !== 'object') return undefined;
   const runtime = (locals as { runtime?: { env?: Record<string, unknown> } }).runtime;
   return runtime?.env;
 }
