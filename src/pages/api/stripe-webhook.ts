@@ -15,6 +15,9 @@ function json(body: unknown, status = 200) {
   });
 }
 
+/** Health check for Stripe CLI / uptime probes (webhook delivery is POST-only). */
+export const GET: APIRoute = async () => json({ ok: true, endpoint: 'stripe-webhook' });
+
 function shippingFrom(session: Stripe.Checkout.Session) {
   return (
     session.collected_information?.shipping_details ??
