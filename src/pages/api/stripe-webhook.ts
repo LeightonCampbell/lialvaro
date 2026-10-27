@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import type Stripe from 'stripe';
 import { getDb } from '../../lib/db';
-import { getAppEnv, runtimeEnvFromLocals } from '../../lib/env';
+import { getAppEnv } from '../../lib/env';
 import { createPaidOrderFromStripe } from '../../lib/orders';
 import { sendCustomerEmail, sendOwnerEmail } from '../../lib/email';
 import { getStripe, webhookCryptoProvider } from '../../lib/stripe-client';
@@ -27,8 +27,8 @@ function shippingFrom(session: Stripe.Checkout.Session) {
   );
 }
 
-export const POST: APIRoute = async ({ request, locals }) => {
-  const env = await getAppEnv(runtimeEnvFromLocals(locals));
+export const POST: APIRoute = async ({ request }) => {
+  const env = await getAppEnv();
   if (!env.STRIPE_SECRET_KEY || !env.STRIPE_WEBHOOK_SECRET) {
     const missing = [
       !env.STRIPE_SECRET_KEY ? 'STRIPE_SECRET_KEY' : null,
