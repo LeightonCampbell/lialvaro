@@ -46,7 +46,11 @@ const {
             <a href={href}>{title}</a>
           </h3>
           <PriceTag amount={price} />
-          <Button variant="secondary" disabled={disabled}>{disabled ? 'Unavailable' : 'Add to cart'}</Button>
+          {disabled ? (
+            <Button variant="secondary" disabled>Unavailable</Button>
+          ) : (
+            <Button variant="secondary" href={href}>View product</Button>
+          )}
         </div>
       </>
     )

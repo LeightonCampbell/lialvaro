@@ -36,8 +36,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	}
 
 	const shouldRedirectHost = url.hostname === 'lialvaro.com';
+	// Never trailing-slash-redirect API routes: POST bodies (checkout/webhooks) break on 301.
+	const isApiRoute = pathname === '/api' || pathname.startsWith('/api/');
 	const shouldRedirectSlash =
-		pathname !== '/' && !pathname.endsWith('/') && !hasFileExtension(pathname);
+		!isApiRoute &&
+		pathname !== '/' &&
+		!pathname.endsWith('/') &&
+		!hasFileExtension(pathname);
 
 	if (shouldRedirectHost || shouldRedirectSlash) {
 		const redirectUrl = new URL(url);
@@ -52,3 +57,4 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	return next();
 });
+

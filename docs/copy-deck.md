@@ -31,7 +31,7 @@
 | Slot | Copy |
 |---|---|
 | Eyebrow / brand | LiAlvaro · Los Angeles · `[claim:methods-screen-dtg-dtf-embroidery]` |
-| H1 | Fast, Easy, High-Quality Custom Apparel Printing |
+| H1 | Fast, Easy, High-Quality<br>Custom Apparel Printing (break after Quality) |
 | Subhead (with same-day) | Start Designing in our Design Studio, or get a free quote for custom and bulk work. `[claim:same-day-printing]` |
 | Subhead (fallback if same-day unconfirmed) | Start Designing in our Design Studio, or get a free quote for custom and bulk work. |
 | Primary CTA | Start Designing → `/design/` |

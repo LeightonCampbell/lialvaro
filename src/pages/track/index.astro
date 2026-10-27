@@ -1,0 +1,96 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/ds/Button.astro';
+import Field from '../../components/ds/Field.astro';
+import { getDb } from '../../lib/db';
+import { claimText } from '../../lib/claims';
+
+export const prerender = false;
+
+const code = (Astro.url.searchParams.get('code') ?? '').trim().toUpperCase();
+const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
+const db = await getDb();
+
+let order: Record<string, unknown> | null = null;
+let items: Array<Record<string, unknown>> = [];
+if (code && db) {
+  order = (await db.prepare('SELECT * FROM orders WHERE tracking_code = ?').bind(code).first()) as Record<
+    string,
+    unknown
+  > | null;
+  if (order) {
+    items = (
+      await db.prepare('SELECT * FROM order_items WHERE order_id = ?').bind(order.id).all()
+    ).results as Array<Record<string, unknown>>;
+  }
+}
+---
+
+<Layout title="Track order" description="Track your LiAlvaro order status.">
+  <div class="page-shell">
+    <header class="page-hero">
+      <p class="eyebrow">Orders</p>
+      <h1>Track your order</h1>
+      <p>Enter the tracking code from your confirmation email.</p>
+    </header>
+
+    <form class="lookup" method="get">
+      <Field id="code" name="code" label="Tracking code" value={code} placeholder="e.g. LA…" required />
+      <Button type="submit">Look up</Button>
+    </form>
+
+    {
+      code && !db ? (
+        <p class="note">
+          Order tracking database is not connected in this environment yet. {phone}
+        </p>
+      ) : null
+    }
+
+    {
+      code && db && !order ? <p class="note">No order found for that code. Double-check the email or {phone}</p> : null
+    }
+
+    {
+      order ? (
+        <section class="result">
+          <h2>Status: {String(order.status)}</h2>
+          <p>Tracking code: <strong>{String(order.tracking_code)}</strong></p>
+          <p>Placed: {String(order.created_at)}</p>
+          <ul>
+            {items.map((item) => (
+              <li>
+                {String(item.quantity)}× {String(item.product_name)} — {String(item.variant_name)} (
+                {String(item.status)})
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null
+    }
+  </div>
+</Layout>
+
+<style>
+  .lookup {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 28rem;
+    margin-bottom: 1.5rem;
+  }
+  .note {
+    color: var(--mesh-text);
+  }
+  .result {
+    padding: 1.25rem;
+    background: var(--white);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-lg);
+  }
+  .result h2 {
+    margin-top: 0;
+    text-transform: uppercase;
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+</style>

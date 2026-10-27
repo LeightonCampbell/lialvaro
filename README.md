@@ -1,46 +1,40 @@
-# Astro Starter Kit: Basics
+# LiAlvaro T-Shirt Printing (Astro)
 
-```sh
-npm create astro@latest -- --template basics
-```
+Custom apparel site for LiAlvaro. Local day-to-day workflow is Vite/Astro (`npm run dev`).
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Model (locked)
 
-## 🚀 Project Structure
+- **Store** lists designs from **vendors**.
+- **LiAlvaro fulfills** every store order (owner POD — no Printful/Printify).
+- After fulfillment, **vendors receive their cut** (tracked as payouts).
+- **Design Studio** = customer-ready-to-order path; other custom work uses the **quote modal**.
 
-Inside of your Astro project, you'll see the following folders and files:
+See `docs/OWNER_LOCKS.md`.
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
+## Commands
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+| Command | Action |
+| --- | --- |
+| `npm install` | Install dependencies (Node `>=22.12.0`) |
+| `npm run dev` | Local app at http://localhost:4321 |
+| `npm run build` | Production build → `./dist/` |
+| `npx wrangler d1 migrations apply lialvaro-commerce --local` | Apply D1 migrations locally |
 
-## 🧞 Commands
+## Owner-editable data
 
-All commands are run from the root of the project, from a terminal:
+- `src/data/claims.json` — public claims
+- `src/data/catalog.seed.json` — vendors + designs until D1 is populated
+- `src/data/pricing.json` — vendor cut defaults, shipping estimate, tax
+- `src/data/same-day.json` — ZIP allowlist + cutoff
+- `src/data/site.json` — brand contact defaults
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## Secrets
 
-## 👀 Want to learn more?
+| Name | Purpose |
+| --- | --- |
+| `STRIPE_SECRET_KEY` | Stripe Checkout |
+| `STRIPE_WEBHOOK_SECRET` | Webhook signature verify |
+| `RESEND_API_KEY` | Order emails |
+| `ORDER_NOTIFICATION_EMAIL` | Owner inbox |
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+D1 binding: `DB` in `wrangler.jsonc` (replace placeholder `database_id` before deploy).

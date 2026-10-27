@@ -13,6 +13,15 @@
 
 ---
 
+## Fulfillment & Store (locked 2026-10-26)
+
+1. **LiAlvaro fulfills print-on-demand itself.** Do **not** integrate Printful, Printify, or any named POD vendor for store fulfillment. Never name POD platforms in customer-facing copy.
+2. **Store (`/shop/`)** lists **designs from LiAlvaro’s vendors** (artists/partners). Customers buy those designs on apparel blanks.
+3. After an order is paid, it enters the **owner production queue** (`local` lane). When the order is fulfilled, the **vendor cut** for each design line is owed and tracked for payout — LiAlvaro pays vendors their cut; vendors do not fulfill.
+4. BUILD_PLAN Stage 5 “Implement Printful” / provider sync is **struck** and replaced by: vendor + design catalog, local production queue, vendor_cut accounting.
+
+---
+
 ## Global chrome
 
 | Slot | Locked value |
@@ -30,7 +39,8 @@
 | Slot | Locked value |
 |---|---|
 | Brand signal | **LiAlvaro** (eyebrow / brand line — keep hero-level brand presence) |
-| H1 | **Fast, Easy, High-Quality Custom Apparel Printing** |
+| H1 | **Fast, Easy, High-Quality**<br>**Custom Apparel Printing** (line break after Quality) |
+| Display / headers font | **Poppins** (700 H1 / brand; 600 H2–H3; 500 H4–H6) |
 | Primary CTA | **Start Designing** → `/design/` |
 | Secondary CTA | **Get a free quote** → quote modal |
 | Phone in hero CTA group | **Removed** (phone stays in top bar / footer / final CTA as needed) |
@@ -54,3 +64,7 @@
 | Stage 8 “on `/custom-printing` and as a modal” | **Modal (+ D1/admin) only** |
 | Stage 6 Design Studio | Build canvas on `/design/`; preserve order-ready framing and nav locks |
 | Copy deck / IA older “Design a shirt” hero CTA | Superseded by **Start Designing** + locked H1 |
+| Stage 5 Printful / external POD provider | **Struck** — owner-fulfilled POD + vendor designs + vendor cuts |
+| Stage 5 “POD items never same-day” | Only if a future external lane exists; **store designs are local** and may use same-day rules when eligible |
+| Stage 5 vendor cut default | **20%** (`2000` bps); sample catalog kept until real vendors/designs provided |
+| Stage 5 same-day eligibility | **≤12 pieces**, cutoff **11:00** America/Los_Angeles, existing LA ZIP allowlist in `same-day.json` |

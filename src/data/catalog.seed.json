@@ -1,0 +1,130 @@
+{
+  "syncedAt": null,
+  "source": "seed",
+  "notes": "Store listings are vendor designs. LiAlvaro fulfills; vendorCutBps is the partner share of retail.",
+  "vendors": [
+    {
+      "id": "vnd_studio_north",
+      "slug": "studio-north",
+      "name": "Studio North",
+      "email": "studio-north@example.com"
+    },
+    {
+      "id": "vnd_eastside_ink",
+      "slug": "eastside-ink",
+      "name": "Eastside Ink",
+      "email": "eastside@example.com"
+    }
+  ],
+  "products": [
+    {
+      "id": "dsn_la_sunrise",
+      "slug": "la-sunrise-tee",
+      "name": "LA Sunrise Tee",
+      "description": "Vendor design from Studio North — soft classic tee. Printed and fulfilled by LiAlvaro.",
+      "category": "apparel",
+      "vendorId": "vnd_studio_north",
+      "vendorCutBps": 2000,
+      "blankCostCents": 700,
+      "imageUrl": "/images/homepage-hero-2.jpg",
+      "variants": [
+        {
+          "id": "var_sunrise_s_white",
+          "sku": "SUN-S-WHT",
+          "name": "LA Sunrise Tee / S / White",
+          "size": "S",
+          "color": "White",
+          "lane": "local",
+          "blankCostCents": 700,
+          "retailPriceCents": 2499
+        },
+        {
+          "id": "var_sunrise_m_white",
+          "sku": "SUN-M-WHT",
+          "name": "LA Sunrise Tee / M / White",
+          "size": "M",
+          "color": "White",
+          "lane": "local",
+          "blankCostCents": 700,
+          "retailPriceCents": 2499
+        },
+        {
+          "id": "var_sunrise_l_white",
+          "sku": "SUN-L-WHT",
+          "name": "LA Sunrise Tee / L / White",
+          "size": "L",
+          "color": "White",
+          "lane": "local",
+          "blankCostCents": 700,
+          "retailPriceCents": 2499
+        },
+        {
+          "id": "var_sunrise_m_black",
+          "sku": "SUN-M-BLK",
+          "name": "LA Sunrise Tee / M / Black",
+          "size": "M",
+          "color": "Black",
+          "lane": "local",
+          "blankCostCents": 750,
+          "retailPriceCents": 2599
+        }
+      ]
+    },
+    {
+      "id": "dsn_block_logo_hoodie",
+      "slug": "block-logo-hoodie",
+      "name": "Block Logo Hoodie",
+      "description": "Eastside Ink block-logo design on a midweight hoodie. Fulfilled by LiAlvaro.",
+      "category": "apparel",
+      "vendorId": "vnd_eastside_ink",
+      "vendorCutBps": 2500,
+      "blankCostCents": 1800,
+      "imageUrl": "/images/homepage-hero-2.jpg",
+      "variants": [
+        {
+          "id": "var_block_m_navy",
+          "sku": "BLK-M-NVY",
+          "name": "Block Logo Hoodie / M / Navy",
+          "size": "M",
+          "color": "Navy",
+          "lane": "local",
+          "blankCostCents": 1800,
+          "retailPriceCents": 4499
+        },
+        {
+          "id": "var_block_l_navy",
+          "sku": "BLK-L-NVY",
+          "name": "Block Logo Hoodie / L / Navy",
+          "size": "L",
+          "color": "Navy",
+          "lane": "local",
+          "blankCostCents": 1800,
+          "retailPriceCents": 4499
+        }
+      ]
+    },
+    {
+      "id": "dsn_script_cap",
+      "slug": "script-cap",
+      "name": "Script Cap",
+      "description": "Studio North script mark on a structured cap. Embroidered and fulfilled by LiAlvaro.",
+      "category": "headwear",
+      "vendorId": "vnd_studio_north",
+      "vendorCutBps": 2000,
+      "blankCostCents": 900,
+      "imageUrl": "/images/homepage-hero-2.jpg",
+      "variants": [
+        {
+          "id": "var_script_os_black",
+          "sku": "SCR-OS-BLK",
+          "name": "Script Cap / OS / Black",
+          "size": "OS",
+          "color": "Black",
+          "lane": "local",
+          "blankCostCents": 900,
+          "retailPriceCents": 2899
+        }
+      ]
+    }
+  ]
+}

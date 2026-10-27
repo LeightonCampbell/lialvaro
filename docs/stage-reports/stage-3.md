@@ -18,7 +18,7 @@
 ## Assumptions
 
 - Stage 2 wireframes approved 2026-10-24 (defaults accepted).
-- BUILD_PLAN font stack (Anton / Inter / IBM Plex Mono) is authoritative for this stage.
+- BUILD_PLAN font stack was Anton / Inter / IBM Plex Mono for this stage; display font later locked to Poppins (see OWNER_LOCKS).
 - DS components live under `src/components/ds/` so production chrome is untouched until Stage 4.
 - Brand gold `#B8912A` / mesh `#8B8B85` remain for fills; AA text uses `--gold-text` / `--mesh-text`.
 

@@ -25,7 +25,7 @@ Save as `docs/BUILD_PLAN.md`. To run a stage, tell Cursor:
 **Public language rule (important).**
 - "Same-day printing" MAY be advertised, and the existing same-day page/keywords stay.
 - The fact that the owner produces same-day work in-house must NOT be publicized or implied. Never use: "in-house", "our shop floor", "our presses", "our facility", "on-site", "made in our studio", "our artisans", or photos/captions of a production floor. Neutral first-person ("we", "our team") is fine.
-- Never name POD vendors (Printful, Printify, etc.) in customer-facing pages, emails, order pages, or tracking. Use our own order and tracking page with the carrier number. Use the provider's white-label/branded packing-slip options where available (verify in current docs).
+- Never name external POD platforms (Printful, Printify, etc.) in customer-facing pages, emails, order pages, or tracking. Use our own order and tracking page with the carrier number. Store “vendors” means design partners who receive a cut — not fulfillment platforms.
 - Same-day is promised only where eligible: eligible products, LA-area ZIPs, and cutoff time come from `same-day.json`. POD items are never described as same-day. Public wording: "Same-day printing available for select orders in Los Angeles. Call to confirm."
 
 **Quality bars.** WCAG 2.2 AA, mobile-first, keyboard-navigable, `prefers-reduced-motion` respected. TypeScript strict. No `any` without a comment. No dead links (`#` is not a page).
@@ -40,9 +40,10 @@ One storefront, three internal lanes. Customers never see lane names.
 
 | Lane | Meaning | Fulfilment |
 |---|---|---|
-| `local` | Owner produces the item (incl. same-day for eligible LA orders) | Admin production queue |
-| `pod` | Print-on-demand: client stores, owner listings, customer-designed items | Provider API (Printful first, behind a provider interface) |
+| `local` | Owner produces the item — **including store vendor designs and Design Studio orders** (same-day when eligible) | Admin production queue; vendors receive a cut after fulfillment |
 | `broker` | Work outside owner's scope | Quote -> customer pays -> owner sources from partner -> tracked |
+
+~~`pod` via Printful~~ **Struck (owner lock 2026-10-26):** LiAlvaro runs POD itself; do not wire an external POD provider for store fulfillment.
 
 One catalog, one cart, one order record. Each `order_item` carries a `lane`. Routing is by rule.
 
@@ -86,7 +87,7 @@ One catalog, one cart, one order record. Each `order_item` carries a `lane`. Rou
 **Goal:** one source of truth for look and feel.
 **Do:**
 - Tokens (single CSS file): canvas `#EFEBE1`, ink `#1B2233`, print-red `#C8102E`, gold `#B8912A`, mesh-grey `#8B8B85`, white `#FFFDF9`.
-- Fonts: Anton (display), Inter (body), IBM Plex Mono (prices/specs), self-hosted, preloaded, with fallbacks.
+- Fonts: Poppins (display / headers), Inter (body), IBM Plex Mono (prices/specs), self-hosted, preloaded, with fallbacks.
 - Motifs: registration-mark crosshairs, dashed cut-line dividers, hangtag product cards.
 - Component inventory built in Astro: Button, Field/Input/Select/Textarea, FileDrop, ProductCard, PriceTag, Badge, Header/Nav/MobileMenu, Footer, Section, Accordion, ReviewCard, StepList, Modal/Drawer, Toast, Photo (obviously swappable placeholder).
 - Every component documents and renders its states: default, hover, focus, disabled, loading, error, empty.
@@ -108,15 +109,16 @@ One catalog, one cart, one order record. Each `order_item` carries a `lane`. Rou
 
 ### Stage 5: Commerce core (catalog, cart, checkout, orders)
 **Goal:** money in, orders reliably out.
+**Owner lock (2026-10-26):** LiAlvaro fulfills POD itself. Store lists **vendor designs**. After fulfillment, pay vendors their cut. **Do not implement Printful/Printify** (see `docs/OWNER_LOCKS.md`).
 **Do:**
-- D1 schema: `users`, `products`, `variants`, `stores`, `carts`, `orders`, `order_items` (lane, provider, provider_order_id, status), `quotes`, `designs`, `events` (audit log), `webhook_events` (Stripe event IDs for idempotency). Propose the schema first; migrations versioned.
-- Provider interface: `listProducts`, `getVariants`, `getShippingRates`, `createOrder`, `getOrderStatus`, `handleWebhook`. Implement Printful. Verify every endpoint against the CURRENT official docs, not memory. Sync catalog to D1 on a schedule; page renders never call vendor APIs.
-- Pricing: vendor cost + shipping + markup rules (`pricing.json`), computed server-side only. Admin-visible margin per product.
-- `/shop`, category and product pages, cart. Stripe Checkout + Stripe Tax (California). Webhook with `constructEventAsync` and SubtleCrypto (Workers runtime), idempotent.
-- Order router: `pod` -> provider order with retry/backoff; permanent failure -> status `needs_attention` + owner email. A paid order must never disappear silently.
-- Same-day: checkout offers a same-day request only for eligible `local` items, ZIPs and before the cutoff from `same-day.json`; otherwise a "call to confirm" path.
+- D1 schema: `users`, `vendors`, `products` (designs), `variants`, `stores`, `carts`, `orders`, `order_items` (lane=`local`, vendor_id, vendor_cut_cents, vendor_payout_status), `vendor_payouts`, `quotes`, `designs` (Studio), `events`, `webhook_events`. Propose the schema first; migrations versioned.
+- Catalog: owner-editable / seed vendor designs; page renders never call external POD APIs.
+- Pricing: retail + blank cost + vendor cut bps (`pricing.json`), computed server-side; admin-visible margin later.
+- `/shop`, design/PDP pages, cart. Stripe Checkout + Stripe Tax (California). Webhook with `constructEventAsync` and SubtleCrypto (Workers runtime), idempotent.
+- Order router: paid → **owner production queue**; record vendor cuts as `owed`; never drop a paid order silently.
+- Same-day: offer request for eligible `local` items, ZIPs, and cutoff from `same-day.json`.
 - White-label emails (Resend) and our own `/track` page.
-**Gate:** Stripe test-mode order produces a DRAFT order at the provider; Stripe CLI webhook replay proves idempotency; forced provider failure lands in `needs_attention`; then the owner places one live sample order and confirms the physical item arrives.
+**Gate:** Stripe test-mode order lands in production queue with vendor cuts owed; Stripe CLI webhook replay proves idempotency; owner fulfills one live sample and confirms arrival; then mark vendor payout paid.
 
 ### Stage 6: Design Studio (`/design`)
 **Goal:** a customer can design a shirt on a phone and buy it.

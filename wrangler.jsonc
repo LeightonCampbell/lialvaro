@@ -1,5 +1,5 @@
 {
-	"compatibility_date": "2026-03-27",
+	"compatibility_date": "2026-03-17",
 	"compatibility_flags": [
 		"global_fetch_strictly_public"
 	],
@@ -11,5 +11,13 @@
 	},
 	"observability": {
 		"enabled": true
-	}
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "lialvaro-commerce",
+			"database_id": "26c850ff-29cb-434b-a9fa-08b3fe577b99",
+			"migrations_dir": "migrations"
+		}
+	]
 }

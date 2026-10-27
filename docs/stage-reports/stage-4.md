@@ -115,3 +115,5 @@ Per BUILD_PLAN: *“Cloudflare preview URL; Lighthouse mobile perf ≥ 90, a11y 
 ## STOP
 
 Stage 4 complete for implementation. Do **not** begin Stage 5 until the owner accepts this foundation (and preferably supplies analytics + legal text).
+
+**Owner approved Stage 4 on 2026-10-26** (plus Design Studio / quote-modal IA pivot and FAQ/H1 updates). Stage 5 opened on `cursor/stage-5-commerce-ba6a`.

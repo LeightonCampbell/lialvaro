@@ -7,6 +7,9 @@ import ProductCard from '../components/ds/ProductCard.astro';
 import ReviewCard from '../components/ds/ReviewCard.astro';
 import Accordion from '../components/ds/Accordion.astro';
 import { brand, claimText } from '../lib/claims';
+import { listProducts, productCardPrice } from '../lib/catalog';
+
+const featured = listProducts().slice(0, 3);
 
 const sameDay = claimText('same-day-printing');
 const methods = claimText('methods-screen-dtg-dtf-embroidery');
@@ -94,7 +97,10 @@ const faqPageLd = {
   <section class="home-hero">
     <div class="home-hero__copy">
       <p class="eyebrow">LiAlvaro · Los Angeles{methods ? ` · ${methods}` : ''}</p>
-      <h1>Fast, Easy, High-Quality Custom Apparel Printing</h1>
+      <h1>
+        <span class="home-hero__line">Fast, Easy, High&#8209;Quality</span>
+        <span class="home-hero__line">Custom Apparel Printing</span>
+      </h1>
       <p class="home-hero__sub">
         Start Designing in our Design Studio, or get a free quote for custom and bulk work.
         {sameDay ? ` ${sameDay}` : ''}
@@ -126,9 +132,22 @@ const faqPageLd = {
     </Section>
 
     <Section eyebrow="Store" title="Standard products with clear pricing.">
-      <p slot="lede">Browse ready-to-order items. Custom and bulk jobs use a quote instead.</p>
+      <p slot="lede">Browse vendor designs we print and fulfill. Custom and bulk jobs use a quote instead.</p>
       <div class="product-grid">
-        <ProductCard empty />
+        {
+          featured.length ? (
+            featured.map((product) => (
+              <ProductCard
+                title={product.name}
+                href={`/shop/${product.slug}/`}
+                price={productCardPrice(product)}
+                badge={product.category}
+              />
+            ))
+          ) : (
+            <ProductCard empty />
+          )
+        }
       </div>
       <div class="section-cta">
         <Button href="/shop/">Browse the store →</Button>
@@ -204,12 +223,27 @@ const faqPageLd = {
 
   .home-hero h1 {
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.02em;
     font-family: var(--font-display);
-    font-size: clamp(2.2rem, 5.5vw, 3.6rem);
-    font-weight: 400;
-    letter-spacing: 0.02em;
+    font-size: clamp(1.65rem, 3.6vw, 2.85rem);
+    font-weight: 700;
+    letter-spacing: 0.01em;
     text-transform: uppercase;
-    line-height: 0.98;
+    line-height: 1.12;
+  }
+
+  .home-hero__line {
+    display: block;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 420px) {
+    .home-hero__line {
+      white-space: normal;
+    }
   }
 
   .home-hero__sub {
@@ -276,6 +310,7 @@ const faqPageLd = {
   }
 
   @media (min-width: 768px) {
+    .product-grid,
     .method-grid,
     .review-grid {
       grid-template-columns: repeat(3, 1fr);
@@ -348,7 +383,7 @@ const faqPageLd = {
     margin: 0;
     font-family: var(--font-display);
     font-size: var(--text-3xl);
-    font-weight: 400;
+    font-weight: 600;
     text-transform: uppercase;
   }
 
