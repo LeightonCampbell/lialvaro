@@ -34,7 +34,7 @@
 
 ## Owner gate progress
 
-1. **D1 `database_id`:** set to `26c850ff-29cb-434b-a9fa-08b3fe577b99` (`lialvaro-commerce`). Local migrations applied. **Remote** `wrangler d1 migrations apply lialvaro-commerce --remote` still needs Cloudflare auth on owner machine (or API token).
+1. **D1 `database_id`:** set to `26c850ff-29cb-434b-a9fa-08b3fe577b99` (`lialvaro-commerce`). Local + **remote** migrations applied (`0001_commerce_core.sql`) — **done**.
 2. Stripe + Resend secrets — still needed  
 3. Stripe test checkout + webhook idempotency proof — still needed  
 4. Confirm default vendor cut (seed uses 20–25%) and real vendor/design catalog — still needed  
