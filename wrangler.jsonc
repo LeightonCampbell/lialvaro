@@ -16,7 +16,7 @@
 		{
 			"binding": "DB",
 			"database_name": "lialvaro-commerce",
-			"database_id": "00000000-0000-0000-0000-000000000000",
+			"database_id": "26c850ff-29cb-434b-a9fa-08b3fe577b99",
 			"migrations_dir": "migrations"
 		}
 	]

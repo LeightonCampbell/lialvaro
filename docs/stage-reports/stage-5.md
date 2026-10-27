@@ -32,12 +32,13 @@
 - `npm run build` after pivot
 - Store lists vendor designs; PDP shows “Design by …”; cart add works
 
-## Still needed from owner
+## Owner gate progress
 
-1. Real D1 `database_id` + migrations apply  
-2. Stripe + Resend secrets  
-3. Confirm default vendor cut (seed uses 20–25%) and real vendor/design catalog  
-4. Same-day ZIP/cutoff confirmation  
+1. **D1 `database_id`:** set to `26c850ff-29cb-434b-a9fa-08b3fe577b99` (`lialvaro-commerce`). Local migrations applied. **Remote** `wrangler d1 migrations apply lialvaro-commerce --remote` still needs Cloudflare auth on owner machine (or API token).
+2. Stripe + Resend secrets — still needed  
+3. Stripe test checkout + webhook idempotency proof — still needed  
+4. Confirm default vendor cut (seed uses 20–25%) and real vendor/design catalog — still needed  
+5. Same-day ZIP/cutoff confirmation — still needed  
 
 ## STOP
 
