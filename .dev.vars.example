@@ -1,0 +1,7 @@
+# Copy to `.dev.vars` (gitignored) and fill in real values.
+# Local Astro/Wrangler reads these for commerce APIs.
+
+STRIPE_SECRET_KEY=sk_test_REPLACE
+STRIPE_WEBHOOK_SECRET=whsec_REPLACE
+RESEND_API_KEY=re_REPLACE
+ORDER_NOTIFICATION_EMAIL=help@lialvaro.com
