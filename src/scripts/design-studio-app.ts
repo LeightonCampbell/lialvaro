@@ -1,7 +1,7 @@
 import { Canvas, FabricImage, IText, type FabricObject } from 'fabric';
 import studio from '../data/design-studio.json';
 import { displayBoxPx, effectiveDpi, type StudioProduct } from '../lib/design-studio';
-import { addToCart } from './cart';
+import { addToCart, cartCount, readCart } from './cart';
 import { track } from './analytics';
 
 type HistoryEntry = string;
@@ -24,6 +24,14 @@ function $(id: string) {
   return document.getElementById(id);
 }
 
+function show(el: HTMLElement | null) {
+  if (el) el.hidden = false;
+}
+
+function hide(el: HTMLElement | null) {
+  if (el) el.hidden = true;
+}
+
 export function initDesignStudio() {
   const canvasEl = $('studioCanvas') as HTMLCanvasElement | null;
   const stage = $('studioStage');
@@ -32,16 +40,19 @@ export function initDesignStudio() {
   const statusEl = $('studioStatus');
   const priceEl = $('studioPrice');
   const warningEl = $('studioWarnings');
+  const emptyCtas = $('emptyCtas');
   if (!canvasEl || !stage || !mockup || !printFrame || !statusEl || !priceEl || !warningEl) return;
 
   let product: StudioProduct = studio.products[0];
-  let colorId = product.colors[0]?.id ?? 'white';
+  let colorId = product.colors.find((c) => c.id === 'black')?.id ?? product.colors[0]?.id ?? 'white';
   let side: string = Object.keys(product.placements)[0] ?? 'front';
   let canvas: Canvas | null = null;
   let history: HistoryEntry[] = [];
   let historyIndex = -1;
   let applyingHistory = false;
+  let zoom = 1;
   const warnings: string[] = [];
+  const sideCanvases: Record<string, string> = {};
 
   function setStatus(msg: string) {
     statusEl.textContent = msg;
@@ -53,7 +64,7 @@ export function initDesignStudio() {
   }
 
   function currentPlacement() {
-    return product.placements[side as keyof typeof product.placements];
+    return (product.placements as Record<string, (typeof product.placements)[keyof typeof product.placements]>)[side];
   }
 
   function garmentHex() {
@@ -64,6 +75,46 @@ export function initDesignStudio() {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(cents / 100);
   }
 
+  function syncPrice() {
+    const root = $('designStudioRoot');
+    try {
+      const map = JSON.parse(root?.dataset.priceMap || '{}') as Record<string, number>;
+      if (map[product.id]) priceEl.dataset.cents = String(map[product.id]);
+    } catch {
+      /* ignore */
+    }
+    const priced = Number(priceEl.dataset.cents ?? '0');
+    priceEl.textContent = priced > 0 ? money(priced) : '—';
+  }
+
+  function syncProductCard() {
+    const name = $('productName');
+    const blurb = $('productBlurb');
+    const thumb = $('productThumb');
+    const colorLabel = $('selectedColorLabel');
+    if (name) name.textContent = product.label;
+    if (blurb) blurb.textContent = product.blurb;
+    if (thumb) thumb.style.background = garmentHex();
+    if (colorLabel) {
+      colorLabel.textContent = product.colors.find((c) => c.id === colorId)?.label ?? colorId;
+    }
+    mockup.style.color = garmentHex();
+    mockup.dataset.shape = (product as { shape?: string }).shape ?? 'tee';
+  }
+
+  function syncCartBadge() {
+    const badge = $('studioCartBadge');
+    if (!badge) return;
+    const count = cartCount(readCart());
+    badge.hidden = count === 0;
+    badge.textContent = String(count);
+  }
+
+  function syncEmptyCtas() {
+    if (!emptyCtas || !canvas) return;
+    emptyCtas.hidden = canvas.getObjects().length > 0;
+  }
+
   function pushHistory() {
     if (!canvas || applyingHistory) return;
     const json = JSON.stringify(canvas.toJSON());
@@ -71,6 +122,7 @@ export function initDesignStudio() {
     history.push(json);
     if (history.length > 40) history.shift();
     historyIndex = history.length - 1;
+    syncEmptyCtas();
   }
 
   async function restoreHistory(index: number) {
@@ -80,6 +132,7 @@ export function initDesignStudio() {
     await canvas.loadFromJSON(history[index]);
     canvas.requestRenderAll();
     applyingHistory = false;
+    syncEmptyCtas();
   }
 
   function layoutCanvas() {
@@ -91,16 +144,13 @@ export function initDesignStudio() {
     printFrame.style.height = `${box.height}px`;
     printFrame.style.left = `${placement.mockup.xPct}%`;
     printFrame.style.top = `${placement.mockup.yPct}%`;
-    mockup.style.background = garmentHex();
+    syncProductCard();
+    syncPrice();
     canvas.requestRenderAll();
-    const variantHint = product.variantId;
-    priceEl.textContent = `From catalog blank · ${variantHint}`;
-    // Price shown from data attribute filled by page when available
-    const priced = Number(priceEl.dataset.cents ?? '0');
-    if (priced > 0) priceEl.textContent = money(priced);
+    stage.style.transform = `scale(${zoom})`;
   }
 
-  function bindCanvas() {
+  function bindCanvas(restoreJson?: string) {
     canvas?.dispose();
     canvas = new Canvas(canvasEl, {
       preserveObjectStacking: true,
@@ -110,28 +160,64 @@ export function initDesignStudio() {
     canvas.on('object:modified', () => pushHistory());
     canvas.on('object:added', () => {
       if (!applyingHistory) pushHistory();
+      syncEmptyCtas();
     });
+    canvas.on('object:removed', () => syncEmptyCtas());
     layoutCanvas();
     history = [];
     historyIndex = -1;
-    pushHistory();
+    if (restoreJson) {
+      void (async () => {
+        applyingHistory = true;
+        await canvas!.loadFromJSON(restoreJson);
+        canvas!.requestRenderAll();
+        applyingHistory = false;
+        pushHistory();
+        syncEmptyCtas();
+      })();
+    } else {
+      pushHistory();
+      syncEmptyCtas();
+    }
+  }
+
+  function saveCurrentSide() {
+    if (!canvas) return;
+    sideCanvases[side] = JSON.stringify(canvas.toJSON());
+  }
+
+  function switchSide(next: string) {
+    if (next === side) return;
+    if (!(next in (product.placements as object))) return;
+    saveCurrentSide();
+    side = next;
+    refreshSideButtons();
+    bindCanvas(sideCanvases[side]);
+    setStatus(`${product.label} · ${currentPlacement()?.label ?? side}`);
   }
 
   function refreshSideButtons() {
     const wrap = $('sideButtons');
     if (!wrap) return;
     wrap.innerHTML = '';
-    for (const key of Object.keys(product.placements)) {
+    const keys = Object.keys(product.placements);
+    for (const key of keys) {
+      const placement = (product.placements as Record<string, { label: string }>)[key];
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = `chip${key === side ? ' is-active' : ''}`;
-      btn.textContent = product.placements[key as keyof typeof product.placements].label;
-      btn.addEventListener('click', () => {
-        side = key;
-        refreshSideButtons();
-        bindCanvas();
-        setStatus(`${product.label} · ${currentPlacement()?.label ?? side}`);
-      });
+      btn.className = `print-thumb${key === side ? ' is-active' : ''}`;
+      btn.innerHTML = `<span class="print-thumb__preview" style="background:${garmentHex()}"><span></span></span><span class="print-thumb__label">${placement.label}</span>`;
+      btn.addEventListener('click', () => switchSide(key));
+      wrap.append(btn);
+    }
+    // Disabled sleeve placeholders to match competitor chrome without claiming support
+    for (const label of ['Left sleeve', 'Right sleeve']) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'print-thumb is-disabled';
+      btn.disabled = true;
+      btn.title = 'Not available on this blank yet';
+      btn.innerHTML = `<span class="print-thumb__preview"><span style="left:35%;top:40%;width:30%;height:18%"></span></span><span class="print-thumb__label">${label}</span>`;
       wrap.append(btn);
     }
   }
@@ -145,14 +231,32 @@ export function initDesignStudio() {
       btn.type = 'button';
       btn.className = `swatch${c.id === colorId ? ' is-active' : ''}`;
       btn.title = c.label;
+      btn.setAttribute('aria-label', c.label);
       btn.style.background = c.hex;
       btn.addEventListener('click', () => {
         colorId = c.id;
         refreshColorButtons();
+        refreshSideButtons();
         layoutCanvas();
       });
       wrap.append(btn);
     }
+  }
+
+  function selectProduct(p: StudioProduct) {
+    Object.keys(sideCanvases).forEach((k) => delete sideCanvases[k]);
+    product = p;
+    colorId = p.colors.find((c) => c.id === 'black')?.id ?? p.colors[0]?.id ?? colorId;
+    side = Object.keys(p.placements)[0] ?? 'front';
+    refreshProductButtons();
+    refreshColorButtons();
+    refreshSideButtons();
+    bindCanvas();
+    syncPrice();
+    setStatus(`${p.label} ready — upload art or add text`);
+    track('design_started', { productId: p.id });
+    window.dispatchEvent(new CustomEvent('lialvaro:design-started'));
+    hide($('productDrawer'));
   }
 
   function refreshProductButtons() {
@@ -164,25 +268,7 @@ export function initDesignStudio() {
       btn.type = 'button';
       btn.className = `product-chip${p.id === product.id ? ' is-active' : ''}`;
       btn.innerHTML = `<strong>${p.label}</strong><span>${p.blurb}</span>`;
-      btn.addEventListener('click', () => {
-        product = p;
-        colorId = p.colors[0]?.id ?? colorId;
-        side = Object.keys(p.placements)[0] ?? 'front';
-        const root = $('designStudioRoot');
-        try {
-          const map = JSON.parse(root?.dataset.priceMap || '{}') as Record<string, number>;
-          if (map[p.id]) priceEl.dataset.cents = String(map[p.id]);
-        } catch {
-          /* ignore */
-        }
-        refreshProductButtons();
-        refreshColorButtons();
-        refreshSideButtons();
-        bindCanvas();
-        setStatus(`${p.label} ready — upload art or add text`);
-        track('design_started', { productId: p.id });
-        window.dispatchEvent(new CustomEvent('lialvaro:design-started'));
-      });
+      btn.addEventListener('click', () => selectProduct(p));
       wrap.append(btn);
     }
   }
@@ -193,13 +279,14 @@ export function initDesignStudio() {
       left: 24,
       top: 24,
       fontFamily: 'Poppins, sans-serif',
-      fill: colorId === 'white' ? '#1b2233' : '#fffdf9',
+      fill: colorId === 'white' || colorId === 'sand' || colorId === 'sky' ? '#1b2233' : '#fffdf9',
       fontSize: 28,
       fontWeight: '700',
     });
     canvas.add(text);
     canvas.setActiveObject(text);
     canvas.requestRenderAll();
+    syncEmptyCtas();
   }
 
   async function addUpload(file: File) {
@@ -232,10 +319,8 @@ export function initDesignStudio() {
       canvas.add(img);
       canvas.setActiveObject(img);
       canvas.requestRenderAll();
+      syncEmptyCtas();
 
-      const natural = img.width || 0;
-      const dpi = effectiveDpi(natural / (img.scaleX || 1), placement!.widthIn * (natural > 0 ? scale : 1));
-      // Simpler: natural pixel width vs print width inches at current visual scale approximation
       const exportScale = 1 / studio.displayScale;
       const approxDpi = effectiveDpi((img.width || 0) * (img.scaleX || 1) * exportScale, placement!.widthIn);
       if (approxDpi > 0 && approxDpi < 150) {
@@ -278,6 +363,11 @@ export function initDesignStudio() {
     pushHistory();
   }
 
+  function qty() {
+    const input = $('studioQty') as HTMLInputElement | null;
+    return Math.max(1, Math.min(20, Number(input?.value) || 1));
+  }
+
   async function exportAndCart() {
     if (!canvas) return;
     const attestation = $('ipAttest') as HTMLInputElement | null;
@@ -285,6 +375,7 @@ export function initDesignStudio() {
     const localWarnings = [...warnings];
     if (!attestation?.checked) {
       setStatus('Check the IP attestation box before adding to cart.');
+      show($('pricingPanel'));
       return;
     }
     if (!objects.length) {
@@ -293,6 +384,7 @@ export function initDesignStudio() {
     }
 
     setStatus('Saving design…');
+    saveCurrentSide();
     const canvasJson = canvas.toJSON();
     const res = await fetch('/api/designs', {
       method: 'POST',
@@ -306,6 +398,8 @@ export function initDesignStudio() {
         attestation: true,
         guestId: guestId(),
         preflightWarnings: localWarnings,
+        size: (document.getElementById('studioSize') as HTMLSelectElement | null)?.value,
+        quantity: qty(),
       }),
     });
     const data = (await res.json()) as {
@@ -321,7 +415,6 @@ export function initDesignStudio() {
     }
     if (data.warnings?.length) setWarnings(data.warnings);
 
-    // High-res export preview for the customer (print-ready PNG download).
     const multiplier = 1 / studio.displayScale;
     const png = canvas.toDataURL({ format: 'png', multiplier, enableRetinaScaling: false });
     const link = document.createElement('a');
@@ -329,13 +422,13 @@ export function initDesignStudio() {
     link.download = `${data.designId}-${side}.png`;
     link.click();
 
-    addToCart(data.variantId, 1, data.designId);
+    addToCart(data.variantId, qty(), data.designId);
     track('add_to_cart', { designId: data.designId, variantId: data.variantId });
     setStatus('Design saved and added to cart. Print-ready PNG downloaded.');
     window.location.href = '/cart/';
   }
 
-  // Wire controls
+  // Toolbar + drawers
   $('btnAddText')?.addEventListener('click', () => void addText());
   $('btnUpload')?.addEventListener('click', () => $('fileInput')?.click());
   $('fileInput')?.addEventListener('change', (event) => {
@@ -344,6 +437,22 @@ export function initDesignStudio() {
     if (file) void addUpload(file);
     input.value = '';
   });
+  emptyCtas?.querySelectorAll('[data-action]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const action = (btn as HTMLElement).dataset.action;
+      if (action === 'upload') $('fileInput')?.click();
+      if (action === 'text') void addText();
+      if (action === 'note') {
+        setStatus('Design note saved locally — add details in cart notes or Contact if needed.');
+        try {
+          sessionStorage.setItem('lialvaro_design_note', '1');
+        } catch {
+          /* ignore */
+        }
+      }
+    });
+  });
+
   $('btnUndo')?.addEventListener('click', () => void restoreHistory(historyIndex - 1));
   $('btnRedo')?.addEventListener('click', () => void restoreHistory(historyIndex + 1));
   $('btnForward')?.addEventListener('click', () => bringForward());
@@ -360,13 +469,68 @@ export function initDesignStudio() {
     }
   });
 
+  $('btnZoomIn')?.addEventListener('click', () => {
+    zoom = Math.min(1.6, zoom + 0.1);
+    stage.style.transform = `scale(${zoom})`;
+  });
+  $('btnZoomOut')?.addEventListener('click', () => {
+    zoom = Math.max(0.7, zoom - 0.1);
+    stage.style.transform = `scale(${zoom})`;
+  });
+  $('btnToggleGrid')?.addEventListener('click', () => {
+    const on = stage.classList.toggle('is-grid');
+    $('btnToggleGrid')?.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+
+  $('btnChangeProduct')?.addEventListener('click', () => show($('productDrawer')));
+  document.querySelectorAll('[data-close-drawer]').forEach((el) => {
+    el.addEventListener('click', () => hide($('productDrawer')));
+  });
+  $('btnQtySize')?.addEventListener('click', () => show($('qtyPanel')));
+  document.querySelectorAll('[data-close-qty]').forEach((el) => {
+    el.addEventListener('click', () => hide($('qtyPanel')));
+  });
+  $('btnSeePricing')?.addEventListener('click', () => {
+    syncPrice();
+    show($('pricingPanel'));
+  });
+  document.querySelectorAll('[data-close-pricing]').forEach((el) => {
+    el.addEventListener('click', () => hide($('pricingPanel')));
+  });
+
+  $('btnSaveShare')?.addEventListener('click', () => {
+    if (!canvas) return;
+    saveCurrentSide();
+    const png = canvas.toDataURL({ format: 'png', multiplier: 1, enableRetinaScaling: false });
+    const link = document.createElement('a');
+    link.href = png;
+    link.download = `lialvaro-design-${product.id}-${side}.png`;
+    link.click();
+    setStatus('Preview PNG saved to your device.');
+  });
+
+  $('btnPreview')?.addEventListener('click', () => {
+    emptyCtas && (emptyCtas.hidden = true);
+    setStatus('Preview mode — empty helpers hidden. Click Upload or Add text to keep editing.');
+    setTimeout(() => syncEmptyCtas(), 2500);
+  });
+
+  $('btnProductDesc')?.addEventListener('click', () => {
+    const dialog = $('descDialog') as HTMLDialogElement | null;
+    const body = $('descBody');
+    if (body) body.textContent = product.blurb;
+    dialog?.showModal();
+  });
+
   refreshProductButtons();
   refreshColorButtons();
   refreshSideButtons();
   bindCanvas();
-  setStatus('Pick a product, then upload art or add text.');
+  syncCartBadge();
+  setStatus('Upload art or add text inside the print area.');
   track('design_started', { productId: product.id });
   window.dispatchEvent(new CustomEvent('lialvaro:design-started'));
+  window.addEventListener('lialvaro:cart-updated', () => syncCartBadge());
 }
 
 if (document.getElementById('designStudioRoot')) {
