@@ -12,7 +12,7 @@
 
 | Area | Notes |
 |---|---|
-| `/design/` studio | Product / color / front-back, upload PNG/JPG/SVG, text, color, layers, undo/redo, mockup stage |
+| `/design/` studio | Competitor-style chrome: dark top toolbar, left product/color rail, large garment stage with empty CTAs, right print-area thumbs, See Pricing drawer. Upload PNG/JPG/SVG, text, layers, undo/redo. |
 | Print boxes | Inches → 300 DPI export via `displayScale` (edit small, export full) in `design-studio.json` |
 | Preflight | Soft DPI warning (~150), JPG transparency note, 8MB cap |
 | Export API | `POST /api/designs` validates attestation + objects, server price from catalog variant, stores design meta in D1 when available |
