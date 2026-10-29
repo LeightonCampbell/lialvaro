@@ -6,7 +6,13 @@ import { getPricingConfig } from '../../lib/pricing';
 
 export const prerender = false;
 
-type CartItem = { variantId?: unknown; id?: unknown; qty?: unknown; quantity?: unknown };
+type CartItem = {
+  variantId?: unknown;
+  id?: unknown;
+  qty?: unknown;
+  quantity?: unknown;
+  designId?: unknown;
+};
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -71,6 +77,7 @@ export const POST: APIRoute = async ({ request, url }) => {
           items.map((item) => ({
             variantId: String(item.variantId ?? item.id),
             quantity: Math.max(1, Math.min(Number(item.qty ?? item.quantity) || 1, 20)),
+            designId: item.designId ? String(item.designId) : undefined,
           })),
         ),
       },

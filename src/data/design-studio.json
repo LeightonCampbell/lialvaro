@@ -1,0 +1,102 @@
+{
+  "notes": "Owner-fulfilled Design Studio blanks. Print boxes are inches at 300 DPI export; canvas displays at displayScale.",
+  "dpi": 300,
+  "displayScale": 0.2,
+  "maxUploadBytes": 8000000,
+  "fonts": [
+    { "id": "poppins", "label": "Poppins", "stack": "Poppins, sans-serif" },
+    { "id": "inter", "label": "Inter", "stack": "Inter, sans-serif" },
+    { "id": "anton", "label": "Anton", "stack": "Anton, Impact, sans-serif" }
+  ],
+  "products": [
+    {
+      "id": "studio_tee",
+      "label": "Classic Tee",
+      "blurb": "Soft everyday tee — front and back print areas.",
+      "variantId": "var_sunrise_m_white",
+      "shape": "tee",
+      "colors": [
+        { "id": "white", "label": "White", "hex": "#f5f5f5" },
+        { "id": "black", "label": "Black", "hex": "#1b2233" },
+        { "id": "navy", "label": "Navy", "hex": "#1e3a5f" },
+        { "id": "red", "label": "Print Red", "hex": "#c8102e" },
+        { "id": "royal", "label": "Royal", "hex": "#1d4ed8" },
+        { "id": "forest", "label": "Forest", "hex": "#166534" },
+        { "id": "maroon", "label": "Maroon", "hex": "#7f1d1d" },
+        { "id": "gold", "label": "Gold", "hex": "#b8912a" },
+        { "id": "orange", "label": "Orange", "hex": "#c2410c" },
+        { "id": "purple", "label": "Purple", "hex": "#5b21b6" },
+        { "id": "pink", "label": "Pink", "hex": "#db2777" },
+        { "id": "teal", "label": "Teal", "hex": "#0f766e" },
+        { "id": "grey", "label": "Heather", "hex": "#8b8b85" },
+        { "id": "sand", "label": "Sand", "hex": "#d6c6a8" },
+        { "id": "charcoal", "label": "Charcoal", "hex": "#374151" },
+        { "id": "sky", "label": "Sky", "hex": "#7dd3fc" }
+      ],
+      "placements": {
+        "front": {
+          "label": "Front",
+          "widthIn": 12,
+          "heightIn": 16,
+          "mockup": { "xPct": 30, "yPct": 28, "wPct": 40, "hPct": 46 }
+        },
+        "back": {
+          "label": "Back",
+          "widthIn": 12,
+          "heightIn": 16,
+          "mockup": { "xPct": 30, "yPct": 26, "wPct": 40, "hPct": 48 }
+        }
+      }
+    },
+    {
+      "id": "studio_hoodie",
+      "label": "Pullover Hoodie",
+      "blurb": "Roomy hoodie with a large front print box.",
+      "variantId": "var_block_m_navy",
+      "shape": "hoodie",
+      "colors": [
+        { "id": "black", "label": "Black", "hex": "#1b2233" },
+        { "id": "grey", "label": "Heather", "hex": "#8b8b85" },
+        { "id": "navy", "label": "Navy", "hex": "#1e3a5f" },
+        { "id": "red", "label": "Print Red", "hex": "#c8102e" },
+        { "id": "forest", "label": "Forest", "hex": "#166534" },
+        { "id": "white", "label": "White", "hex": "#f5f5f5" }
+      ],
+      "placements": {
+        "front": {
+          "label": "Front",
+          "widthIn": 12,
+          "heightIn": 14,
+          "mockup": { "xPct": 30, "yPct": 32, "wPct": 40, "hPct": 40 }
+        },
+        "back": {
+          "label": "Back",
+          "widthIn": 12,
+          "heightIn": 14,
+          "mockup": { "xPct": 30, "yPct": 30, "wPct": 40, "hPct": 42 }
+        }
+      }
+    },
+    {
+      "id": "studio_cap",
+      "label": "Dad Cap",
+      "blurb": "Front panel logo area for caps.",
+      "variantId": "var_script_os_black",
+      "shape": "cap",
+      "colors": [
+        { "id": "black", "label": "Black", "hex": "#1b2233" },
+        { "id": "white", "label": "White", "hex": "#f5f5f5" },
+        { "id": "khaki", "label": "Khaki", "hex": "#c4b89a" },
+        { "id": "navy", "label": "Navy", "hex": "#1e3a5f" }
+      ],
+      "placements": {
+        "front": {
+          "label": "Front",
+          "widthIn": 4.5,
+          "heightIn": 2.5,
+          "mockup": { "xPct": 30, "yPct": 38, "wPct": 40, "hPct": 22 }
+        }
+      }
+    }
+  ]
+}

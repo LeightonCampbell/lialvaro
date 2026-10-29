@@ -1,4 +1,4 @@
-export type CartLine = { variantId: string; quantity: number };
+export type CartLine = { variantId: string; quantity: number; designId?: string };
 
 const KEY = 'lialvaro_cart_v1';
 
@@ -22,20 +22,25 @@ export function cartCount(lines = readCart()): number {
   return lines.reduce((n, l) => n + l.quantity, 0);
 }
 
-export function addToCart(variantId: string, quantity = 1): CartLine[] {
+function sameLine(a: CartLine, b: { variantId: string; designId?: string }) {
+  return a.variantId === b.variantId && (a.designId ?? '') === (b.designId ?? '');
+}
+
+export function addToCart(variantId: string, quantity = 1, designId?: string): CartLine[] {
   const lines = readCart();
-  const existing = lines.find((l) => l.variantId === variantId);
+  const existing = lines.find((l) => sameLine(l, { variantId, designId }));
   if (existing) existing.quantity = Math.min(20, existing.quantity + quantity);
-  else lines.push({ variantId, quantity: Math.min(20, quantity) });
+  else lines.push({ variantId, quantity: Math.min(20, quantity), designId });
   writeCart(lines);
   return lines;
 }
 
-export function setQuantity(variantId: string, quantity: number): CartLine[] {
+export function setQuantity(variantId: string, quantity: number, designId?: string): CartLine[] {
   let lines = readCart();
-  if (quantity <= 0) lines = lines.filter((l) => l.variantId !== variantId);
-  else {
-    const row = lines.find((l) => l.variantId === variantId);
+  if (quantity <= 0) {
+    lines = lines.filter((l) => !sameLine(l, { variantId, designId }));
+  } else {
+    const row = lines.find((l) => sameLine(l, { variantId, designId }));
     if (row) row.quantity = Math.min(20, quantity);
   }
   writeCart(lines);

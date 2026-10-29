@@ -2,6 +2,8 @@
 
 Custom apparel site for LiAlvaro. Local day-to-day workflow is Vite/Astro (`npm run dev`).
 
+**Current work branch (cloud + local):** `cursor/stage-6-design-studio-ba6a`. Use that branch for Design Studio — not `master` (production) and not the live site until Stage 6 is merged/deployed. See `AGENTS.md` for the reset commands.
+
 ## Model (locked)
 
 - **Store** lists designs from **vendors**.
