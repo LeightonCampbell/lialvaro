@@ -2,11 +2,12 @@
 import Layout from '../layouts/Layout.astro';
 import Button from '../components/ds/Button.astro';
 import { claimText } from '../lib/claims';
+import { readSecret } from '../lib/env';
 
 const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
-const email = claimText('email-help') ?? 'Email help@lialvaro.com.';
 const sameDay = claimText('same-day-printing');
 const losAngeles = claimText('los-angeles');
+const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
 ---
 
 <Layout
@@ -17,7 +18,7 @@ const losAngeles = claimText('los-angeles');
     <header class="page-hero">
       <p class="eyebrow">Contact</p>
       <h1>Let’s talk project.</h1>
-      <p>Got an idea? Need a quote? Call or email — we’re happy to help.</p>
+      <p>Got an idea? Need a quote? Call or send a message — we’re happy to help.</p>
     </header>
 
     <div class="contact-grid">
@@ -27,11 +28,6 @@ const losAngeles = claimText('los-angeles');
         <Button href="tel:3109042655">{phone}</Button>
       </article>
       <article class="card">
-        <h2>Email</h2>
-        <p>Send project details and files when that is easier.</p>
-        <Button variant="secondary" href="mailto:help@lialvaro.com">{email}</Button>
-      </article>
-      <article class="card">
         <h2>Los Angeles</h2>
         <p>{losAngeles ?? 'Serving customers from Los Angeles, California.'}</p>
         {sameDay ? <p class="note">{sameDay}</p> : null}
@@ -39,13 +35,67 @@ const losAngeles = claimText('los-angeles');
       </article>
     </div>
 
-    <section class="quote-band">
-      <h2>Prefer a form?</h2>
-      <p>Request a free quote — no obligation.</p>
-      <button type="button" class="ds-btn ds-btn--primary" data-quote-trigger>Get a free quote</button>
+    <section class="contact-form-band" aria-labelledby="contact-form-title">
+      <h2 id="contact-form-title">Send a message</h2>
+      <p>Tell us what you need — we’ll follow up by phone or email.</p>
+      <form id="contactForm" class="contact-form">
+        <input type="text" name="_gotcha" value="" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" />
+        <label>
+          Name*
+          <input type="text" name="name" required autocomplete="name" />
+        </label>
+        <div class="contact-form__row">
+          <label>
+            Email*
+            <input type="email" name="email" required autocomplete="email" />
+          </label>
+          <label>
+            Phone
+            <input type="tel" name="phone" autocomplete="tel" />
+          </label>
+        </div>
+        <label>
+          Message*
+          <textarea name="message" rows="5" required placeholder="Quantity, garment, timing, or questions"></textarea>
+        </label>
+        {turnstileSiteKey ? <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div> : null}
+        <button type="submit" class="ds-btn ds-btn--primary">Send message</button>
+        {turnstileSiteKey ? <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script> : null}
+        <p id="contactMsg" class="contact-form__msg" hidden></p>
+      </form>
     </section>
   </div>
 </Layout>
+
+<script>
+  const form = document.getElementById('contactForm');
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!(form instanceof HTMLFormElement)) return;
+    const msg = document.getElementById('contactMsg');
+    const submit = form.querySelector('button[type="submit"]');
+    if (submit instanceof HTMLButtonElement) submit.disabled = true;
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' },
+      });
+      const body = (await res.json()) as { error?: string; ok?: boolean };
+      if (!msg) return;
+      msg.hidden = false;
+      msg.classList.toggle('is-error', !res.ok);
+      if (!res.ok) {
+        msg.textContent = body.error ?? 'Could not send your message.';
+        return;
+      }
+      msg.textContent = 'Message sent. We’ll get back to you soon.';
+      form.reset();
+    } finally {
+      if (submit instanceof HTMLButtonElement) submit.disabled = false;
+    }
+  });
+</script>
 
 <style>
   .contact-grid {
@@ -55,7 +105,7 @@ const losAngeles = claimText('los-angeles');
 
   @media (min-width: 800px) {
     .contact-grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 
@@ -83,24 +133,75 @@ const losAngeles = claimText('los-angeles');
     font-size: var(--text-sm);
   }
 
-  .quote-band {
+  .contact-form-band {
     margin-top: 2.5rem;
     padding: 1.75rem;
-    text-align: center;
     background: var(--white);
     border: 1px solid var(--color-border-strong);
     border-radius: var(--radius-lg);
   }
 
-  .quote-band h2 {
+  .contact-form-band h2 {
     margin: 0;
     font-family: var(--font-display);
     text-transform: uppercase;
     font-weight: 600;
+    text-align: center;
   }
 
-  .quote-band p {
-    margin: 0.5rem 0 1rem;
+  .contact-form-band > p {
+    margin: 0.5rem 0 1.25rem;
+    text-align: center;
+  }
+
+  .contact-form {
+    display: grid;
+    gap: 0.9rem;
+    max-width: 36rem;
+    margin-inline: auto;
+  }
+
+  .contact-form__row {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  @media (min-width: 640px) {
+    .contact-form__row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .contact-form label {
+    display: grid;
+    gap: 0.35rem;
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 44px;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    font: inherit;
+    font-weight: 400;
+  }
+
+  .contact-form textarea {
+    min-height: 8rem;
+    resize: vertical;
+  }
+
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
   }
 
   .ds-btn--primary {
@@ -117,6 +218,23 @@ const losAngeles = claimText('los-angeles');
     font-size: var(--text-sm);
     font-weight: 700;
     cursor: pointer;
+    justify-self: center;
+  }
+
+  .ds-btn--primary:disabled {
+    opacity: 0.65;
+    cursor: wait;
+  }
+
+  .contact-form__msg {
+    margin: 0;
+    text-align: center;
+    font-weight: 600;
+    color: var(--studio-green);
+  }
+
+  .contact-form__msg.is-error {
+    color: #c8102e;
   }
 
   .linkish {

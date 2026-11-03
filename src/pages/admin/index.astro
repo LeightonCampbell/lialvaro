@@ -1,4 +1,6 @@
 ---
+export const prerender = false;
+
 import Layout from '../../layouts/Layout.astro';
 import { isOwnerEmail, readSession, SESSION_COOKIE } from '../../lib/auth';
 import { listProducts } from '../../lib/catalog';
