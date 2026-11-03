@@ -4,6 +4,7 @@ import Button from '../../components/ds/Button.astro';
 import { getProductBySlug, listProducts } from '../../lib/catalog';
 import { formatUsd } from '../../lib/pricing';
 import { claimText } from '../../lib/claims';
+import { listStores } from '../../lib/stores';
 
 export function getStaticPaths() {
   return listProducts().map((p) => ({ params: { slug: p.slug } }));
@@ -19,6 +20,9 @@ const sameDay = claimText('same-day-printing');
 const sizes = [...new Set(product.variants.map((v) => v.size).filter(Boolean))];
 const colors = [...new Set(product.variants.map((v) => v.color).filter(Boolean))];
 const defaultVariant = product.variants[0];
+const storeOptions = listStores()
+  .filter((store) => store.vendorId === product.vendorId)
+  .map((store) => ({ slug: store.slug, name: store.name, markupBps: store.markupBps }));
 ---
 
 <Layout title={product.name} description={product.description}>
@@ -74,6 +78,7 @@ const defaultVariant = product.variants[0];
 </Layout>
 
 <script type="application/json" id="pdp-variants" set:html={JSON.stringify(product.variants)} />
+<script type="application/json" id="pdp-stores" set:html={JSON.stringify(storeOptions)} />
 <script>
   import { addToCart } from '../../scripts/cart.ts';
   import { track } from '../../scripts/analytics.ts';
@@ -87,6 +92,10 @@ const defaultVariant = product.variants[0];
 
   const raw = document.getElementById('pdp-variants')?.textContent ?? '[]';
   const variants = JSON.parse(raw) as PdpVariant[];
+  const storeRaw = document.getElementById('pdp-stores')?.textContent ?? '[]';
+  const storeOptions = JSON.parse(storeRaw) as Array<{ slug: string; name: string; markupBps: number }>;
+  const requestedStore = new URLSearchParams(location.search).get('store') ?? '';
+  const activeStore = storeOptions.find((store) => store.slug === requestedStore);
 
   track('view_item', { product: variants[0]?.id });
 
@@ -104,9 +113,10 @@ const defaultVariant = product.variants[0];
       variants.find((v) => (!color || v.color === color) && (!size || v.size === size)) || variants[0];
     if (variantIdInput instanceof HTMLInputElement) variantIdInput.value = match.id;
     if (priceEl) {
-      priceEl.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
-        match.retailPriceCents / 100,
-      );
+      const cents = activeStore
+        ? Math.round((match.retailPriceCents * (10000 + Math.max(0, activeStore.markupBps))) / 10000)
+        : match.retailPriceCents;
+      priceEl.textContent = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(cents / 100);
     }
     return match;
   }
@@ -120,7 +130,7 @@ const defaultVariant = product.variants[0];
     const variant = resolveVariant();
     const qtyInput = document.getElementById('qty');
     const qty = qtyInput instanceof HTMLInputElement ? Number(qtyInput.value) || 1 : 1;
-    addToCart(variant.id, qty);
+    addToCart(variant.id, qty, undefined, undefined, activeStore ? { storeSlug: activeStore.slug } : undefined);
     track('add_to_cart', { variantId: variant.id, quantity: qty });
     addedMsg?.removeAttribute('hidden');
   });
@@ -152,8 +162,8 @@ const defaultVariant = product.variants[0];
   .copy h1 {
     margin: 0 0 0.35rem;
     font-family: var(--font-display);
-    text-transform: uppercase;
-    font-weight: 700;
+    letter-spacing: -0.03em;
+    font-weight: 600;
     font-size: clamp(2rem, 4vw, 3rem);
   }
   .vendor {
@@ -185,8 +195,8 @@ const defaultVariant = product.variants[0];
   select,
   input {
     min-height: 44px;
-    border: 2px solid var(--ink);
-    border-radius: var(--radius-md);
+    border: 0;
+    border-radius: var(--radius-pill);
     padding: 0.5rem 0.75rem;
     font: inherit;
   }

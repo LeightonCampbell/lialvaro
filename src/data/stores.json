@@ -1,0 +1,16 @@
+[
+  {
+    "slug": "studio-north",
+    "name": "Studio North",
+    "vendorId": "vnd_studio_north",
+    "markupBps": 0,
+    "visibility": "public"
+  },
+  {
+    "slug": "eastside-ink",
+    "name": "Eastside Ink",
+    "vendorId": "vnd_eastside_ink",
+    "markupBps": 0,
+    "visibility": "public"
+  }
+]

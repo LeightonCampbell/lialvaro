@@ -12,14 +12,24 @@
     {
       "id": "studio_tee",
       "label": "Classic Tee",
+      "category": "T-shirts",
       "blurb": "Soft everyday tee — front and back print areas.",
+      "description": "Classic fit tee with a front and back print area. A solid choice for screen printing, DTG, and DTF.",
+      "sizeGuide": {
+        "unit": "in",
+        "sizes": ["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"],
+        "rows": [
+          { "label": "Body Length", "values": ["28", "29", "30", "31", "32", "33", "34", "35"] },
+          { "label": "Body Width", "values": ["18", "20", "22", "24", "26", "28", "30", "32"] }
+        ]
+      },
       "variantId": "var_sunrise_m_white",
       "shape": "tee",
       "colors": [
         { "id": "white", "label": "White", "hex": "#f5f5f5" },
         { "id": "black", "label": "Black", "hex": "#1b2233" },
         { "id": "navy", "label": "Navy", "hex": "#1e3a5f" },
-        { "id": "red", "label": "Print Red", "hex": "#c8102e" },
+        { "id": "red", "label": "Print Red", "hex": "#ff6b2b" },
         { "id": "royal", "label": "Royal", "hex": "#1d4ed8" },
         { "id": "forest", "label": "Forest", "hex": "#166534" },
         { "id": "maroon", "label": "Maroon", "hex": "#7f1d1d" },
@@ -38,63 +48,99 @@
           "label": "Front",
           "widthIn": 12,
           "heightIn": 16,
-          "mockup": { "xPct": 30, "yPct": 28, "wPct": 40, "hPct": 46 }
+          "image": "/studio/tee-front.jpg",
+          "mockup": { "xPct": 32, "yPct": 22, "wPct": 34.5, "hPct": 46 }
         },
         "back": {
           "label": "Back",
           "widthIn": 12,
           "heightIn": 16,
-          "mockup": { "xPct": 30, "yPct": 26, "wPct": 40, "hPct": 48 }
+          "image": "/studio/tee-back.jpg",
+          "mockup": { "xPct": 33, "yPct": 20, "wPct": 34.5, "hPct": 46 }
         }
       }
     },
     {
       "id": "studio_hoodie",
       "label": "Pullover Hoodie",
-      "blurb": "Roomy hoodie with a large front print box.",
+      "category": "Hoodies",
+      "blurb": "Roomy hoodie with front and back print areas.",
+      "description": "Pullover hoodie with front and back print areas. Color previews use your black blank photo.",
       "variantId": "var_block_m_navy",
       "shape": "hoodie",
       "colors": [
+        { "id": "white", "label": "White", "hex": "#f5f5f5" },
         { "id": "black", "label": "Black", "hex": "#1b2233" },
-        { "id": "grey", "label": "Heather", "hex": "#8b8b85" },
         { "id": "navy", "label": "Navy", "hex": "#1e3a5f" },
-        { "id": "red", "label": "Print Red", "hex": "#c8102e" },
+        { "id": "red", "label": "Print Red", "hex": "#ff6b2b" },
+        { "id": "royal", "label": "Royal", "hex": "#1d4ed8" },
         { "id": "forest", "label": "Forest", "hex": "#166534" },
-        { "id": "white", "label": "White", "hex": "#f5f5f5" }
+        { "id": "maroon", "label": "Maroon", "hex": "#7f1d1d" },
+        { "id": "gold", "label": "Gold", "hex": "#b8912a" },
+        { "id": "orange", "label": "Orange", "hex": "#c2410c" },
+        { "id": "purple", "label": "Purple", "hex": "#5b21b6" },
+        { "id": "pink", "label": "Pink", "hex": "#db2777" },
+        { "id": "teal", "label": "Teal", "hex": "#0f766e" },
+        { "id": "grey", "label": "Heather", "hex": "#8b8b85" },
+        { "id": "sand", "label": "Sand", "hex": "#d6c6a8" },
+        { "id": "charcoal", "label": "Charcoal", "hex": "#374151" },
+        { "id": "sky", "label": "Sky", "hex": "#7dd3fc" }
       ],
       "placements": {
         "front": {
           "label": "Front",
           "widthIn": 12,
           "heightIn": 14,
-          "mockup": { "xPct": 30, "yPct": 32, "wPct": 40, "hPct": 40 }
+          "image": "/studio/hoodie-front.jpg",
+          "mockup": { "xPct": 37.5, "yPct": 30, "wPct": 24, "hPct": 28 }
         },
         "back": {
           "label": "Back",
           "widthIn": 12,
           "heightIn": 14,
-          "mockup": { "xPct": 30, "yPct": 30, "wPct": 40, "hPct": 42 }
+          "image": "/studio/hoodie-back.jpg",
+          "mockup": { "xPct": 35.5, "yPct": 28, "wPct": 28, "hPct": 32.5 }
         }
       }
     },
     {
       "id": "studio_cap",
       "label": "Dad Cap",
-      "blurb": "Front panel logo area for caps.",
+      "category": "Hats",
+      "blurb": "Front, side, and back views. Side and back mockups match the front photo.",
+      "description": "Dad cap with front, side, and back views. Colors are black, white, red, royal, charcoal, pink, and gold. Side and back views are mockups based on the front photo.",
       "variantId": "var_script_os_black",
       "shape": "cap",
       "colors": [
         { "id": "black", "label": "Black", "hex": "#1b2233" },
         { "id": "white", "label": "White", "hex": "#f5f5f5" },
-        { "id": "khaki", "label": "Khaki", "hex": "#c4b89a" },
-        { "id": "navy", "label": "Navy", "hex": "#1e3a5f" }
+        { "id": "red", "label": "Print Red", "hex": "#ff6b2b" },
+        { "id": "royal", "label": "Royal", "hex": "#1d4ed8" },
+        { "id": "charcoal", "label": "Charcoal", "hex": "#374151" },
+        { "id": "pink", "label": "Pink", "hex": "#db2777" },
+        { "id": "gold", "label": "Gold", "hex": "#b8912a" }
       ],
       "placements": {
         "front": {
           "label": "Front",
           "widthIn": 4.5,
           "heightIn": 2.5,
-          "mockup": { "xPct": 30, "yPct": 38, "wPct": 40, "hPct": 22 }
+          "image": "/studio/hat-front.jpg",
+          "mockup": { "xPct": 36, "yPct": 36.7, "wPct": 28, "hPct": 16 }
+        },
+        "side": {
+          "label": "Side",
+          "widthIn": 2.5,
+          "heightIn": 1.4,
+          "image": "/studio/hat-side.jpg",
+          "mockup": { "xPct": 50, "yPct": 38, "wPct": 16, "hPct": 9 }
+        },
+        "back": {
+          "label": "Back",
+          "widthIn": 3.5,
+          "heightIn": 2,
+          "image": "/studio/hat-back.jpg",
+          "mockup": { "xPct": 39, "yPct": 34, "wPct": 22, "hPct": 12.5 }
         }
       }
     }

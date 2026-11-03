@@ -31,7 +31,7 @@ const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnit
         <span class="tb-ico" aria-hidden="true">▢+</span>
         <span>Add design</span>
       </button>
-      <button type="button" class="tb-item" id="btnQtySize" title="Quantity & size" aria-expanded="false" aria-controls="qtyPanel">
+      <button type="button" class="tb-item" id="btnQtySize" title="Quantity & size" aria-expanded="false" aria-controls="pricingPanel">
         <span class="tb-ico" aria-hidden="true">▣</span>
         <span>Quantity &amp; size</span>
       </button>
@@ -44,11 +44,11 @@ const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnit
         <span>My cart</span>
         <span class="cart-badge" id="studioCartBadge" hidden>0</span>
       </a>
-      <button type="button" class="tb-pricing" id="btnSeePricing">
+      <button type="button" class="tb-pricing" id="btnSeePricing" disabled title="Add a design to see pricing">
         See Pricing
         <span aria-hidden="true">→</span>
       </button>
-      <input id="fileInput" type="file" accept="image/png,image/jpeg,image/svg+xml,.png,.jpg,.jpeg,.svg" hidden />
+      <input id="fileInput" type="file" accept="image/png,image/jpeg,image/svg+xml,.png,.jpg,.jpeg,.svg" aria-label="Upload artwork" hidden />
     </div>
 
     <div class="studio-body">
@@ -65,6 +65,7 @@ const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnit
         <div class="color-block">
           <p class="color-label">Selected Color: <strong id="selectedColorLabel">Black</strong></p>
           <div id="colorButtons" class="swatches"></div>
+          <p class="preview-note" id="previewNote" hidden></p>
         </div>
 
         <div class="help-box">
@@ -79,6 +80,7 @@ const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnit
       <section class="studio-center" aria-label="Design canvas">
         <div class="stage-tools">
           <button type="button" class="icon-btn" id="btnZoomOut" title="Zoom out">−</button>
+          <span class="zoom-label">Zoom</span>
           <button type="button" class="icon-btn" id="btnZoomIn" title="Zoom in">+</button>
           <button type="button" class="icon-btn" id="btnToggleGrid" title="Toggle grid" aria-pressed="false">Grid</button>
           <button type="button" class="icon-btn" id="btnForward" title="Bring forward">Layers ↑</button>
@@ -87,7 +89,7 @@ const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnit
           <button type="button" class="icon-btn" id="btnRedo" title="Redo">Redo</button>
           <button type="button" class="icon-btn" id="btnDelete" title="Delete selected">Delete</button>
           <label class="text-color-mini" title="Text / fill color">
-            <input id="textColor" type="color" value="#c8102e" />
+            <input id="textColor" type="color" value="#ff6b2b" aria-label="Text color" />
           </label>
         </div>
 
@@ -97,32 +99,36 @@ const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnit
         </div>
 
         <div class="studio-stage" id="studioStage">
-          <div class="studio-mockup" id="studioMockup" data-shape="tee" aria-hidden="true">
-            <svg class="garment-svg" viewBox="0 0 200 240" preserveAspectRatio="xMidYMid meet">
-              <path
-                id="garmentPath"
-                d="M40 42 L70 28 L85 48 L115 48 L130 28 L160 42 L175 70 L155 82 L148 70 L148 210 L52 210 L52 70 L45 82 L25 70 Z"
-                fill="currentColor"
-              />
-            </svg>
-          </div>
-          <div class="print-frame" id="printFrame">
-            <canvas id="studioCanvas" width="360" height="480"></canvas>
-            <div class="empty-ctas" id="emptyCtas">
-              <button type="button" class="empty-cta" data-action="upload">
-                <span aria-hidden="true">↑</span> Upload image
-              </button>
-              <button type="button" class="empty-cta" data-action="text">
-                <span aria-hidden="true">T</span> Add text
-              </button>
-              <button type="button" class="empty-cta" data-action="note" id="btnDesignNote">
-                <span aria-hidden="true">✎</span> Add design note
-              </button>
+          <div class="mockup-frame" id="mockupFrame">
+            <img class="studio-photo" id="studioPhoto" alt="" hidden />
+            <div class="studio-mockup" id="studioMockup" data-shape="tee" aria-hidden="true">
+              <svg class="garment-svg" viewBox="0 0 200 240" preserveAspectRatio="xMidYMid meet">
+                <path
+                  id="garmentPath"
+                  d="M40 42 L70 28 L85 48 L115 48 L130 28 L160 42 L175 70 L155 82 L148 70 L148 210 L52 210 L52 70 L45 82 L25 70 Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </div>
+            <div class="print-frame" id="printFrame">
+              <canvas id="studioCanvas" width="360" height="480"></canvas>
+              <div class="empty-ctas" id="emptyCtas">
+                <button type="button" class="empty-cta" data-action="upload">
+                  <span aria-hidden="true">↑</span> Upload image
+                </button>
+                <button type="button" class="empty-cta" data-action="text">
+                  <span aria-hidden="true">T</span> Add text
+                </button>
+                <button type="button" class="empty-cta" data-action="note" id="btnDesignNote">
+                  <span aria-hidden="true">✎</span> Add design note
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
         <p class="studio-status" id="studioStatus" role="status"></p>
+        <p class="edit-hint" id="editHint" hidden>Drag to move · drag a corner to resize · red × or Delete to remove</p>
         <ul class="studio-warnings" id="studioWarnings" hidden></ul>
       </section>
 
@@ -134,58 +140,50 @@ const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnit
         </div>
         <h2>Print area</h2>
         <div id="sideButtons" class="print-thumbs"></div>
-        <p class="sleeve-note">Left / right sleeve placements are not available yet on this blank.</p>
       </aside>
     </div>
 
-    <!-- Change product drawer -->
-    <div class="drawer" id="productDrawer" hidden>
-      <div class="drawer__backdrop" data-close-drawer></div>
-      <div class="drawer__panel" role="dialog" aria-labelledby="productDrawerTitle">
+    <div class="product-modal" id="productDrawer" hidden>
+      <div class="product-modal__backdrop" data-close-drawer></div>
+      <div class="product-modal__panel" role="dialog" aria-labelledby="productDrawerTitle">
         <header>
-          <h2 id="productDrawerTitle">Change Product</h2>
+          <h2 id="productDrawerTitle">Change your product</h2>
           <button type="button" class="icon-btn" data-close-drawer aria-label="Close">×</button>
         </header>
-        <div id="productButtons" class="product-buttons"></div>
+        <div class="product-modal__body">
+          <div id="productCats" class="product-cats"></div>
+          <div id="productButtons" class="product-picks"></div>
+        </div>
       </div>
     </div>
 
-    <!-- Qty / size panel -->
-    <div class="drawer drawer--right" id="qtyPanel" hidden>
-      <div class="drawer__backdrop" data-close-qty></div>
-      <div class="drawer__panel" role="dialog" aria-labelledby="qtyTitle">
+    <div class="qty-modal" id="pricingPanel" hidden>
+      <div class="qty-modal__backdrop" data-close-pricing></div>
+      <div class="qty-modal__panel" role="dialog" aria-labelledby="pricingTitle" aria-modal="true">
         <header>
-          <h2 id="qtyTitle">Quantity &amp; size</h2>
-          <button type="button" class="icon-btn" data-close-qty aria-label="Close">×</button>
-        </header>
-        <label class="field">
-          Size
-          <select id="studioSize">
-            <option>S</option>
-            <option selected>M</option>
-            <option>L</option>
-            <option>XL</option>
-            <option>2XL</option>
-          </select>
-        </label>
-        <label class="field">
-          Quantity
-          <input id="studioQty" type="number" min="1" max="20" value="1" />
-        </label>
-        <button type="button" class="btn-outline" data-close-qty>Done</button>
-      </div>
-    </div>
-
-    <!-- Pricing / checkout rail -->
-    <div class="drawer drawer--right" id="pricingPanel" hidden>
-      <div class="drawer__backdrop" data-close-pricing></div>
-      <div class="drawer__panel" role="dialog" aria-labelledby="pricingTitle">
-        <header>
-          <h2 id="pricingTitle">See Pricing</h2>
+          <h2 id="pricingTitle">How Many Do You Need?</h2>
           <button type="button" class="icon-btn" data-close-pricing aria-label="Close">×</button>
         </header>
-        <p class="price" id="studioPrice" data-cents={priceMap.studio_tee ?? 0}>—</p>
-        <p class="fine">Unit price from catalog blank. Final total calculated at checkout.</p>
+        <p class="qty-modal__label" id="sizeQtyHeading">Adult sizes</p>
+        <div id="sizeQtyGrid" class="size-qty"></div>
+        <p class="qty-note" id="qtyPriceNote" hidden></p>
+        <div class="qty-totals">
+          <div>
+            <span>Total pieces</span>
+            <strong id="qtyTotal">0</strong>
+          </div>
+          <div>
+            <span>Price each</span>
+            <strong class="price" id="studioPrice" data-cents={priceMap.studio_tee ?? 0}>—</strong>
+          </div>
+          <div>
+            <span>Subtotal</span>
+            <strong id="qtySubtotal">—</strong>
+          </div>
+        </div>
+        <p class="qty-note" id="qtyDelivery">
+          Same-day printing can be requested at checkout for up to 12 pieces, before 11:00am Pacific, in select Los Angeles ZIPs.
+        </p>
         <label class="attest">
           <input id="ipAttest" type="checkbox" />
           <span>
@@ -193,16 +191,23 @@ const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnit
             <a href="/terms/">Terms</a>.
           </span>
         </label>
-        <button type="button" class="btn-pricing-solid" id="btnExport">Export &amp; add to cart</button>
-        <p class="fine">Downloads a print-ready PNG and saves your design. Report misuse via <a href="/contact/">Contact</a>.</p>
+        <button type="button" class="btn-pricing-solid" id="btnExport">Add to cart</button>
       </div>
     </div>
 
     <dialog id="descDialog" class="desc-dialog">
       <form method="dialog">
-        <h2>Product description</h2>
+        <header>
+          <h2>Product Info</h2>
+          <button type="submit" class="icon-btn" aria-label="Close">×</button>
+        </header>
+        <h3 id="descTitle"></h3>
         <p id="descBody"></p>
-        <button type="submit" class="btn-outline">Close</button>
+        <button type="button" class="text-link" id="descMore">read more</button>
+        <p class="desc-label">Color</p>
+        <div id="descColors" class="desc-colors"></div>
+        <h3 id="descSizeHeading">Size Guide</h3>
+        <div id="descSizes"></div>
       </form>
     </dialog>
   </div>
@@ -309,8 +314,13 @@ const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnit
     min-height: 3.25rem;
   }
 
-  .tb-pricing:hover {
+  .tb-pricing:hover:not(:disabled) {
     filter: brightness(1.05);
+  }
+
+  .tb-pricing:disabled {
+    background: #9aa3b2;
+    cursor: not-allowed;
   }
 
   .studio-body {
@@ -485,9 +495,21 @@ const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnit
     cursor: pointer;
   }
 
+  .zoom-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0 0.15rem;
+  }
+
   .icon-btn[aria-pressed='true'] {
     border-color: var(--studio-blue);
     color: var(--studio-blue);
+  }
+
+  .icon-btn.is-ready {
+    background: var(--print-red);
+    border-color: var(--print-red);
+    color: var(--white);
   }
 
   .text-color-mini input {
@@ -531,24 +553,53 @@ const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnit
   .studio-stage {
     position: relative;
     flex: 1;
-    min-height: 440px;
     margin: 0 auto;
-    width: min(100%, 520px);
+    width: min(100%, 560px);
     transform-origin: center top;
     transition: transform var(--duration-med) var(--ease-out);
   }
 
-  .studio-stage.is-grid::before {
+  .mockup-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    min-height: 420px;
+  }
+
+  .mockup-frame.has-photo {
+    aspect-ratio: 1;
+    min-height: 0;
+    background: #fff;
+  }
+
+  .studio-photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .studio-photo[hidden],
+  .studio-mockup[hidden] {
+    display: none !important;
+  }
+
+  .preview-note {
+    margin: 0.65rem 0 0;
+    font-size: 0.75rem;
+    color: var(--color-muted);
+  }
+
+  .mockup-frame.is-grid::after {
     content: '';
     position: absolute;
     inset: 0;
-    z-index: 1;
+    z-index: 4;
     pointer-events: none;
     background-image:
-      linear-gradient(to right, color-mix(in srgb, var(--ink) 12%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in srgb, var(--ink) 12%, transparent) 1px, transparent 1px);
+      linear-gradient(to right, rgba(37, 99, 235, 0.35) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(37, 99, 235, 0.35) 1px, transparent 1px);
     background-size: 24px 24px;
-    opacity: 0.5;
   }
 
   .studio-mockup {
@@ -568,11 +619,18 @@ const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnit
   .print-frame {
     position: absolute;
     z-index: 2;
-    border: 1px dashed color-mix(in srgb, var(--studio-blue) 70%, var(--white));
-    background: color-mix(in srgb, var(--white) 8%, transparent);
+    border: 1.5px dashed color-mix(in srgb, var(--studio-blue) 80%, var(--white));
+    background: color-mix(in srgb, var(--white) 42%, transparent);
     touch-action: none;
+    overflow: visible;
   }
 
+  .mockup-frame.has-photo .print-frame {
+    border: 1.5px dashed rgba(255, 255, 255, 0.95);
+    background: transparent;
+  }
+
+  .print-frame .canvas-container,
   .print-frame canvas {
     display: block;
     width: 100% !important;
@@ -613,11 +671,33 @@ const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnit
     box-shadow: 0 2px 8px color-mix(in srgb, var(--ink) 12%, transparent);
   }
 
-  .studio-status {
+  .empty-ctas.is-cap {
+    gap: 0.4rem;
+    padding: 0;
+    justify-items: center;
+    overflow: visible;
+  }
+
+  .empty-ctas.is-cap .empty-cta {
+    min-width: 9.5rem;
+    min-height: 2.35rem;
+    padding: 0.45rem 0.8rem;
+    font-size: 1.05rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    color: var(--ink);
+  }
+
+  .studio-status,
+  .edit-hint {
     margin: 0;
     text-align: center;
     font-size: 0.85rem;
     font-weight: 600;
+  }
+
+  .edit-hint {
+    color: var(--studio-navy);
   }
 
   .studio-warnings {
@@ -667,6 +747,19 @@ const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnit
     border-color: var(--studio-blue);
   }
 
+  .print-thumb.is-designed .print-thumb__preview::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 2;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #15803d;
+    box-shadow: 0 0 0 2px #fff;
+  }
+
   .print-thumb.is-disabled {
     opacity: 0.4;
     cursor: not-allowed;
@@ -677,19 +770,25 @@ const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnit
     aspect-ratio: 3 / 4;
     border: 1px solid var(--color-border);
     border-radius: 4px;
-    background: #dfe3ea;
+    background: #e7ebf0;
     position: relative;
     overflow: hidden;
+    display: grid;
+    place-items: center;
+  }
+
+  .print-thumb__preview svg,
+  .print-thumb__preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
 
   .print-thumb__preview span {
     position: absolute;
-    left: 28%;
-    top: 22%;
-    width: 44%;
-    height: 48%;
     border: 2px solid #f5c518;
     box-sizing: border-box;
+    pointer-events: none;
   }
 
   .print-thumb__label {
@@ -752,19 +851,98 @@ const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnit
     font-size: 1.1rem;
   }
 
-  .product-buttons {
+  .product-modal[hidden] {
+    display: none;
+  }
+
+  .product-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+  }
+
+  .product-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--ink) 45%, transparent);
+  }
+
+  .product-modal__panel {
+    position: relative;
+    width: min(860px, calc(100% - 2rem));
+    max-height: min(78vh, 640px);
+    margin: 8vh auto 0;
+    background: var(--white);
+    border-radius: 10px;
     display: grid;
-    gap: 0.5rem;
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow: hidden;
+    box-shadow: 0 18px 50px color-mix(in srgb, var(--ink) 28%, transparent);
+  }
+
+  .product-modal__panel header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .product-modal__panel h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .product-modal__body {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .product-cats {
+    display: grid;
+    align-content: start;
+    border-right: 1px solid var(--color-border);
+    overflow: auto;
+  }
+
+  .product-cat {
+    text-align: left;
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--white);
+    padding: 0.85rem 1rem;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .product-cat.is-active {
+    background: color-mix(in srgb, var(--studio-blue) 10%, var(--white));
+    color: var(--studio-blue);
+  }
+
+  .product-picks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.75rem;
+    align-content: start;
+    padding: 1rem;
+    overflow: auto;
   }
 
   .product-chip {
     display: grid;
-    gap: 0.15rem;
-    text-align: left;
-    border: 2px solid var(--ink);
-    border-radius: 6px;
+    gap: 0.35rem;
+    justify-items: center;
+    text-align: center;
+    border: 2px solid var(--color-border-strong);
+    border-radius: 8px;
     background: var(--white);
-    padding: 0.75rem;
+    padding: 0.65rem;
     font: inherit;
     cursor: pointer;
   }
@@ -818,11 +996,229 @@ const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnit
     font-size: 0.85rem;
   }
 
-  .desc-dialog {
+  .pick-preview {
+    width: 100%;
+    height: 120px;
+    display: grid;
+    place-items: center;
+    background: #eef1f5;
+    border-radius: 4px;
+  }
+
+  .pick-preview svg,
+  .pick-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .qty-modal[hidden] {
+    display: none;
+  }
+
+  .qty-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+  }
+
+  .qty-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--ink) 45%, transparent);
+  }
+
+  .qty-modal__panel {
+    position: relative;
+    z-index: 1;
+    width: min(720px, calc(100% - 2rem));
+    margin: 8vh auto 0;
+    background: var(--white);
+    border-radius: 12px;
+    padding: 1.15rem 1.25rem 1.25rem;
+    display: grid;
+    gap: 0.9rem;
+    box-shadow: 0 18px 50px color-mix(in srgb, var(--ink) 28%, transparent);
+  }
+
+  .qty-modal__panel header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .qty-modal__panel h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .qty-modal__label {
+    margin: 0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .size-qty {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(3.4rem, 1fr));
+    gap: 0.45rem;
+  }
+
+  .size-qty.is-wide {
+    grid-template-columns: repeat(auto-fit, minmax(4.6rem, 1fr));
+  }
+
+  .size-step {
+    display: grid;
+    justify-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .size-step__ctrl {
+    display: grid;
+    grid-template-columns: 1.4rem 1fr 1.4rem;
+    align-items: center;
+    width: 100%;
     border: 1px solid var(--color-border-strong);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .size-step__ctrl button {
+    border: none;
+    background: #f4f6f8;
+    min-height: 2rem;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .size-step__ctrl input {
+    width: 100%;
+    min-height: 2rem;
+    border: none;
+    text-align: center;
+    font: inherit;
+    font-weight: 700;
+    padding: 0;
+  }
+
+  .qty-totals {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
-    padding: 1.25rem;
-    max-width: 28rem;
+    overflow: hidden;
+  }
+
+  .qty-totals div {
+    display: grid;
+    gap: 0.2rem;
+    justify-items: center;
+    padding: 0.75rem 0.4rem;
+    border-right: 1px solid var(--color-border);
+  }
+
+  .qty-totals div:last-child {
+    border-right: none;
+  }
+
+  .qty-totals span {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .qty-totals strong {
+    font-size: 1.15rem;
+  }
+
+  .qty-note {
+    margin: 0;
+    padding: 0.7rem 0.8rem;
+    border-radius: 8px;
+    background: #f4f7fb;
+    font-size: 0.8rem;
+  }
+
+  .desc-dialog {
+    border: none;
+    border-radius: 10px;
+    padding: 0;
+    width: min(640px, calc(100% - 2rem));
+    max-height: min(80vh, 720px);
+  }
+
+  .desc-dialog form {
+    display: grid;
+    gap: 0.75rem;
+    padding: 1rem 1.15rem 1.25rem;
+    overflow: auto;
+    max-height: min(80vh, 720px);
+  }
+
+  .desc-dialog header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .desc-dialog h2,
+  .desc-dialog h3 {
+    margin: 0;
+    font-family: var(--font-display);
+  }
+
+  .desc-dialog p {
+    margin: 0;
+  }
+
+  .desc-label {
+    font-weight: 700;
+  }
+
+  .desc-colors {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+  }
+
+  .desc-colors span {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
+  }
+
+  .size-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+
+  .size-table th,
+  .size-table td {
+    border: 1px solid var(--color-border);
+    padding: 0.4rem 0.35rem;
+    text-align: center;
+  }
+
+  .size-table th {
+    background: #f3f6fb;
+  }
+
+  .size-table td:first-child {
+    text-align: left;
+    font-weight: 700;
   }
 
   .desc-dialog::backdrop {

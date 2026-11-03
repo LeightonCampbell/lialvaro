@@ -1,0 +1,66 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProductCard from '../../components/ds/ProductCard.astro';
+import { listProducts, productCardPrice } from '../../lib/catalog';
+import { claimText } from '../../lib/claims';
+import { formatUsd } from '../../lib/pricing';
+import { getStore, listStores, markedUpCents } from '../../lib/stores';
+
+export function getStaticPaths() {
+  return listStores().map((store) => ({ params: { slug: store.slug } }));
+}
+
+const store = getStore(Astro.params.slug ?? '');
+if (!store) {
+  return Astro.redirect('/stores/');
+}
+
+const products = listProducts().filter((product) => product.vendorId === store.vendorId);
+const sameDay = claimText('same-day-printing');
+---
+
+<Layout title={store.name} description={`${store.name} designs, printed and fulfilled by LiAlvaro.`}>
+  <div class="page-shell">
+    <header class="page-hero">
+      <p class="eyebrow"><a href="/stores/">Stores</a></p>
+      <h1>{store.name}</h1>
+      <p>Designs from this partner. LiAlvaro prints and fulfills the order.</p>
+      {sameDay ? <p>Pickup in Los Angeles is available when the order qualifies. {sameDay}</p> : null}
+    </header>
+    <div class="grid">
+      {
+        products.length ? (
+          products.map((product) => {
+            const cents = Math.min(...product.variants.map((variant) => variant.retailPriceCents));
+            const price =
+              store.markupBps > 0 ? formatUsd(markedUpCents(cents, store.markupBps)) : productCardPrice(product);
+            return (
+              <ProductCard
+                title={product.name}
+                href={`/shop/${product.slug}/?store=${store.slug}`}
+                price={price}
+                image={product.imageUrl ?? undefined}
+                badge={product.category}
+              />
+            );
+          })
+        ) : (
+          <ProductCard empty />
+        )
+      }
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

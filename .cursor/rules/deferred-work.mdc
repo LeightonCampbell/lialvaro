@@ -1,0 +1,15 @@
+---
+description: Remind the owner about deferred launch and stage work at the moment it becomes relevant
+alwaysApply: true
+---
+
+# Deferred work — remind at the right time
+
+Do not implement these unless the owner asks or the current task is exactly that work. When the owner starts a matching task, mention the item in one sentence before continuing.
+
+- **Deploy, launch, or production secrets:** set `AUTH_SECRET` and `RESEND_API_KEY` (magic-link email fails closed without them), apply `migrations/0002_members.sql` to remote D1, and set the deferred Cloudflare Worker secrets.
+- **Catalog or store editing in an admin UI:** catalog and client stores still live in `src/data/catalog.seed.json` and `src/data/stores.json`, not the database.
+- **Tests or CI:** Playwright for design → checkout, login, reorder, and a client-store purchase is still deferred.
+- **Artwork library or print files:** saved designs are metadata. Print PNGs are not stored in R2 yet.
+- **Real hat photos:** hat side and back views are approximations of the front photo until the owner supplies photos.
+- **Next build stage:** Stage 8 is the quote modal rebuild (modal and admin only, no `/custom-printing/` page). Do not start it until the owner asks.

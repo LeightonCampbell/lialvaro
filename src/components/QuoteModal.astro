@@ -1,4 +1,7 @@
 ---
+import { readSecret } from '../lib/env';
+
+const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
 ---
 <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal" id="modal">
@@ -15,7 +18,7 @@
       <form
         id="quoteForm"
         class="modal-body"
-        action="https://formspree.io/f/xnjoaoyw"
+        action="/api/quotes"
         method="POST"
         novalidate
       >
@@ -231,8 +234,18 @@
 
           <div class="modal-nav">
             <button type="button" class="modal-back modal-nav-btn" id="step4Back">Back</button>
+            {
+              turnstileSiteKey ? (
+                <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>
+              ) : null
+            }
             <button type="submit" class="modal-submit modal-nav-btn" id="step4Submit">Get My Free Quote →</button>
           </div>
+          {
+            turnstileSiteKey ? (
+              <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+            ) : null
+          }
 
           <div class="modal-guarantee">🔒 &nbsp;No spam. No hidden fees. Just a fast, honest quote.</div>
         </div>
@@ -531,8 +544,7 @@
 
       try {
         var formData = new FormData(quoteForm);
-        var endpoint = quoteForm.getAttribute('action') || 'https://formspree.io/f/xnjoaoyw';
-        var res = await fetch(endpoint, { method: 'POST', body: formData });
+        var res = await fetch('/api/quotes', { method: 'POST', body: formData, headers: { Accept: 'application/json' } });
 
         if (res && res.ok) {
           formView.style.display = 'none';
@@ -542,7 +554,14 @@
           return;
         }
 
-        setError('Submission failed. Please try again.');
+        var message = 'Submission failed. Please try again.';
+        try {
+          var body = await res.json();
+          if (body && body.error) message = body.error;
+        } catch (_parse) {
+          /* keep the fallback */
+        }
+        setError(message);
       } catch (_err) {
         setError('Network error. Please check your connection and try again.');
       } finally {

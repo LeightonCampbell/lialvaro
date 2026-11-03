@@ -22,6 +22,7 @@ interface ImportMetaEnv {
   readonly STRIPE_WEBHOOK_SECRET?: string;
   readonly RESEND_API_KEY?: string;
   readonly ORDER_NOTIFICATION_EMAIL?: string;
+  readonly AUTH_SECRET?: string;
 }
 
 interface ImportMeta {

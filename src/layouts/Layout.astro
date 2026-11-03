@@ -3,7 +3,8 @@ import '../styles/tokens.css';
 import Header from '../components/ds/Header.astro';
 import Footer from '../components/ds/Footer.astro';
 import QuoteModal from '../components/QuoteModal.astro';
-import { brand, claimText } from '../lib/claims';
+import { readSession, SESSION_COOKIE } from '../lib/auth';
+import { brand } from '../lib/claims';
 
 interface Props {
 	title: string;
@@ -33,8 +34,7 @@ const normalizedPathname =
 			? Astro.url.pathname
 			: `${Astro.url.pathname}/`;
 const canonicalUrl = new URL(normalizedPathname, canonicalOrigin).toString();
-const sameDay = claimText('same-day-printing');
-const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
+const accountSession = await readSession(Astro.cookies.get(SESSION_COOKIE)?.value);
 const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 
@@ -69,17 +69,7 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 		<slot name="head" />
 	</head>
 	<body class="site-body">
-		<div class="topbar">
-			<p class="topbar__announce">
-				{sameDay ? <>{sameDay}&nbsp;·&nbsp;</> : null}
-				<a href="tel:3109042655">{phone.replace(/^Call\s+/i, '')}</a>
-			</p>
-			<div class="topbar__utils">
-				<a href="/cart/">Cart</a>
-				<a href="/account/">Sign in</a>
-			</div>
-		</div>
-		<Header />
+		<Header accountEmail={accountSession?.email} />
 		<main id="main">
 			<slot />
 		</main>
@@ -89,21 +79,32 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 			import { initAnalyticsScaffold, track } from '../scripts/analytics.ts';
 			initAnalyticsScaffold();
 
+			const storeQuoteEvent = (kind: string, extra: Record<string, unknown> = {}) => {
+				fetch('/api/events', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ kind, ...extra }),
+				}).catch(() => undefined);
+			};
+
 			document.addEventListener('click', (event) => {
 				const target = event.target;
 				if (!(target instanceof Element)) return;
 				const quoteTrigger = target.closest('[data-quote-trigger]');
 				if (quoteTrigger) {
 					track('quote_started', { source: 'trigger' });
+					storeQuoteEvent('quote_started', { source: 'trigger' });
 				}
 			});
 
 			window.addEventListener('lialvaro:quote-step', ((event: CustomEvent) => {
 				track('quote_step_N', { step: event.detail?.step });
+				storeQuoteEvent('quote_step_N', { step: event.detail?.step });
 			}) as EventListener);
 
 			window.addEventListener('lialvaro:quote-submitted', (() => {
 				track('quote_submitted');
+				storeQuoteEvent('quote_submitted');
 			}) as EventListener);
 
 			window.addEventListener('lialvaro:design-started', (() => {
@@ -134,44 +135,17 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 		outline-offset: 2px;
 	}
 
-	.topbar {
-		background: var(--ink);
-		color: var(--white);
-		padding: 0.55rem 1rem;
-		font-size: 0.8rem;
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.5rem 1rem;
-	}
-
-	.topbar__announce {
-		margin: 0;
-		text-align: left;
-		flex: 1 1 auto;
-		min-width: 0;
-	}
-
-	.topbar__utils {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.75rem;
-		margin-left: auto;
-		flex-shrink: 0;
-	}
-
-	.topbar a {
-		color: var(--white);
-		text-decoration: underline;
-		text-underline-offset: 2px;
+	.site-width,
+	.page-shell {
+		box-sizing: border-box;
+		width: min(var(--site-max), calc(100% - 2 * var(--site-gutter)));
+		max-width: none;
+		margin-inline: auto;
+		padding-inline: var(--site-pad);
 	}
 
 	.page-shell {
-		max-width: 1120px;
-		margin: 0 auto;
-		padding: 2.5rem 1rem 4rem;
+		padding-block: 2.5rem 4rem;
 	}
 
 	.page-hero {
@@ -205,11 +179,10 @@ const jsonLdBlocks = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 	.page-hero h1 {
 		margin: 0;
 		font-family: var(--font-display);
-		font-size: clamp(2.4rem, 6vw, 3.75rem);
-		font-weight: 700;
-		letter-spacing: 0.02em;
-		text-transform: uppercase;
-		line-height: 1.05;
+		font-size: clamp(2rem, 4vw, 3rem);
+		font-weight: 600;
+		letter-spacing: -0.03em;
+		line-height: 1.1;
 	}
 
 	.page-hero p {

@@ -50,10 +50,10 @@ const { steps, class: className = '' } = Astro.props;
     display: grid;
     grid-template-columns: auto 1fr;
     gap: var(--space-3);
-    padding: var(--space-4);
-    background: var(--white);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
+    padding: var(--space-5) var(--space-4);
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-lg);
   }
 
   .ds-steps__num {
@@ -61,9 +61,10 @@ const { steps, class: className = '' } = Astro.props;
     height: 2rem;
     display: grid;
     place-items: center;
-    border: 1px solid var(--ink);
+    background: var(--white);
+    box-shadow: var(--shadow-soft);
     border-radius: 50%;
-    font-family: var(--font-mono);
+    font-family: var(--font-display);
     font-size: var(--text-sm);
     font-weight: 500;
   }

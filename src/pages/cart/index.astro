@@ -35,7 +35,8 @@ const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
 </Layout>
 
 <script>
-  import { readCart, setQuantity, clearCart, cartCount } from '../../scripts/cart.ts';
+  import { readCart, setQuantity, clearCart, cartCount, type CartLine } from '../../scripts/cart.ts';
+  import { teeUnitCents } from '../../lib/design-studio.ts';
   import { track } from '../../scripts/analytics.ts';
 
   type CatalogVariant = {
@@ -43,20 +44,41 @@ const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
     name: string;
     retailPriceCents: number;
     lane: string;
-    product: { name: string; slug: string };
+    product: { name: string; slug: string; vendorId: string };
   };
+  type StoreRow = { slug: string; vendorId: string; markupBps: number };
 
   const catalog: CatalogVariant[] = [];
+  const stores: StoreRow[] = [];
 
   async function loadCatalog() {
     const res = await fetch('/api/catalog.json');
     if (!res.ok) return;
-    const data = (await res.json()) as { variants: CatalogVariant[] };
+    const data = (await res.json()) as { variants: CatalogVariant[]; stores?: StoreRow[] };
     catalog.splice(0, catalog.length, ...(data.variants ?? []));
+    stores.splice(0, stores.length, ...(data.stores ?? []));
+  }
+
+  function storeUnit(line: CartLine, catalogCents: number, vendorId: string) {
+    const store = stores.find((entry) => entry.slug === line.storeSlug && entry.vendorId === vendorId);
+    if (!store || store.markupBps <= 0) return catalogCents;
+    return Math.round((catalogCents * (10000 + store.markupBps)) / 10000);
   }
 
   function money(cents: number) {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(cents / 100);
+  }
+
+  function lineUnitCents(line: CartLine, lines: CartLine[], catalogCents: number, vendorId = '') {
+    if (line.studioPrice !== 'tee' || !line.designId) return storeUnit(line, catalogCents, vendorId);
+    const total = lines
+      .filter((entry) => entry.designId === line.designId && entry.studioPrice === 'tee')
+      .reduce((sum, entry) => sum + entry.quantity, 0);
+    return teeUnitCents({
+      totalPieces: total,
+      size: line.size ?? '',
+      printPositions: line.printPositions ?? 1,
+    });
   }
 
   function render() {
@@ -86,9 +108,15 @@ const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
         if (!variant) {
           return `<li class="line">Unknown item (${line.variantId}) <button data-remove="${line.variantId}" type="button">Remove</button></li>`;
         }
-        subtotal += variant.retailPriceCents * line.quantity;
+        const unit = lineUnitCents(line, lines, variant.retailPriceCents, variant.product.vendorId);
+        subtotal += unit * line.quantity;
         const designAttr = line.designId ? ` data-design="${line.designId}"` : '';
-        const designMeta = line.designId ? `<div class="meta">Custom design ${line.designId.slice(0, 12)}…</div>` : '';
+        const sizeAttr = line.size ? ` data-size="${line.size}"` : '';
+        const storeAttr = ` data-store="${line.storeSlug ?? ''}"`;
+        const positionMeta = line.positions ? ` · ${line.positions}` : '';
+        const designMeta = line.designId
+          ? `<div class="meta">Custom design ${line.designId.slice(0, 12)}…${line.size ? ` · Size ${line.size}` : ''}${positionMeta}</div>`
+          : '';
         return `<li class="line">
           <div>
             <a href="/shop/${variant.product.slug}/">${variant.product.name}</a>
@@ -96,11 +124,11 @@ const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
             ${designMeta}
           </div>
           <div class="qty">
-            <button type="button" data-dec="${variant.id}"${designAttr} aria-label="Decrease">−</button>
+            <button type="button" data-dec="${variant.id}"${designAttr}${sizeAttr}${storeAttr} aria-label="Decrease">−</button>
             <span>${line.quantity}</span>
-            <button type="button" data-inc="${variant.id}"${designAttr} aria-label="Increase">+</button>
+            <button type="button" data-inc="${variant.id}"${designAttr}${sizeAttr}${storeAttr} aria-label="Increase">+</button>
           </div>
-          <div class="price">${money(variant.retailPriceCents * line.quantity)}</div>
+          <div class="price">${money(unit * line.quantity)}</div>
         </li>`;
       })
       .join('');
@@ -129,16 +157,24 @@ const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
     const dec = target.getAttribute('data-dec');
     const remove = target.getAttribute('data-remove');
     const designId = target.getAttribute('data-design') || undefined;
+    const size = target.getAttribute('data-size') || undefined;
+    const storeSlug = target.getAttribute('data-store') || undefined;
+    const match = (variantId: string) =>
+      readCart().find(
+        (l) =>
+          l.variantId === variantId &&
+          (l.designId || undefined) === designId &&
+          (l.size || undefined) === size &&
+          (l.storeSlug || undefined) === storeSlug,
+      );
     if (inc) {
-      const line = readCart().find((l) => l.variantId === inc && (l.designId || undefined) === designId);
-      setQuantity(inc, (line?.quantity ?? 0) + 1, designId);
+      setQuantity(inc, (match(inc)?.quantity ?? 0) + 1, designId, size, storeSlug);
       render();
     } else if (dec) {
-      const line = readCart().find((l) => l.variantId === dec && (l.designId || undefined) === designId);
-      setQuantity(dec, (line?.quantity ?? 1) - 1, designId);
+      setQuantity(dec, (match(dec)?.quantity ?? 1) - 1, designId, size, storeSlug);
       render();
     } else if (remove) {
-      setQuantity(remove, 0, designId);
+      setQuantity(remove, 0, designId, size, storeSlug);
       render();
     }
   });
@@ -224,8 +260,8 @@ const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
   .qty button {
     min-width: 44px;
     min-height: 44px;
-    border: 2px solid var(--ink);
-    border-radius: var(--radius-md);
+    border: 0;
+    border-radius: var(--radius-pill);
     background: var(--white);
     font-size: 1.1rem;
     cursor: pointer;
@@ -249,8 +285,8 @@ const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
     justify-content: center;
     min-height: 44px;
     padding: 0.7rem 1.15rem;
-    border: 2px solid var(--print-red);
-    border-radius: var(--radius-md);
+    border: 0;
+    border-radius: var(--radius-pill);
     background: var(--print-red);
     color: var(--white);
     font-family: var(--font-body);
