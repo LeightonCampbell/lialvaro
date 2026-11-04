@@ -42,6 +42,7 @@ const products = listProducts(category === 'all' ? undefined : category);
               href={`/shop/${product.slug}/`}
               price={productCardPrice(product)}
               image={product.imageUrl ?? undefined}
+              hoverImage={product.hoverImageUrl ?? undefined}
               badge={product.category}
             />
           ))

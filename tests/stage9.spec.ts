@@ -44,10 +44,10 @@ test('quote modal opens and does not submit', async ({ page }) => {
 });
 
 test('client store add to cart can start checkout', async ({ page }) => {
-  await page.goto('/shop/la-sunrise-tee/?store=studio-north');
+  await page.goto('/shop/coffee-lover-tee/?store=studio-north');
   await page.getByRole('button', { name: 'Add to cart' }).click();
   await page.goto('/cart/');
-  await expect(page.getByText('LA Sunrise Tee / S / White')).toBeVisible();
+  await expect(page.getByText('Coffee Lover Tee / S / Black')).toBeVisible();
   await page.getByRole('button', { name: 'Checkout' }).click();
   const error = page.locator('#cartError');
   await Promise.race([
@@ -105,5 +105,5 @@ test('sign-in and reorder', async ({ page, request }) => {
   await page.goto('/account/');
   await page.getByRole('button', { name: 'Reorder' }).click();
   await page.waitForURL('**/cart/**');
-  await expect(page.getByText('LA Sunrise Tee / S / White')).toBeVisible();
+  await expect(page.getByText('Coffee Lover Tee / S / Black')).toBeVisible();
 });

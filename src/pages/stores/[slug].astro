@@ -40,6 +40,7 @@ const sameDay = claimText('same-day-printing');
                 href={`/shop/${product.slug}/?store=${store.slug}`}
                 price={price}
                 image={product.imageUrl ?? undefined}
+                hoverImage={product.hoverImageUrl ?? undefined}
                 badge={product.category}
               />
             );

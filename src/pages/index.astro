@@ -18,7 +18,7 @@ const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
 
 const trustItems = (
   [
-    turnaround ? { label: '5–7 day turnaround', icon: 'clock' } : null,
+    turnaround ? { label: 'Rapid turnaround', icon: 'clock' } : null,
     noMinimums ? { label: 'No minimums', icon: 'stack' } : null,
     { label: 'Easy Design Studio', icon: 'design' },
     freeQuote ? { label: 'Free quote', icon: 'quote' } : null,
@@ -41,7 +41,7 @@ const steps = [
   },
   {
     title: 'We print & deliver',
-    body: 'We print and get it to you.',
+    body: 'Choose pickup or delivery',
     image: '/images/screenprinting.jpg',
     alt: 'Finished printed apparel',
   },
@@ -126,7 +126,7 @@ const favorites = [
 const methodCards = [
   { label: 'Screen Printing', service: 'Screen Printing', image: '/images/screenprinting.jpg' },
   { label: 'DTG', service: 'Direct to Garment', image: '/images/dtg.jpg' },
-  { label: 'DTF', service: 'Direct to Film', image: '/images/wolf.jpg' },
+  { label: 'DTF', service: 'Direct to Film', image: '/images/direct-to-film.jpg' },
   { label: 'Embroidery', service: 'Embroidery', image: '/images/embroidery-hat.jpg' },
 ];
 
@@ -315,8 +315,8 @@ const faqPageLd = {
     <section class="studio-section studio-section--white">
       <div class="studio-wrap">
         <header class="studio-section__head studio-section__head--center">
-          <h2>How to create custom shirts</h2>
-          <p>Three clear steps from Design Studio to finished print — no runaround.</p>
+          <h2>How to create custom prints</h2>
+          <p>Three simple steps from Design Studio to your finished product — no runaround.</p>
         </header>
         <ol class="studio-steps">
           {
@@ -341,8 +341,7 @@ const faqPageLd = {
         <div class="studio-split__copy">
           <h2>Free and easy way to bring your ideas to life</h2>
           <p>
-            Open Design Studio, place your art on real product views, pick sizes, and add to cart when you are ready to
-            order.
+            Open Design Studio, setup your artwork, pick sizes, and add to cart to place your order.
           </p>
           <a class="studio-btn studio-btn--green" href="/design/">Get Started</a>
         </div>
@@ -399,7 +398,8 @@ const faqPageLd = {
                   href={`/shop/${product.slug}/`}
                   price={productCardPrice(product)}
                   image={product.imageUrl ?? undefined}
-                  badge={product.category}
+                  hoverImage={product.hoverImageUrl ?? undefined}
+                  centered
                 />
               ))
             ) : (
@@ -432,10 +432,12 @@ const faqPageLd = {
               <button type="button" class="studio-btn studio-btn--green" data-quote-trigger>View quote options</button>
             </div>
             <aside class="studio-why__card">
-              <p class="studio-why__card-kicker">Create your own</p>
-              <h3>custom products online!</h3>
-              <p>Free and easy way to bring your ideas to life</p>
-              <a class="studio-btn studio-btn--dark" href="/design/">Order in Design Studio</a>
+              <div class="studio-why__card-body">
+                <p class="studio-why__card-kicker">Create your own</p>
+                <h3>custom products online!</h3>
+                <p>Free and easy way to bring your ideas to life</p>
+                <a class="studio-btn studio-btn--dark" href="/design/">Order in Design Studio</a>
+              </div>
               <img src="/images/wolf.jpg" alt="" width="360" height="280" loading="lazy" decoding="async" />
             </aside>
           </div>
@@ -649,9 +651,19 @@ const faqPageLd = {
     position: relative;
     z-index: 2;
     display: grid;
-    justify-items: start;
+    justify-items: center;
+    text-align: center;
     gap: 1rem;
     max-width: 36rem;
+    margin-inline: auto;
+  }
+
+  @media (min-width: 960px) {
+    .studio-hero__copy {
+      justify-items: start;
+      text-align: left;
+      margin-inline: 0;
+    }
   }
 
   .studio-hero__badge {
@@ -700,9 +712,16 @@ const faqPageLd = {
   .studio-hero__ctas {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 0.75rem;
     margin-top: 0.35rem;
     width: min(100%, 28rem);
+  }
+
+  @media (min-width: 960px) {
+    .studio-hero__ctas {
+      justify-content: flex-start;
+    }
   }
 
   .studio-hero__ctas .studio-btn {
@@ -848,10 +867,17 @@ const faqPageLd = {
     align-items: center;
     justify-content: center;
     gap: 0.55rem;
-    text-align: left;
+    text-align: center;
     font-size: 0.92rem;
     font-weight: 500;
     color: color-mix(in srgb, var(--ink) 78%, var(--mesh-grey));
+  }
+
+  @media (max-width: 799px) {
+    .studio-trust__list li:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+      justify-self: center;
+    }
   }
 
   .studio-trust__icon {
@@ -945,6 +971,10 @@ const faqPageLd = {
     }
   }
 
+  .studio-step {
+    text-align: center;
+  }
+
   .studio-step h3 {
     margin: 1rem 0 0.4rem;
     font-size: 1.2rem;
@@ -996,6 +1026,19 @@ const faqPageLd = {
     .studio-split {
       grid-template-columns: 1fr 1.05fr;
       gap: 3rem;
+    }
+  }
+
+  .studio-split__copy {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+
+  @media (min-width: 900px) {
+    .studio-split__copy {
+      justify-items: start;
+      text-align: left;
     }
   }
 
@@ -1143,9 +1186,16 @@ const faqPageLd = {
     position: relative;
     overflow: hidden;
     border-radius: 24px;
-    padding: 1.75rem 1.5rem 10.5rem;
+    min-height: 22rem;
+    padding: 1.75rem 1.5rem 1.75rem;
     background: linear-gradient(165deg, #efe6ff 0%, #f7f1ff 45%, #ffffff 100%);
     box-shadow: 0 18px 40px color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+
+  .studio-why__card-body {
+    position: relative;
+    z-index: 1;
+    max-width: min(100%, 12.75rem);
   }
 
   .studio-why__card-kicker {
@@ -1161,19 +1211,31 @@ const faqPageLd = {
     letter-spacing: -0.02em;
   }
 
-  .studio-why__card > p:not(.studio-why__card-kicker) {
+  .studio-why__card-body > p:not(.studio-why__card-kicker) {
     margin: 0 0 1.15rem;
     color: color-mix(in srgb, var(--ink) 65%, var(--mesh-grey));
   }
 
+  .studio-why__card-body .studio-btn {
+    display: inline-flex;
+    width: fit-content;
+    max-width: 100%;
+    padding-inline: 1rem;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.2;
+  }
+
   .studio-why__card img {
     position: absolute;
-    right: -8%;
-    bottom: -8%;
-    width: min(78%, 280px);
+    right: -4%;
+    bottom: -4%;
+    z-index: 0;
+    width: min(46%, 210px);
     height: auto;
     border-radius: 18px;
     box-shadow: 0 16px 36px color-mix(in srgb, var(--ink) 16%, transparent);
+    pointer-events: none;
   }
 
   /* Favorites */

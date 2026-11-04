@@ -52,7 +52,7 @@ type EventRow = { kind: string; payload_json: string | null; created_at: string 
 
 const orders: OrderRow[] = [];
 const quotes: QuoteRow[] = [];
-const quoteLines = new Map<string, QuoteLineRow>();
+const quoteLines = new Map<string, QuoteLineRow[]>();
 const quoteEvents: EventRow[] = [];
 let databaseReady = false;
 if (owner) {
@@ -78,7 +78,9 @@ if (owner) {
         .prepare('SELECT quote_id, label, quantity, unit_cents FROM quote_items ORDER BY rowid')
         .all<QuoteLineRow>();
       for (const line of lineRows.results ?? []) {
-        if (!quoteLines.has(line.quote_id)) quoteLines.set(line.quote_id, line);
+        const existing = quoteLines.get(line.quote_id) ?? [];
+        existing.push(line);
+        quoteLines.set(line.quote_id, existing);
       }
       const eventRows = await db
         .prepare(
@@ -203,9 +205,36 @@ const margins = listProducts().map((product) => {
                           {quote.public_token ? <a href={`/quotes/${quote.public_token}/`}>Customer page</a> : null}
                         </div>
                         <form class="quote-form" data-quote={quote.id}>
-                          <label>Line <input name="label" placeholder="Screen print, 2 colors" value={quoteLines.get(quote.id)?.label ?? ''} /></label>
-                          <label>Qty <input name="quantity" inputmode="numeric" value={quoteLines.get(quote.id)?.quantity ?? 1} /></label>
-                          <label>Unit $ <input name="unit" inputmode="decimal" placeholder="0.00" value={quoteLines.get(quote.id) ? (quoteLines.get(quote.id)!.unit_cents / 100).toFixed(2) : ''} /></label>
+                          <div class="quote-lines" data-quote-lines>
+                            {(quoteLines.get(quote.id)?.length
+                              ? quoteLines.get(quote.id)!
+                              : [{ quote_id: quote.id, label: '', quantity: 1, unit_cents: 0 }]
+                            ).map((line) => (
+                              <div class="quote-line" data-quote-line>
+                                <label>
+                                  Line
+                                  <input name="label" placeholder="Screen print, 2 colors" value={line.label} />
+                                </label>
+                                <label>
+                                  Qty
+                                  <input name="quantity" inputmode="numeric" value={line.quantity} />
+                                </label>
+                                <label>
+                                  Unit $
+                                  <input
+                                    name="unit"
+                                    inputmode="decimal"
+                                    placeholder="0.00"
+                                    value={line.unit_cents ? (line.unit_cents / 100).toFixed(2) : ''}
+                                  />
+                                </label>
+                                <button type="button" class="quote-line-remove" data-remove-line>
+                                  Remove
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                          <button type="button" data-add-line>Add line</button>
                           <label>Partner $ <input name="partnerCost" inputmode="decimal" value={(quote.partner_cost_cents / 100).toFixed(2)} /></label>
                           <label>Markup $ <input name="markup" inputmode="decimal" value={(quote.markup_cents / 100).toFixed(2)} /></label>
                           <label>Deposit $ <input name="deposit" inputmode="decimal" value={(quote.deposit_cents / 100).toFixed(2)} /></label>
@@ -306,11 +335,46 @@ const margins = listProducts().map((product) => {
     });
   });
 
+  function bindQuoteLine(line: HTMLElement) {
+    line.querySelector<HTMLButtonElement>('[data-remove-line]')?.addEventListener('click', () => {
+      const host = line.parentElement;
+      if (!host) return;
+      if (host.querySelectorAll('[data-quote-line]').length <= 1) {
+        line.querySelectorAll('input').forEach((input) => {
+          if (input.name === 'quantity') input.value = '1';
+          else input.value = '';
+        });
+        return;
+      }
+      line.remove();
+    });
+  }
+
   document.querySelectorAll<HTMLFormElement>('.quote-form').forEach((form) => {
+    form.querySelectorAll<HTMLElement>('[data-quote-line]').forEach(bindQuoteLine);
+
+    form.querySelector<HTMLButtonElement>('[data-add-line]')?.addEventListener('click', () => {
+      const host = form.querySelector<HTMLElement>('[data-quote-lines]');
+      const template = host?.querySelector<HTMLElement>('[data-quote-line]');
+      if (!host || !template) return;
+      const clone = template.cloneNode(true) as HTMLElement;
+      clone.querySelectorAll('input').forEach((input) => {
+        if (input.name === 'quantity') input.value = '1';
+        else input.value = '';
+      });
+      host.appendChild(clone);
+      bindQuoteLine(clone);
+    });
+
     form.querySelectorAll<HTMLButtonElement>('[data-quote-action]').forEach((button) => {
       button.addEventListener('click', async () => {
         const data = new FormData(form);
         const note = form.querySelector<HTMLElement>('.quote-note');
+        const lines = Array.from(form.querySelectorAll<HTMLElement>('[data-quote-line]')).map((row) => ({
+          label: row.querySelector<HTMLInputElement>('input[name="label"]')?.value ?? '',
+          quantity: row.querySelector<HTMLInputElement>('input[name="quantity"]')?.value ?? '1',
+          unit: row.querySelector<HTMLInputElement>('input[name="unit"]')?.value ?? '',
+        }));
         const res = await fetch('/api/admin/quote', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -322,13 +386,7 @@ const margins = listProducts().map((product) => {
             partnerCost: data.get('partnerCost'),
             markup: data.get('markup'),
             deposit: data.get('deposit'),
-            lines: [
-              {
-                label: data.get('label'),
-                quantity: data.get('quantity'),
-                unit: data.get('unit'),
-              },
-            ],
+            lines,
           }),
         });
         const body = (await res.json()) as { error?: string };
@@ -415,6 +473,23 @@ const margins = listProducts().map((product) => {
     gap: 0.2rem;
     font-size: var(--text-sm);
     font-weight: 700;
+  }
+
+  .quote-lines {
+    flex-basis: 100%;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .quote-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: end;
+    padding: 0.55rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--white) 70%, var(--canvas));
   }
 
   .quote-note {

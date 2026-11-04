@@ -8,8 +8,21 @@
 	"assets": {
 		"directory": "./dist",
 		"binding": "ASSETS",
-		"run_worker_first": true,
-		"html_handling": "force-trailing-slash"
+		// Boolean true breaks `astro dev`: Vite modules + public/ assets 404
+		// (worker catches /* before Vite). Asset-first still hits the Worker for
+		// SSR/API routes with no matching static file. Use path patterns only if
+		// a specific route must run before assets.
+		"run_worker_first": [
+			"/api/*",
+			"/account/*",
+			"/admin/*",
+			"/auth/*",
+			"/cart/*",
+			"/checkout/*"
+		]
+		// Do not set html_handling force-trailing-slash here: in `astro dev` the
+		// Cloudflare Vite plugin appends "/" to static asset URLs (e.g. /images/x.jpg/)
+		// and they 404. Page trailing slashes stay in src/middleware.ts.
 	},
 	"observability": {
 		"enabled": true

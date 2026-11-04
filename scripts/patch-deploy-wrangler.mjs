@@ -20,7 +20,10 @@ config.kv_namespaces = kvs.some((k) => k.binding === 'SESSION')
 
 if (!config.assets) config.assets = {};
 config.assets.run_worker_first = true;
-config.assets.html_handling = config.assets.html_handling ?? 'force-trailing-slash';
+// Avoid assets.html_handling=force-trailing-slash: it can 404 static files
+// requested as /file.ext/ (seen in local Vite + Lighthouse for /images/*).
+// Page trailing-slash redirects stay in src/middleware.ts.
+delete config.assets.html_handling;
 
 writeFileSync(TARGET, `${JSON.stringify(config, null, 2)}\n`);
 console.log(`Patched ${TARGET}: SESSION=${SESSION_ID}, run_worker_first=true`);

@@ -40,12 +40,6 @@ const phoneClaim = claimText('phone-310-904-2655');
         <div class="ds-topbar__inner">
           <p class="ds-topbar__msg">
             {sameDay ? 'Same-day printing available for select LA orders' : 'Custom apparel printing in Los Angeles'}
-            {phoneClaim ? (
-              <>
-                {' '}
-                · <a href="tel:3109042655">(310) 904-2655</a>
-              </>
-            ) : null}
           </p>
           <a class="ds-topbar__cta" href="/shop/">Shop Now</a>
         </div>
@@ -472,7 +466,7 @@ const phoneClaim = claimText('phone-310-904-2655');
       padding: 0.75rem 0.55rem 1rem;
       border: 0;
       border-radius: 8px 0 0 8px;
-      background: #c8102e;
+      background: #ff6b2b;
       color: #fff;
       font-family: var(--font-body);
       font-size: 0.95rem;
@@ -483,7 +477,7 @@ const phoneClaim = claimText('phone-310-904-2655');
     }
 
     .quote-tab:hover {
-      background: #a50d25;
+      background: #e8521a;
     }
   }
 
@@ -491,8 +485,28 @@ const phoneClaim = claimText('phone-310-904-2655');
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #f5b301;
+    background: #22856c;
     flex: none;
+    box-shadow: 0 0 0 0 color-mix(in srgb, #22856c 55%, transparent);
+    animation: quote-dot-pulse 1.8s ease-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .quote-tab__dot {
+      animation: none;
+    }
+  }
+
+  @keyframes quote-dot-pulse {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, #22856c 55%, transparent);
+    }
+    70% {
+      box-shadow: 0 0 0 10px color-mix(in srgb, #22856c 0%, transparent);
+    }
+    100% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, #22856c 0%, transparent);
+    }
   }
 
   .quote-tab__label {

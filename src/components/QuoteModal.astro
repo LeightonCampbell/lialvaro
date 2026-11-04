@@ -12,7 +12,9 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
           <div class="modal-title" id="modalTitle">Let's get you a quote</div>
           <div class="modal-sub">We'll respond within 1 business hour.</div>
         </div>
-        <button type="button" class="modal-close" id="modalClose" aria-label="Close">✕</button>
+        <button type="button" class="modal-close" id="modalClose" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
       </div>
 
       <form
@@ -30,6 +32,13 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
         <input type="text" name="_gotcha" style="display:none" />
         <input type="hidden" name="service" id="quoteServiceInput" value="" />
 
+        <ol class="quote-progress" id="quoteProgress" aria-label="Quote steps">
+          <li data-step="1" class="is-active"><span>1</span> Service</li>
+          <li data-step="2"><span>2</span> Design</li>
+          <li data-step="3"><span>3</span> Files</li>
+          <li data-step="4"><span>4</span> Contact</li>
+        </ol>
+
         <div class="quote-error" id="quoteError" aria-live="polite" hidden></div>
         <div class="quote-step" id="quoteStep1">
           <div class="step-label">
@@ -37,20 +46,20 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
           </div>
 
           <div class="service-picker" id="servicePicker">
-            <div class="service-opt" data-service="Screen Printing">
-              <span class="service-opt-icon">🖨️</span>
+            <div class="service-opt" data-service="Screen Printing" role="button" tabindex="0">
+              <span class="service-opt-mark" aria-hidden="true">SP</span>
               <span class="service-opt-name">Screen Printing</span>
             </div>
-            <div class="service-opt" data-service="Direct to Garment">
-              <span class="service-opt-icon">🎨</span>
+            <div class="service-opt" data-service="Direct to Garment" role="button" tabindex="0">
+              <span class="service-opt-mark" aria-hidden="true">DTG</span>
               <span class="service-opt-name">DTG Printing</span>
             </div>
-            <div class="service-opt" data-service="Direct to Film">
-              <span class="service-opt-icon">🎞️</span>
+            <div class="service-opt" data-service="Direct to Film" role="button" tabindex="0">
+              <span class="service-opt-mark" aria-hidden="true">DTF</span>
               <span class="service-opt-name">Direct to Film</span>
             </div>
-            <div class="service-opt" data-service="Embroidery">
-              <span class="service-opt-icon">🪡</span>
+            <div class="service-opt" data-service="Embroidery" role="button" tabindex="0">
+              <span class="service-opt-mark" aria-hidden="true">EM</span>
               <span class="service-opt-name">Embroidery</span>
             </div>
           </div>
@@ -157,9 +166,9 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
 
           <div class="upload-dropzone" id="uploadDropzone" role="button" tabindex="0" aria-label="Upload your design files (optional)">
             <input type="file" id="quote-files" name="design_files" multiple hidden />
-            <div class="upload-icon" aria-hidden="true">⬆️</div>
-            <div class="upload-title">Upload File(s)</div>
-            <div class="upload-sub">Drag and drop files here</div>
+            <div class="upload-icon" aria-hidden="true"></div>
+            <div class="upload-title">Upload file(s)</div>
+            <div class="upload-sub">PNG, JPG, PDF, AI, EPS, or ZIP — drag and drop or browse</div>
             <button type="button" class="upload-browse" id="uploadBrowse">Browse</button>
           </div>
 
@@ -247,14 +256,14 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
             ) : null
           }
 
-          <div class="modal-guarantee">🔒 &nbsp;No spam. No hidden fees. Just a fast, honest quote.</div>
+          <div class="modal-guarantee">No spam. No hidden fees. Just a fast, honest quote.</div>
         </div>
       </form>
     </div>
 
     <div class="modal-success" id="modalSuccess">
-      <div class="success-icon">🎉</div>
-      <div class="success-title">Quote request received!</div>
+      <div class="success-icon" aria-hidden="true"></div>
+      <div class="success-title">Quote request received</div>
       <div class="success-sub">
         We'll reach out within 1 business hour. For urgent orders, call us at
         <a href="tel:3109042655" class="success-phone">(310) 904-2655</a>.
@@ -336,6 +345,11 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
       [step1, step2, step3, step4].forEach((el, idx) => {
         if (!el) return;
         el.hidden = idx !== (step - 1);
+      });
+      document.querySelectorAll('#quoteProgress [data-step]').forEach((el) => {
+        const n = Number(el.getAttribute('data-step'));
+        el.classList.toggle('is-active', n === step);
+        el.classList.toggle('is-done', n < step);
       });
       setError('');
       if (step === 2) updateColorsVisibility();
@@ -632,18 +646,67 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
 
 <style is:global>
   :root {
-    --orange: #ff6b2b;
-    --orange-deep: #e8521a;
-    --orange-soft: #fff0e8;
-    --orange-mid: #ffd9c4;
+    --orange: #c8102e;
+    --orange-deep: #a50d25;
+    --orange-soft: #fdecef;
+    --orange-mid: #f5b4be;
     --surface: #f5f5f7;
     --border: #e5e5ea;
-    --text-primary: #1d1d1f;
+    --text-primary: #1b2233;
     --text-secondary: #6e6e73;
     --text-tertiary: #8e8e93;
     --shadow-xl: 0 32px 80px rgba(0, 0, 0, 0.14), 0 8px 24px rgba(0, 0, 0, 0.07);
     --radius-sm: 10px;
-    --radius-xl: 32px;
+    --radius-xl: 20px;
+    --quote-font: var(--font-body, 'Inter', system-ui, sans-serif);
+  }
+
+  .quote-progress {
+    list-style: none;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.4rem;
+  }
+
+  .quote-progress li {
+    display: grid;
+    justify-items: center;
+    gap: 0.35rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+
+  .quote-progress li span {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    font-size: 0.75rem;
+  }
+
+  .quote-progress li.is-active,
+  .quote-progress li.is-done {
+    color: var(--orange);
+  }
+
+  .quote-progress li.is-active span {
+    border-color: var(--orange);
+    background: var(--orange);
+    color: #fff;
+  }
+
+  .quote-progress li.is-done span {
+    border-color: var(--orange);
+    background: var(--orange-soft);
+    color: var(--orange);
   }
 
   .modal-overlay {
@@ -801,7 +864,7 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
     padding: 15px;
     border-radius: var(--radius-sm);
     cursor: pointer;
-    font-family: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--quote-font);
     font-size: 15px;
     font-weight: 700;
     letter-spacing: -0.01em;
@@ -894,14 +957,20 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
   }
 
   .upload-dropzone.dragover {
-    border-color: rgba(255, 107, 43, 1);
+    border-color: var(--orange);
     background: white;
   }
 
   .upload-icon {
-    font-size: 28px;
-    margin-bottom: 10px;
-    color: var(--orange);
+    width: 36px;
+    height: 36px;
+    margin: 0 auto 10px;
+    border-radius: 10px;
+    border: 1.5px dashed var(--orange-mid);
+    background:
+      linear-gradient(var(--orange), var(--orange)) center 11px / 14px 2px no-repeat,
+      linear-gradient(var(--orange), var(--orange)) center / 2px 14px no-repeat,
+      var(--orange-soft);
   }
 
   .upload-title {
@@ -925,7 +994,7 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
     padding: 10px 16px;
     border-radius: 100px;
     cursor: pointer;
-    font-family: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--quote-font);
     font-size: 13.5px;
     font-weight: 700;
     transition: background 0.18s, border-color 0.18s, transform 0.15s;
@@ -966,8 +1035,24 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
     background: var(--orange-soft);
   }
 
-  .service-opt-icon {
-    font-size: 20px;
+  .service-opt-mark {
+    flex: none;
+    min-width: 2.5rem;
+    height: 2rem;
+    padding: 0 0.45rem;
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    background: var(--orange-soft);
+    color: var(--orange);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
+
+  .service-opt.selected .service-opt-mark {
+    background: var(--orange);
+    color: #fff;
   }
 
   .service-opt-name {
@@ -1005,7 +1090,7 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
     color: var(--text-primary);
     border: 1.5px solid var(--border);
     border-radius: var(--radius-sm);
-    font-family: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--quote-font);
     font-size: 14.5px;
     outline: none;
     transition: border-color 0.18s, box-shadow 0.18s;
@@ -1016,7 +1101,7 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
   .form-select:focus,
   .form-textarea:focus {
     border-color: var(--orange);
-    box-shadow: 0 0 0 3px rgba(255, 107, 43, 0.12);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--orange) 18%, transparent);
     background: white;
   }
 
@@ -1052,20 +1137,20 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
     color: white;
     border: none;
     padding: 15px;
-    font-family: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--quote-font);
     font-size: 15px;
     font-weight: 700;
     border-radius: var(--radius-sm);
     cursor: pointer;
     letter-spacing: -0.01em;
     transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
-    box-shadow: 0 4px 18px rgba(255, 107, 43, 0.3);
+    box-shadow: 0 4px 18px color-mix(in srgb, var(--orange) 28%, transparent);
     margin-top: 8px;
   }
 
   .modal-submit:hover {
     background: var(--orange-deep);
-    box-shadow: 0 6px 24px rgba(255, 107, 43, 0.4);
+    box-shadow: 0 6px 24px color-mix(in srgb, var(--orange) 36%, transparent);
     transform: translateY(-1px);
   }
 
@@ -1086,8 +1171,15 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
   }
 
   .success-icon {
-    font-size: 52px;
-    margin-bottom: 16px;
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background:
+      linear-gradient(#fff, #fff) center 18px / 18px 2.5px no-repeat,
+      linear-gradient(#fff, #fff) 22px 26px / 2.5px 12px no-repeat,
+      var(--orange);
+    transform: rotate(45deg);
   }
 
   .success-title {

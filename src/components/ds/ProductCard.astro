@@ -10,8 +10,10 @@ interface Props {
   price?: string;
   badge?: string;
   image?: string;
+  hoverImage?: string;
   empty?: boolean;
   disabled?: boolean;
+  centered?: boolean;
   class?: string;
 }
 
@@ -21,13 +23,15 @@ const {
   price = '$24.00',
   badge,
   image,
+  hoverImage,
   empty = false,
   disabled = false,
+  centered = false,
   class: className = '',
 } = Astro.props;
 ---
 
-<article class:list={['ds-product-card', empty ? 'is-empty' : '', className]}>
+<article class:list={['ds-product-card', empty ? 'is-empty' : '', centered ? 'is-centered' : '', className]}>
   {
     empty ? (
       <div class="ds-product-card__empty">
@@ -36,11 +40,23 @@ const {
       </div>
     ) : (
       <>
-        <a class="ds-product-card__media" href={href} tabindex="-1" aria-hidden="true">
-          <Photo alt={title} src={image} aspect="1/1" />
+        <a
+          class:list={['ds-product-card__media', hoverImage ? 'has-hover' : '']}
+          href={href}
+          tabindex="-1"
+          aria-hidden="true"
+        >
+          {hoverImage ? (
+            <span class="ds-product-card__swap">
+              <img class="ds-product-card__img is-main" src={image} alt="" width="600" height="600" loading="lazy" decoding="async" />
+              <img class="ds-product-card__img is-hover" src={hoverImage} alt="" width="600" height="600" loading="lazy" decoding="async" />
+            </span>
+          ) : (
+            <Photo alt={title} src={image} aspect="1/1" />
+          )}
         </a>
         <div class="ds-product-card__body">
-          {badge ? <Badge tone="gold">{badge}</Badge> : null}
+          {!centered && badge ? <Badge tone="gold">{badge}</Badge> : null}
           <h3 class="ds-product-card__title">
             <a href={href}>{title}</a>
           </h3>
@@ -71,12 +87,52 @@ const {
   .ds-product-card__media {
     display: block;
     text-decoration: none;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+  }
+
+  .ds-product-card__swap {
+    position: relative;
+    display: block;
+    aspect-ratio: 1 / 1;
+    background: var(--canvas);
+    overflow: hidden;
+  }
+
+  .ds-product-card__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ds-product-card__img.is-hover {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .ds-product-card__media.has-hover:hover .ds-product-card__img.is-hover,
+  .ds-product-card__media.has-hover:focus-visible .ds-product-card__img.is-hover {
+    opacity: 1;
+  }
+
+  @media (hover: none) {
+    .ds-product-card__img.is-hover {
+      display: none;
+    }
   }
 
   .ds-product-card__body {
     display: grid;
     gap: var(--space-2);
     justify-items: start;
+  }
+
+  .ds-product-card.is-centered .ds-product-card__body {
+    justify-items: center;
+    text-align: center;
   }
 
   .ds-product-card__title {
