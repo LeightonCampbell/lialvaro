@@ -26,11 +26,11 @@
       "vendorId": "vnd_studio_north",
       "vendorCutBps": 2000,
       "blankCostCents": 700,
-      "imageUrl": "/images/products/coffee-lover-1.png",
-      "hoverImageUrl": "/images/products/coffee-lover-2.png",
+      "imageUrl": "/images/products/coffee-lover-2.png",
+      "hoverImageUrl": "/images/products/coffee-lover-1.png",
       "galleryUrls": [
-        "/images/products/coffee-lover-1.png",
         "/images/products/coffee-lover-2.png",
+        "/images/products/coffee-lover-1.png",
         "/images/products/coffee-lover-3.png"
       ],
       "variants": [
@@ -136,22 +136,28 @@
       ]
     },
     {
-      "id": "dsn_script_cap",
-      "slug": "script-cap",
-      "name": "Script Cap",
-      "description": "Studio North script mark on a structured cap. Embroidered and fulfilled by LiAlvaro.",
+      "id": "dsn_american_pride",
+      "slug": "american-pride",
+      "name": "American Pride",
+      "description": "Studio North eagle-and-flag graphic on a structured navy cap. Embroidered and fulfilled by LiAlvaro.",
       "category": "headwear",
       "vendorId": "vnd_studio_north",
       "vendorCutBps": 2000,
       "blankCostCents": 900,
-      "imageUrl": "/images/embroidery-hat.jpg",
+      "imageUrl": "/images/products/american-pride-1.png",
+      "hoverImageUrl": "/images/products/american-pride-2.png",
+      "galleryUrls": [
+        "/images/products/american-pride-1.png",
+        "/images/products/american-pride-2.png",
+        "/images/products/american-pride-3.png"
+      ],
       "variants": [
         {
           "id": "var_script_os_black",
-          "sku": "SCR-OS-BLK",
-          "name": "Script Cap / OS / Black",
+          "sku": "AMPR-OS-NVY",
+          "name": "American Pride / OS / Navy",
           "size": "OS",
-          "color": "Black",
+          "color": "Navy",
           "lane": "local",
           "blankCostCents": 900,
           "retailPriceCents": 2899
