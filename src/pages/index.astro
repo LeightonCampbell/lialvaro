@@ -92,7 +92,7 @@ const favorites = [
   {
     title: 'Birthday t-shirts',
     blurb: 'Celebrate in print — design online and order.',
-    image: '/images/dtg.jpg',
+    image: '/images/most-requested-birthday.png',
     href: '/design/',
     quote: false,
     cta: 'Customize',
@@ -100,7 +100,7 @@ const favorites = [
   {
     title: 'Team Jerseys',
     blurb: 'Names, numbers, and roster runs.',
-    image: '/images/screenprinting.jpg',
+    image: '/images/most-requested-jersey.jpg',
     href: null,
     quote: true,
     cta: 'Get a quote',
@@ -108,7 +108,7 @@ const favorites = [
   {
     title: 'Hoodies',
     blurb: 'Soft layers with your art up front.',
-    image: '/images/wolf.jpg',
+    image: '/images/most-requested-hoodie.jpg',
     href: '/design/',
     quote: false,
     cta: 'Customize',
@@ -116,7 +116,7 @@ const favorites = [
   {
     title: 'School uniforms',
     blurb: 'Campus and program apparel at scale.',
-    image: '/images/hero-background-image.jpg',
+    image: '/images/most-requested-uniform.png',
     href: null,
     quote: true,
     cta: 'Get a quote',
@@ -387,7 +387,13 @@ const faqPageLd = {
       <div class="studio-wrap">
         <header class="studio-section__head studio-section__head--center">
           <h2>Our picks for you</h2>
-          <p>Browse vendor designs we print and fulfill. Custom and bulk jobs use a quote instead.</p>
+          <p>
+            Browse vendor designs we print and fulfill. For bulk jobs,
+            <button type="button" class="studio-inline-quote" data-quote-trigger>
+              <strong><u>Get a quote</u></strong>
+            </button>
+            instead.
+          </p>
         </header>
         <div class="studio-products">
           {
@@ -449,7 +455,7 @@ const faqPageLd = {
     <section class="studio-section studio-section--white">
       <div class="studio-wrap">
         <header class="studio-section__head studio-section__head--center">
-          <h2>Popular projects</h2>
+          <h2>Most requested</h2>
           <p>Pick a path — design online now, or request a quote for bulk and specialty work.</p>
         </header>
         <div class="studio-favorites">
@@ -943,6 +949,22 @@ const faqPageLd = {
     margin: 0.85rem 0 0;
     color: color-mix(in srgb, var(--ink) 62%, var(--mesh-grey));
     font-size: 1.02rem;
+  }
+
+  .studio-inline-quote {
+    display: inline;
+    margin: 0 0.2em;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .studio-inline-quote:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
   }
 
   .studio-section__cta {

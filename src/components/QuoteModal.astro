@@ -8,7 +8,6 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
     <div id="modalForm">
       <div class="modal-header">
         <div class="modal-header-text">
-          <div class="modal-eyebrow">Free Quote</div>
           <div class="modal-title" id="modalTitle">Let's get you a quote</div>
           <div class="modal-sub">We'll respond within 1 business hour.</div>
         </div>
@@ -33,44 +32,14 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
         <input type="hidden" name="service" id="quoteServiceInput" value="" />
 
         <ol class="quote-progress" id="quoteProgress" aria-label="Quote steps">
-          <li data-step="1" class="is-active"><span>1</span> Service</li>
-          <li data-step="2"><span>2</span> Design</li>
-          <li data-step="3"><span>3</span> Files</li>
-          <li data-step="4"><span>4</span> Contact</li>
+          <li data-step="1" class="is-active"><span>1</span> Design</li>
+          <li data-step="2"><span>2</span> Files</li>
+          <li data-step="3"><span>3</span> Contact</li>
         </ol>
 
         <div class="quote-error" id="quoteError" aria-live="polite" hidden></div>
         <div class="quote-step" id="quoteStep1">
-          <div class="step-label">
-            Step 1: Select a service <span class="quote-optional">(optional)</span>
-          </div>
-
-          <div class="service-picker" id="servicePicker">
-            <div class="service-opt" data-service="Screen Printing" role="button" tabindex="0">
-              <span class="service-opt-mark" aria-hidden="true">SP</span>
-              <span class="service-opt-name">Screen Printing</span>
-            </div>
-            <div class="service-opt" data-service="Direct to Garment" role="button" tabindex="0">
-              <span class="service-opt-mark" aria-hidden="true">DTG</span>
-              <span class="service-opt-name">DTG Printing</span>
-            </div>
-            <div class="service-opt" data-service="Direct to Film" role="button" tabindex="0">
-              <span class="service-opt-mark" aria-hidden="true">DTF</span>
-              <span class="service-opt-name">Direct to Film</span>
-            </div>
-            <div class="service-opt" data-service="Embroidery" role="button" tabindex="0">
-              <span class="service-opt-mark" aria-hidden="true">EM</span>
-              <span class="service-opt-name">Embroidery</span>
-            </div>
-          </div>
-
-          <div class="modal-nav modal-nav-single">
-            <button type="button" class="modal-submit modal-nav-btn" id="step1Next">Next →</button>
-          </div>
-        </div>
-
-        <div class="quote-step" id="quoteStep2" hidden>
-          <div class="step-label">Step 2: What would you like to design?* </div>
+          <div class="step-label">Step 1: What would you like to design?* </div>
 
           <div class="choice-grid" role="group" aria-label="What would you like to design?">
             <label class="choice">
@@ -126,14 +95,13 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
             />
           </div>
 
-          <div class="modal-nav">
-            <button type="button" class="modal-back modal-nav-btn" id="step2Back">Back</button>
-            <button type="button" class="modal-submit modal-nav-btn" id="step2Next">Next →</button>
+          <div class="modal-nav modal-nav-single">
+            <button type="button" class="modal-submit modal-nav-btn" id="step1Next">Next →</button>
           </div>
         </div>
 
-        <div class="quote-step" id="quoteStep3" hidden>
-          <div class="step-label">Step 3: Blanks &amp; design upload</div>
+        <div class="quote-step" id="quoteStep2" hidden>
+          <div class="step-label">Step 2: Blanks &amp; design upload</div>
 
           <div class="form-group" style="margin-bottom:22px;">
             <div class="form-label" style="margin-bottom:10px; text-transform:none;">Will you be providing the blank(s)?*</div>
@@ -183,13 +151,13 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
           </div>
 
           <div class="modal-nav">
-            <button type="button" class="modal-back modal-nav-btn" id="step3Back">Back</button>
-            <button type="button" class="modal-submit modal-nav-btn" id="step3Next">Next →</button>
+            <button type="button" class="modal-back modal-nav-btn" id="step2Back">Back</button>
+            <button type="button" class="modal-submit modal-nav-btn" id="step2Next">Next →</button>
           </div>
         </div>
 
-        <div class="quote-step" id="quoteStep4" hidden>
-          <div class="step-label">Step 4: Your details</div>
+        <div class="quote-step" id="quoteStep3" hidden>
+          <div class="step-label">Step 3: Your details</div>
 
           <div class="form-row">
             <div class="form-group">
@@ -241,14 +209,16 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
             </div>
           </div>
 
-          <div class="modal-nav">
-            <button type="button" class="modal-back modal-nav-btn" id="step4Back">Back</button>
-            {
-              turnstileSiteKey ? (
+          {
+            turnstileSiteKey ? (
+              <div class="quote-turnstile">
                 <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>
-              ) : null
-            }
-            <button type="submit" class="modal-submit modal-nav-btn" id="step4Submit">Get My Free Quote →</button>
+              </div>
+            ) : null
+          }
+          <div class="modal-nav">
+            <button type="button" class="modal-back modal-nav-btn" id="step3Back">Back</button>
+            <button type="submit" class="modal-submit modal-nav-btn" id="step3Submit">Get My Free Quote →</button>
           </div>
           {
             turnstileSiteKey ? (
@@ -281,24 +251,20 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
     const step1 = document.getElementById('quoteStep1');
     const step2 = document.getElementById('quoteStep2');
     const step3 = document.getElementById('quoteStep3');
-    const step4 = document.getElementById('quoteStep4');
     const errorEl = document.getElementById('quoteError');
     const modalClose = document.getElementById('modalClose');
     const successClose = document.getElementById('successClose');
-    const servicePicker = document.getElementById('servicePicker');
     const blankMaterialWrap = document.getElementById('blankMaterialWrap');
 
     const step1Next = document.getElementById('step1Next');
     const step2Back = document.getElementById('step2Back');
     const step2Next = document.getElementById('step2Next');
     const step3Back = document.getElementById('step3Back');
-    const step3Next = document.getElementById('step3Next');
-    const step4Back = document.getElementById('step4Back');
-    const step4Submit = document.getElementById('step4Submit');
+    const step3Submit = document.getElementById('step3Submit');
 
     const quoteForm = document.getElementById('quoteForm');
     const quoteServiceInput = document.getElementById('quoteServiceInput');
-    const submitBtn = step4Submit;
+    const submitBtn = step3Submit;
 
     const designTypeInputs = document.querySelectorAll('input[name="quote-design-type"]');
     const colorsSelect = document.getElementById('quote-colors');
@@ -323,8 +289,8 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
 
     function updateColorsVisibility() {
       if (!quoteColorsWrap || !colorsSelect) return;
-      const selectedServices = Array.from(document.querySelectorAll('.service-opt.selected')).map((o) => o.dataset.service);
-      const wantsColors = selectedServices.includes('Screen Printing') || selectedServices.includes('Embroidery');
+      const service = quoteServiceInput ? quoteServiceInput.value : '';
+      const wantsColors = service === 'Screen Printing' || service === 'Embroidery';
       quoteColorsWrap.hidden = !wantsColors;
       if (!wantsColors) colorsSelect.value = '';
     }
@@ -342,7 +308,7 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
 
     function setStep(step) {
       currentStep = step;
-      [step1, step2, step3, step4].forEach((el, idx) => {
+      [step1, step2, step3].forEach((el, idx) => {
         if (!el) return;
         el.hidden = idx !== (step - 1);
       });
@@ -352,15 +318,13 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
         el.classList.toggle('is-done', n < step);
       });
       setError('');
-      if (step === 2) updateColorsVisibility();
+      if (step === 1) updateColorsVisibility();
       window.dispatchEvent(new CustomEvent('lialvaro:quote-step', { detail: { step } }));
     }
 
     function resetForm() {
       setError('');
 
-      // Service selection is optional.
-      document.querySelectorAll('.service-opt').forEach((o) => o.classList.remove('selected'));
       if (quoteServiceInput) quoteServiceInput.value = '';
 
       designTypeInputs.forEach((i) => (i.checked = false));
@@ -384,13 +348,7 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
     function openModal(service) {
       resetForm();
 
-      if (service) {
-        document.querySelectorAll('.service-opt').forEach(function (o) {
-          o.classList.toggle('selected', o.dataset.service === service);
-        });
-      }
-      const selectedService = document.querySelector('.service-opt.selected');
-      if (quoteServiceInput) quoteServiceInput.value = selectedService ? selectedService.dataset.service : '';
+      if (quoteServiceInput) quoteServiceInput.value = service || '';
 
       formView.style.display = '';
       successView.style.display = 'none';
@@ -445,28 +403,7 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
       if (e.key === 'Escape' && overlay.classList.contains('active')) closeModal();
     });
 
-    servicePicker?.addEventListener('click', function (e) {
-      var opt = e.target.closest('.service-opt');
-      if (!opt) return;
-      document.querySelectorAll('.service-opt').forEach(function (o) {
-        o.classList.remove('selected');
-      });
-      opt.classList.add('selected');
-      if (currentStep === 2) updateColorsVisibility();
-
-      const selectedService = document.querySelector('.service-opt.selected');
-      if (quoteServiceInput) quoteServiceInput.value = selectedService ? selectedService.dataset.service : '';
-    });
-
     step1Next?.addEventListener('click', function () {
-      setStep(2);
-    });
-
-    step2Back?.addEventListener('click', function () {
-      setStep(1);
-    });
-
-    step2Next?.addEventListener('click', function () {
       var designSelected = Array.from(designTypeInputs).some((i) => i.checked);
       var colorsSelected = colorsSelect && colorsSelect.value;
       var pieces = piecesInput ? piecesInput.value : '';
@@ -489,14 +426,14 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
         return;
       }
 
-      setStep(3);
-    });
-
-    step3Back?.addEventListener('click', function () {
       setStep(2);
     });
 
-    step3Next?.addEventListener('click', function () {
+    step2Back?.addEventListener('click', function () {
+      setStep(1);
+    });
+
+    step2Next?.addEventListener('click', function () {
       var blanksSelected = Array.from(blanksProvidingInputs).find((i) => i.checked);
       if (!blanksSelected) {
         setError('Please select whether you will provide the blanks.');
@@ -512,16 +449,16 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
         }
       }
 
-      setStep(4);
+      setStep(3);
     });
 
-    step4Back?.addEventListener('click', function () {
-      setStep(3);
+    step3Back?.addEventListener('click', function () {
+      setStep(2);
     });
 
     quoteForm.addEventListener('submit', async function (e) {
       e.preventDefault();
-      if (currentStep !== 4) return;
+      if (currentStep !== 3) return;
 
       var fname = fnameInput ? fnameInput.value.trim() : '';
       var lname = lnameInput ? lnameInput.value.trim() : '';
@@ -666,7 +603,7 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
     margin: 0 0 1.25rem;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.4rem;
   }
 
@@ -692,9 +629,12 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
     font-size: 0.75rem;
   }
 
-  .quote-progress li.is-active,
-  .quote-progress li.is-done {
+  .quote-progress li.is-active {
     color: var(--orange);
+  }
+
+  .quote-progress li.is-done {
+    color: var(--studio-green, #22856c);
   }
 
   .quote-progress li.is-active span {
@@ -704,9 +644,9 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
   }
 
   .quote-progress li.is-done span {
-    border-color: var(--orange);
-    background: var(--orange-soft);
-    color: var(--orange);
+    border-color: var(--studio-green, #22856c);
+    background: var(--studio-mint, #e7f6f1);
+    color: var(--studio-green, #22856c);
   }
 
   .modal-overlay {
@@ -752,19 +692,11 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
     align-items: flex-start;
   }
 
-  .modal-eyebrow {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--orange);
-    margin-bottom: 6px;
-  }
-
   .modal-title {
     font-size: 24px;
     font-weight: 800;
     letter-spacing: -0.025em;
+    color: var(--orange);
   }
 
   .modal-sub {
@@ -834,10 +766,20 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
     border-radius: var(--radius-sm);
   }
 
+  .quote-turnstile {
+    margin-top: 18px;
+    display: flex;
+    justify-content: center;
+  }
+
   .modal-nav {
     display: flex;
     gap: 12px;
     margin-top: 18px;
+  }
+
+  .quote-turnstile + .modal-nav {
+    margin-top: 12px;
   }
 
   .modal-nav-single {
@@ -1004,61 +946,6 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
     background: var(--orange-soft);
     border-color: var(--orange-mid);
     transform: translateY(-1px);
-  }
-
-  .service-picker {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin-bottom: 24px;
-  }
-
-  .service-opt {
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: border-color 0.18s, background 0.18s;
-    background: white;
-  }
-
-  .service-opt:hover {
-    border-color: var(--orange-mid);
-    background: var(--orange-soft);
-  }
-
-  .service-opt.selected {
-    border-color: var(--orange);
-    background: var(--orange-soft);
-  }
-
-  .service-opt-mark {
-    flex: none;
-    min-width: 2.5rem;
-    height: 2rem;
-    padding: 0 0.45rem;
-    border-radius: 6px;
-    display: grid;
-    place-items: center;
-    background: var(--orange-soft);
-    color: var(--orange);
-    font-size: 0.68rem;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-  }
-
-  .service-opt.selected .service-opt-mark {
-    background: var(--orange);
-    color: #fff;
-  }
-
-  .service-opt-name {
-    font-size: 13.5px;
-    font-weight: 700;
-    color: var(--text-primary);
   }
 
   .form-row {
@@ -1237,10 +1124,6 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
 
     .form-row {
       grid-template-columns: 1fr;
-    }
-
-    .service-picker {
-      grid-template-columns: 1fr 1fr;
     }
   }
 </style>

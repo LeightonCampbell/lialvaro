@@ -1,7 +1,7 @@
 {
   "syncedAt": null,
   "source": "seed",
-  "notes": "Store listings are vendor designs. LiAlvaro fulfills; vendorCutBps is the partner share of retail.",
+  "notes": "Store listings are vendor designs. LiAlvaro fulfills; vendorCutBps is the partner share of retail. Default retail: tees $24.95, hoodies $34.95, caps $19.95 unless a variant is priced differently.",
   "vendors": [
     {
       "id": "vnd_studio_north",
@@ -42,7 +42,7 @@
           "color": "Black",
           "lane": "local",
           "blankCostCents": 750,
-          "retailPriceCents": 2599
+          "retailPriceCents": 2495
         },
         {
           "id": "var_coffee_m_black",
@@ -52,7 +52,7 @@
           "color": "Black",
           "lane": "local",
           "blankCostCents": 750,
-          "retailPriceCents": 2599
+          "retailPriceCents": 2495
         },
         {
           "id": "var_coffee_l_black",
@@ -62,7 +62,7 @@
           "color": "Black",
           "lane": "local",
           "blankCostCents": 750,
-          "retailPriceCents": 2599
+          "retailPriceCents": 2495
         },
         {
           "id": "var_sunrise_m_white",
@@ -72,7 +72,7 @@
           "color": "White",
           "lane": "local",
           "blankCostCents": 700,
-          "retailPriceCents": 2499
+          "retailPriceCents": 2495
         }
       ]
     },
@@ -101,7 +101,7 @@
           "color": "Forest",
           "lane": "local",
           "blankCostCents": 1800,
-          "retailPriceCents": 4499
+          "retailPriceCents": 3495
         },
         {
           "id": "var_chosen_m_forest",
@@ -111,7 +111,7 @@
           "color": "Forest",
           "lane": "local",
           "blankCostCents": 1800,
-          "retailPriceCents": 4499
+          "retailPriceCents": 3495
         },
         {
           "id": "var_chosen_l_forest",
@@ -121,7 +121,7 @@
           "color": "Forest",
           "lane": "local",
           "blankCostCents": 1800,
-          "retailPriceCents": 4499
+          "retailPriceCents": 3495
         },
         {
           "id": "var_block_m_navy",
@@ -131,7 +131,7 @@
           "color": "Navy",
           "lane": "local",
           "blankCostCents": 1800,
-          "retailPriceCents": 4499
+          "retailPriceCents": 3495
         }
       ]
     },
@@ -160,7 +160,7 @@
           "color": "Navy",
           "lane": "local",
           "blankCostCents": 900,
-          "retailPriceCents": 2899
+          "retailPriceCents": 1995
         }
       ]
     },
@@ -189,7 +189,7 @@
           "color": "Navy",
           "lane": "local",
           "blankCostCents": 750,
-          "retailPriceCents": 2599
+          "retailPriceCents": 2495
         },
         {
           "id": "var_aura_m_navy",
@@ -199,7 +199,7 @@
           "color": "Navy",
           "lane": "local",
           "blankCostCents": 750,
-          "retailPriceCents": 2599
+          "retailPriceCents": 2495
         },
         {
           "id": "var_aura_l_navy",
@@ -209,7 +209,7 @@
           "color": "Navy",
           "lane": "local",
           "blankCostCents": 750,
-          "retailPriceCents": 2599
+          "retailPriceCents": 2495
         }
       ]
     }
