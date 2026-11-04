@@ -163,6 +163,55 @@
           "retailPriceCents": 2899
         }
       ]
+    },
+    {
+      "id": "dsn_limitless_aura",
+      "slug": "limitless-aura",
+      "name": "Limitless Aura",
+      "description": "Studio North “Limitless Aura.” left-chest graphic on a soft classic tee. Printed and fulfilled by LiAlvaro.",
+      "category": "apparel",
+      "vendorId": "vnd_studio_north",
+      "vendorCutBps": 2000,
+      "blankCostCents": 700,
+      "imageUrl": "/images/products/limitless-aura-1.png",
+      "hoverImageUrl": "/images/products/limitless-aura-2.png",
+      "galleryUrls": [
+        "/images/products/limitless-aura-1.png",
+        "/images/products/limitless-aura-2.png",
+        "/images/products/limitless-aura-3.png"
+      ],
+      "variants": [
+        {
+          "id": "var_aura_s_navy",
+          "sku": "AURA-S-NVY",
+          "name": "Limitless Aura / S / Navy",
+          "size": "S",
+          "color": "Navy",
+          "lane": "local",
+          "blankCostCents": 750,
+          "retailPriceCents": 2599
+        },
+        {
+          "id": "var_aura_m_navy",
+          "sku": "AURA-M-NVY",
+          "name": "Limitless Aura / M / Navy",
+          "size": "M",
+          "color": "Navy",
+          "lane": "local",
+          "blankCostCents": 750,
+          "retailPriceCents": 2599
+        },
+        {
+          "id": "var_aura_l_navy",
+          "sku": "AURA-L-NVY",
+          "name": "Limitless Aura / L / Navy",
+          "size": "L",
+          "color": "Navy",
+          "lane": "local",
+          "blankCostCents": 750,
+          "retailPriceCents": 2599
+        }
+      ]
     }
   ]
 }
