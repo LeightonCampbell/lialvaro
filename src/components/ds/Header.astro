@@ -1,6 +1,8 @@
 ---
 import { claimText } from '../../lib/claims';
 
+import { services } from '../../data/services';
+
 interface NavItem {
   label: string;
   href: string;
@@ -13,10 +15,11 @@ interface Props {
   class?: string;
 }
 
+const serviceLinks = services.map((item) => ({ label: item.label, href: `/services/${item.slug}/` }));
+
 const {
   items = [
     { label: 'Shop', href: '/shop/' },
-    { label: 'Services', href: '/#services' },
     { label: 'Design Studio', href: '/design/' },
     { label: 'FAQs', href: '/faq/' },
   ],
@@ -62,14 +65,41 @@ const phoneClaim = claimText('phone-310-904-2655');
 
       <nav class="ds-header__nav" aria-label="Primary">
         <ul class="ds-header__list">
+          <li>
+            <a class="ds-header__link" href="/shop/">Shop</a>
+          </li>
+          <li class="ds-header__dropdown">
+            <button
+              type="button"
+              class="ds-header__link ds-header__link--button"
+              aria-expanded="false"
+              aria-haspopup="true"
+              aria-controls="ds-services-menu"
+              data-services-toggle
+            >
+              Services
+              <span class="ds-header__caret" aria-hidden="true"></span>
+            </button>
+            <ul class="ds-header__submenu" id="ds-services-menu" hidden>
+              {
+                serviceLinks.map((item) => (
+                  <li>
+                    <a href={item.href}>{item.label}</a>
+                  </li>
+                ))
+              }
+            </ul>
+          </li>
           {
-            items.map((item) => (
-              <li>
-                <a class="ds-header__link" href={item.href}>
-                  {item.label}
-                </a>
-              </li>
-            ))
+            items
+              .filter((item) => item.label !== 'Shop')
+              .map((item) => (
+                <li>
+                  <a class="ds-header__link" href={item.href}>
+                    {item.label}
+                  </a>
+                </li>
+              ))
           }
         </ul>
       </nav>
@@ -91,7 +121,7 @@ const phoneClaim = claimText('phone-310-904-2655');
         </a>
 
         <a class="ds-header__hotline" href="tel:3109042655">
-          <span class="ds-header__hotline-label">Hotline</span>
+          <span class="ds-header__hotline-label">Call Us!</span>
           <span class="ds-header__hotline-num">(310) 904-2655</span>
         </a>
 
@@ -121,12 +151,27 @@ const phoneClaim = claimText('phone-310-904-2655');
     <div class="ds-mobile-menu" id="ds-mobile-menu" hidden>
       <nav aria-label="Mobile">
         <ul class="ds-mobile-menu__list">
+          <li><a href="/shop/">Shop</a></li>
+          <li class="ds-mobile-menu__group">
+            <p class="ds-mobile-menu__label">Services</p>
+            <ul>
+              {
+                serviceLinks.map((item) => (
+                  <li>
+                    <a href={item.href}>{item.label}</a>
+                  </li>
+                ))
+              }
+            </ul>
+          </li>
           {
-            items.map((item) => (
-              <li>
-                <a href={item.href}>{item.label}</a>
-              </li>
-            ))
+            items
+              .filter((item) => item.label !== 'Shop')
+              .map((item) => (
+                <li>
+                  <a href={item.href}>{item.label}</a>
+                </li>
+              ))
           }
           <li><a href="/account/">{accountLabel}</a></li>
           <li><a href="tel:3109042655">(310) 904-2655</a></li>
@@ -159,6 +204,56 @@ const phoneClaim = claimText('phone-310-904-2655');
       menu.setAttribute('hidden', '');
       toggle.setAttribute('aria-expanded', 'false');
     }
+  });
+
+  const servicesToggle = document.querySelector('[data-services-toggle]');
+  const servicesMenu = document.getElementById('ds-services-menu');
+  const servicesItem = servicesToggle?.closest('.ds-header__dropdown');
+
+  function closeServices() {
+    if (!(servicesToggle instanceof HTMLButtonElement) || !servicesMenu) return;
+    servicesMenu.hidden = true;
+    servicesToggle.setAttribute('aria-expanded', 'false');
+  }
+
+  function openServices() {
+    if (!(servicesToggle instanceof HTMLButtonElement) || !servicesMenu) return;
+    servicesMenu.hidden = false;
+    servicesToggle.setAttribute('aria-expanded', 'true');
+  }
+
+  servicesToggle?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    if (!(servicesToggle instanceof HTMLButtonElement) || !servicesMenu) return;
+    if (servicesMenu.hidden) openServices();
+    else closeServices();
+  });
+
+  let closeTimer = 0;
+
+  function cancelClose() {
+    window.clearTimeout(closeTimer);
+  }
+
+  function scheduleClose() {
+    cancelClose();
+    closeTimer = window.setTimeout(closeServices, 220);
+  }
+
+  servicesItem?.addEventListener('mouseenter', () => {
+    cancelClose();
+    openServices();
+  });
+  servicesItem?.addEventListener('mouseleave', () => scheduleClose());
+
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Node)) return;
+    if (servicesItem?.contains(event.target)) return;
+    closeServices();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeServices();
   });
 </script>
 
@@ -278,10 +373,80 @@ const phoneClaim = claimText('phone-310-904-2655');
     font-size: 0.95rem;
   }
 
+  .ds-header__link--button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  .ds-header__caret {
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid currentColor;
+    opacity: 0.7;
+  }
+
+  .ds-header__dropdown {
+    position: relative;
+  }
+
+  .ds-header__submenu {
+    position: absolute;
+    top: calc(100% + 0.65rem);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 15.5rem;
+    margin: 0;
+    padding: 0.45rem;
+    list-style: none;
+    background: var(--white);
+    border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    z-index: 40;
+  }
+
+  /* Invisible bridge across the gap so the pointer can reach the menu */
+  .ds-header__submenu::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: 0.85rem;
+  }
+
+  .ds-header__submenu a {
+    display: block;
+    padding: 0.7rem 0.85rem;
+    border-radius: 8px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .ds-header__submenu a:hover {
+    background: var(--studio-soft);
+    color: var(--studio-green);
+  }
+
   .ds-header__link:hover,
   .ds-header__account:hover,
   .ds-header__cart:hover,
-  .ds-header__hotline:hover {
+  .ds-header__hotline:hover,
+  .ds-header__link--button:hover {
     color: var(--studio-green);
   }
 
@@ -445,6 +610,35 @@ const phoneClaim = claimText('phone-310-904-2655');
   .ds-mobile-menu__list button:focus-visible {
     outline: 3px solid var(--color-focus);
     outline-offset: 2px;
+  }
+
+  .ds-mobile-menu__group {
+    padding: 0.35rem 0 0.55rem;
+    border-top: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+
+  .ds-mobile-menu__label {
+    margin: 0 0 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mesh-text);
+  }
+
+  .ds-mobile-menu__group ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .ds-mobile-menu__group a {
+    min-height: 40px;
+    font-weight: 500;
+    padding-left: 0.35rem;
   }
 
   .quote-tab {

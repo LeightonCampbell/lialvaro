@@ -1,6 +1,16 @@
 import { getAppEnv } from './env';
 
-export async function sendOwnerEmail(opts: { subject: string; text: string }): Promise<boolean> {
+export type EmailAttachment = {
+  filename: string;
+  content: string;
+  content_type?: string;
+};
+
+export async function sendOwnerEmail(opts: {
+  subject: string;
+  text: string;
+  attachments?: EmailAttachment[];
+}): Promise<boolean> {
   const env = await getAppEnv();
   if (!env.RESEND_API_KEY || !env.ORDER_NOTIFICATION_EMAIL) return false;
 
@@ -15,6 +25,7 @@ export async function sendOwnerEmail(opts: { subject: string; text: string }): P
       to: env.ORDER_NOTIFICATION_EMAIL,
       subject: opts.subject,
       text: opts.text,
+      ...(opts.attachments?.length ? { attachments: opts.attachments } : {}),
     }),
   });
   return res.ok;

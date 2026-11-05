@@ -189,11 +189,26 @@ const margins = listProducts().map((product) => {
                 <ul class="list">
                   {quotes.map((quote) => {
                     let summary = quote.email ?? '';
+                    let fileNote = '';
                     try {
-                      const payload = JSON.parse(quote.payload_json) as { service?: string; pieces?: number };
+                      const payload = JSON.parse(quote.payload_json) as {
+                        service?: string;
+                        pieces?: number;
+                        files?: { name?: string; emailed?: boolean }[];
+                        filesEmailed?: string[];
+                      };
                       summary = [quote.name, quote.email, payload.service, payload.pieces ? `${payload.pieces} pcs` : '']
                         .filter(Boolean)
                         .join(' · ');
+                      const names =
+                        payload.filesEmailed?.length
+                          ? payload.filesEmailed
+                          : (payload.files ?? []).map((file) => file.name).filter(Boolean);
+                      if (names.length) {
+                        fileNote = `Files: ${names.join(', ')}${
+                          payload.filesEmailed?.length ? ' (emailed to owner inbox)' : ' (name only — ask customer to resend)'
+                        }`;
+                      }
                     } catch {
                       summary = quote.email ?? quote.id;
                     }
@@ -202,6 +217,7 @@ const margins = listProducts().map((product) => {
                         <div>
                           <strong>{summary}</strong>
                           <span>{quote.status}{quote.total_cents ? ` · ${formatUsd(quote.total_cents)}` : ''}</span>
+                          {fileNote ? <span>{fileNote}</span> : null}
                           {quote.public_token ? <a href={`/quotes/${quote.public_token}/`}>Customer page</a> : null}
                         </div>
                         <form class="quote-form" data-quote={quote.id}>

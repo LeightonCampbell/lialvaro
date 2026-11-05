@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getDb, insertAuditEvent, newId } from '../../lib/db';
-import { sendOwnerEmail } from '../../lib/email';
+import { sendOwnerEmail, type EmailAttachment } from '../../lib/email';
 import { quotePublicToken } from '../../lib/quotes';
 import { allowAction, clientAddress } from '../../lib/rate-limit';
 import { turnstileError } from '../../lib/turnstile';
@@ -10,6 +10,46 @@ export const prerender = false;
 
 const DESIGN_TYPES = ['Tops', 'Bottoms', 'Hats', 'Bags', 'Something Else'];
 const MAX_FILES = 5;
+/** Keep under Resend’s email size ceiling after base64 expansion. */
+const MAX_ATTACH_BYTES = 20 * 1024 * 1024;
+
+function bytesToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
+}
+
+async function filesToAttachments(files: File[]): Promise<{
+  attachments: EmailAttachment[];
+  attachedNames: string[];
+  skippedNames: string[];
+}> {
+  const attachments: EmailAttachment[] = [];
+  const attachedNames: string[] = [];
+  const skippedNames: string[] = [];
+  let used = 0;
+
+  for (const file of files) {
+    if (used + file.size > MAX_ATTACH_BYTES) {
+      skippedNames.push(file.name.slice(0, 180));
+      continue;
+    }
+    const content = bytesToBase64(await file.arrayBuffer());
+    attachments.push({
+      filename: file.name.slice(0, 180) || 'design-file',
+      content,
+      content_type: file.type || undefined,
+    });
+    attachedNames.push(file.name.slice(0, 180));
+    used += file.size;
+  }
+
+  return { attachments, attachedNames, skippedNames };
+}
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -74,6 +114,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 
   const id = newId('quo');
   const token = quotePublicToken();
+  const { attachments, attachedNames, skippedNames } = await filesToAttachments(files);
   const payload = {
     service,
     designTypes,
@@ -82,7 +123,14 @@ export const POST: APIRoute = async ({ request, url }) => {
     providingBlanks: blanks === 'yes',
     material,
     notes,
-    files: files.map((file) => ({ name: file.name.slice(0, 180), size: file.size, type: file.type })),
+    files: files.map((file) => ({
+      name: file.name.slice(0, 180),
+      size: file.size,
+      type: file.type,
+      emailed: attachedNames.includes(file.name.slice(0, 180)),
+    })),
+    filesEmailed: attachedNames,
+    filesSkippedForSize: skippedNames,
   };
 
   try {
@@ -102,9 +150,28 @@ export const POST: APIRoute = async ({ request, url }) => {
     throw err;
   }
 
-  await insertAuditEvent(db, 'quote', id, 'quote_submitted', { email, service });
+  await insertAuditEvent(db, 'quote', id, 'quote_submitted', {
+    email,
+    service,
+    filesAttached: attachedNames.length,
+  });
 
   const page = new URL(`/quotes/${token}/`, url.origin).toString();
+  const fileLines = (() => {
+    if (!files.length) return ['No files attached.'];
+    const lines = [
+      attachedNames.length
+        ? `Design files attached to this email (${attachedNames.length}): ${attachedNames.join(', ')}`
+        : 'Design files were uploaded but could not be attached (size limit).',
+    ];
+    if (skippedNames.length) {
+      lines.push(
+        `Could not attach (too large for email): ${skippedNames.join(', ')}. Ask the customer to resend those files.`,
+      );
+    }
+    return lines;
+  })();
+
   const emailed = await sendOwnerEmail({
     subject: `New quote request — ${firstName} ${lastName}`,
     text: [
@@ -118,16 +185,20 @@ export const POST: APIRoute = async ({ request, url }) => {
       `Providing blanks: ${blanks === 'yes' ? 'yes' : 'no'}`,
       material ? `Material: ${material}` : '',
       notes ? `Notes: ${notes}` : '',
-      files.length
-        ? `Files named (not stored yet): ${files.map((file) => file.name).join(', ')}`
-        : 'No files attached.',
+      ...fileLines,
       '',
       `Build the quote: ${url.origin}/admin/`,
       `Customer page: ${page}`,
     ]
       .filter(Boolean)
       .join('\n'),
+    attachments,
   });
 
-  return json({ ok: true, emailed });
+  return json({
+    ok: true,
+    emailed,
+    filesAttached: attachedNames.length,
+    filesSkipped: skippedNames.length,
+  });
 };

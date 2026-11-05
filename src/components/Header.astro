@@ -1,9 +1,13 @@
 ---
+import { services } from '../data/services';
+
 interface Props {
 	faqHref?: string;
 }
 
 const { faqHref = '/faq' } = Astro.props;
+const pathname = Astro.url.pathname;
+const servicesActive = pathname.startsWith('/services/');
 ---
 <nav class="site-header-nav" id="site-header-nav" aria-label="Primary">
   <div class="nav-inner">
@@ -13,6 +17,36 @@ const { faqHref = '/faq' } = Astro.props;
 
     <span class="nav-rail-spacer" aria-hidden="true"></span>
     <ul class="nav-links">
+      <li class:list={['nav-item', 'nav-item--dropdown', servicesActive ? 'is-active' : null]}>
+        <button
+          type="button"
+          class="nav-dropdown-trigger"
+          id="nav-services-trigger"
+          aria-expanded="false"
+          aria-haspopup="true"
+          aria-controls="nav-services-menu"
+        >
+          Services
+          <svg class="nav-dropdown-chevron" viewBox="0 0 12 12" width="10" height="10" aria-hidden="true">
+            <path d="M2.5 4.25 L6 7.75 L9.5 4.25" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <ul class="nav-dropdown" id="nav-services-menu" role="menu" hidden>
+          {
+            services.map((service) => (
+              <li role="none">
+                <a
+                  role="menuitem"
+                  href={`/services/${service.slug}/`}
+                  aria-current={pathname.startsWith(`/services/${service.slug}`) ? 'page' : undefined}
+                >
+                  {service.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </li>
       <li><a href="/design-your-apparel">Design Your Apparel</a></li>
       <li><a href="/about">About Us</a></li>
       <li><a href={faqHref}>FAQ</a></li>
@@ -44,6 +78,29 @@ const { faqHref = '/faq' } = Astro.props;
     hidden
   >
     <ul class="nav-mobile-links">
+      <li class="nav-mobile-group">
+        <button
+          type="button"
+          class="nav-mobile-group-trigger"
+          id="nav-mobile-services-trigger"
+          aria-expanded="false"
+          aria-controls="nav-mobile-services"
+        >
+          Services
+          <svg class="nav-dropdown-chevron" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true">
+            <path d="M2.5 4.25 L6 7.75 L9.5 4.25" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <ul class="nav-mobile-sub" id="nav-mobile-services" hidden>
+          {
+            services.map((service) => (
+              <li>
+                <a href={`/services/${service.slug}/`}>{service.label}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </li>
       <li><a href="/design-your-apparel">Design Your Apparel</a></li>
       <li><a href="/about">About Us</a></li>
       <li><a href={faqHref}>FAQ</a></li>
@@ -60,17 +117,32 @@ const { faqHref = '/faq' } = Astro.props;
     const nav = document.getElementById('site-header-nav');
     const toggle = document.getElementById('site-nav-menu-toggle');
     const panel = document.getElementById('site-nav-mobile-panel');
+    const servicesTrigger = document.getElementById('nav-services-trigger');
+    const servicesMenu = document.getElementById('nav-services-menu');
+    const mobileServicesTrigger = document.getElementById('nav-mobile-services-trigger');
+    const mobileServices = document.getElementById('nav-mobile-services');
     if (!nav || !toggle || !panel) return;
 
     const openLabel = 'Open menu';
     const closeLabel = 'Close menu';
 
-    function setOpen(open) {
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      toggle.setAttribute('aria-label', open ? closeLabel : openLabel);
-      nav.classList.toggle('nav-is-open', open);
-      panel.hidden = !open;
+    function setOpen(open: boolean) {
+      toggle!.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle!.setAttribute('aria-label', open ? closeLabel : openLabel);
+      nav!.classList.toggle('nav-is-open', open);
+      panel!.hidden = !open;
       document.body.style.overflow = open ? 'hidden' : '';
+      if (!open && mobileServicesTrigger && mobileServices) {
+        mobileServicesTrigger.setAttribute('aria-expanded', 'false');
+        mobileServices.hidden = true;
+      }
+    }
+
+    function setServicesOpen(open: boolean) {
+      if (!servicesTrigger || !servicesMenu) return;
+      servicesTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      servicesMenu.hidden = !open;
+      servicesTrigger.parentElement?.classList.toggle('is-open', open);
     }
 
     toggle.addEventListener('click', () => {
@@ -85,12 +157,40 @@ const { faqHref = '/faq' } = Astro.props;
       el.addEventListener('click', () => setOpen(false));
     });
 
+    servicesTrigger?.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const next = servicesTrigger.getAttribute('aria-expanded') !== 'true';
+      setServicesOpen(next);
+    });
+
+    servicesMenu?.querySelectorAll('a').forEach((a) => {
+      a.addEventListener('click', () => setServicesOpen(false));
+    });
+
+    mobileServicesTrigger?.addEventListener('click', () => {
+      if (!mobileServices || !mobileServicesTrigger) return;
+      const next = mobileServices.hidden;
+      mobileServices.hidden = !next;
+      mobileServicesTrigger.setAttribute('aria-expanded', next ? 'true' : 'false');
+    });
+
+    document.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof Node)) return;
+      if (servicesTrigger?.parentElement?.contains(target)) return;
+      setServicesOpen(false);
+    });
+
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !panel.hidden) setOpen(false);
+      if (e.key === 'Escape') {
+        if (!panel.hidden) setOpen(false);
+        setServicesOpen(false);
+      }
     });
 
     window.addEventListener('resize', () => {
       if (window.innerWidth > 900 && !panel.hidden) setOpen(false);
+      if (window.innerWidth <= 900) setServicesOpen(false);
     });
   })();
 </script>
@@ -162,7 +262,81 @@ const { faqHref = '/faq' } = Astro.props;
     align-items: center;
   }
 
-  .nav-links a {
+  .nav-item--dropdown {
+    position: relative;
+  }
+
+  .nav-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #6e6e73;
+    cursor: pointer;
+    transition: color 0.18s;
+  }
+
+  .nav-item--dropdown.is-active .nav-dropdown-trigger,
+  .nav-item--dropdown.is-open .nav-dropdown-trigger,
+  .nav-dropdown-trigger:hover {
+    color: #1d1d1f;
+  }
+
+  .nav-dropdown-chevron {
+    flex-shrink: 0;
+    transition: transform 0.18s ease;
+  }
+
+  .nav-item--dropdown.is-open .nav-dropdown-chevron,
+  .nav-mobile-group-trigger[aria-expanded='true'] .nav-dropdown-chevron {
+    transform: rotate(180deg);
+  }
+
+  .nav-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 220px;
+    margin: 0;
+    padding: 8px;
+    list-style: none;
+    background: #fff;
+    border: 1px solid #f0f0f5;
+    border-radius: 14px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+    z-index: 520;
+  }
+
+  .nav-dropdown[hidden] {
+    display: none;
+  }
+
+  .nav-dropdown a {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #1d1d1f;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .nav-dropdown a:hover,
+  .nav-dropdown a[aria-current='page'] {
+    background: #f5f5f7;
+    color: #ff6b2b;
+  }
+
+  .nav-links > li > a {
     font-size: 13.5px;
     font-weight: 500;
     color: #6e6e73;
@@ -170,7 +344,7 @@ const { faqHref = '/faq' } = Astro.props;
     transition: color 0.18s;
   }
 
-  .nav-links a:hover {
+  .nav-links > li > a:hover {
     color: #1d1d1f;
   }
 
@@ -268,8 +442,12 @@ const { faqHref = '/faq' } = Astro.props;
     padding: 0;
   }
 
-  .nav-mobile-links a {
-    display: block;
+  .nav-mobile-links > li > a,
+  .nav-mobile-group-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
     padding: 14px 0;
     font-size: 16px;
     font-weight: 600;
@@ -277,13 +455,47 @@ const { faqHref = '/faq' } = Astro.props;
     text-decoration: none;
     border-bottom: 1px solid #f0f0f5;
     transition: color 0.15s;
+    background: transparent;
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    box-sizing: border-box;
   }
 
-  .nav-mobile-links li:first-child a {
+  .nav-mobile-links > li:first-child > a,
+  .nav-mobile-links > li:first-child > .nav-mobile-group-trigger {
     border-top: 1px solid #f0f0f5;
   }
 
-  .nav-mobile-links a:hover {
+  .nav-mobile-links > li > a:hover,
+  .nav-mobile-group-trigger:hover {
+    color: #ff6b2b;
+  }
+
+  .nav-mobile-sub {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0 10px;
+  }
+
+  .nav-mobile-sub[hidden] {
+    display: none;
+  }
+
+  .nav-mobile-sub a {
+    display: block;
+    padding: 10px 0 10px 12px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #6e6e73;
+    text-decoration: none;
+    border-bottom: 1px solid #f5f5f7;
+  }
+
+  .nav-mobile-sub a:hover {
     color: #ff6b2b;
   }
 

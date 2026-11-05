@@ -133,11 +133,12 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
           <div class="form-divider">Upload your design(s) (optional)</div>
 
           <div class="upload-dropzone" id="uploadDropzone" role="button" tabindex="0" aria-label="Upload your design files (optional)">
-            <input type="file" id="quote-files" name="design_files" multiple hidden />
+            <input type="file" id="quote-files" name="design_files" multiple accept=".png,.jpg,.jpeg,.gif,.webp,.svg,.pdf,.ai,.eps,.zip,image/*,application/pdf,application/zip" hidden />
             <div class="upload-icon" aria-hidden="true"></div>
             <div class="upload-title">Upload file(s)</div>
             <div class="upload-sub">PNG, JPG, PDF, AI, EPS, or ZIP — drag and drop or browse</div>
             <button type="button" class="upload-browse" id="uploadBrowse">Browse</button>
+            <div class="upload-list" id="uploadList" hidden></div>
           </div>
 
           <div class="form-group">
@@ -531,10 +532,44 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
       });
     });
 
+    const uploadList = document.getElementById('uploadList');
+
+    function syncUploadList() {
+      if (!uploadList || !filesInput) return;
+      const names = Array.from(filesInput.files || []).map((file) => file.name);
+      if (!names.length) {
+        uploadList.hidden = true;
+        uploadList.textContent = '';
+        return;
+      }
+      uploadList.hidden = false;
+      uploadList.textContent =
+        names.length === 1 ? `Selected: ${names[0]}` : `Selected (${names.length}): ${names.join(', ')}`;
+    }
+
+    function assignFiles(list) {
+      if (!filesInput || !list || !list.length) return;
+      try {
+        const transfer = new DataTransfer();
+        Array.from(list).forEach((file) => transfer.items.add(file));
+        filesInput.files = transfer.files;
+      } catch (_err) {
+        try {
+          filesInput.files = list;
+        } catch (_assign) {
+          /* ignore */
+        }
+      }
+      syncUploadList();
+    }
+
     // Upload (optional): clicking anywhere in the upload section opens the file picker.
-    uploadDropzone?.addEventListener('click', function () {
+    uploadDropzone?.addEventListener('click', function (e) {
+      if (e.target && e.target.closest && e.target.closest('.upload-browse')) return;
       filesInput?.click?.();
     });
+
+    filesInput?.addEventListener('change', syncUploadList);
 
     // Support drop + keyboard open.
     if (uploadDropzone) {
@@ -569,13 +604,7 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
       uploadDropzone.addEventListener('drop', function (e) {
         const dt = e.dataTransfer;
         if (!dt || !dt.files || !dt.files.length) return;
-        if (filesInput) {
-          try {
-            filesInput.files = dt.files;
-          } catch (_err) {
-            // Some browsers may not allow assignment to input.files.
-          }
-        }
+        assignFiles(dt.files);
       });
     }
   })();
@@ -946,6 +975,15 @@ const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
     background: var(--orange-soft);
     border-color: var(--orange-mid);
     transform: translateY(-1px);
+  }
+
+  .upload-list {
+    margin-top: 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.4;
+    word-break: break-word;
   }
 
   .form-row {

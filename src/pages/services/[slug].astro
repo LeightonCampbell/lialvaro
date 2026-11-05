@@ -1,0 +1,352 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ServiceQuoteForm from '../../components/ServiceQuoteForm.astro';
+import { getService, serviceSlugs, services } from '../../data/services';
+
+export function getStaticPaths() {
+  return serviceSlugs().map((slug) => ({ params: { slug } }));
+}
+
+const slug = Astro.params.slug ?? '';
+const service = getService(slug);
+if (!service) {
+  return Astro.redirect('/#services');
+}
+
+const others = services.filter((item) => item.slug !== service.slug);
+---
+
+<Layout
+  title={`${service.label} in Los Angeles`}
+  description={`${service.lede} Get a fast quote from LiAlvaro T-Shirt Printing.`}
+>
+  <div class="svc-page">
+    <header class="svc-hero">
+      <div class="svc-hero__media" aria-hidden="true">
+        <img src={service.heroImage} alt="" width="1600" height="1000" decoding="async" />
+        <div class="svc-hero__shade"></div>
+      </div>
+      <div class="svc-hero__copy">
+        <p class="svc-hero__eyebrow">{service.eyebrow}</p>
+        <h1>{service.headline}</h1>
+        <p class="svc-hero__lede">{service.lede}</p>
+        <div class="svc-hero__actions">
+          <a class="svc-hero__cta" href="#quote">Get a {service.shortLabel} quote</a>
+          <a class="svc-hero__ghost" href="tel:3109042655">(310) 904-2655</a>
+        </div>
+      </div>
+    </header>
+
+    <section class="svc-section">
+      <div class="svc-narrow">
+        <p class="svc-kicker">Best for</p>
+        <h2>When {service.label.toLowerCase()} is the right call</h2>
+        <p class="svc-copy">{service.bestFor}</p>
+        <ul class="svc-benefits">
+          {
+            service.benefits.map((item) => (
+              <li>
+                <strong>{item.title}</strong>
+                <span>{item.body}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="svc-section svc-section--soft">
+      <div class="svc-narrow">
+        <p class="svc-kicker">Process</p>
+        <h2>How your {service.shortLabel.toLowerCase()} order moves</h2>
+        <ol class="svc-steps">
+          {
+            service.steps.map((item, index) => (
+              <li>
+                <span aria-hidden="true">{index + 1}</span>
+                <div>
+                  <strong>{item.title}</strong>
+                  <p>{item.body}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section class="svc-section">
+      <div class="svc-narrow svc-narrow--form">
+        <ServiceQuoteForm service={service} />
+      </div>
+    </section>
+
+    <section class="svc-section svc-section--soft">
+      <div class="svc-narrow">
+        <p class="svc-kicker">More services</p>
+        <h2>Explore other print paths</h2>
+        <ul class="svc-more">
+          {
+            others.map((item) => (
+              <li>
+                <a href={`/services/${item.slug}/`}>
+                  <strong>{item.label}</strong>
+                  <span>{item.eyebrow}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .svc-page {
+    background: var(--white);
+  }
+
+  .svc-hero {
+    position: relative;
+    min-height: min(78vh, 640px);
+    display: grid;
+    align-items: center;
+    color: var(--white);
+    overflow: hidden;
+  }
+
+  .svc-hero__media {
+    position: absolute;
+    inset: 0;
+  }
+
+  .svc-hero__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .svc-hero__shade {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(17, 17, 17, 0.45) 0%, rgba(17, 17, 17, 0.62) 50%, rgba(17, 17, 17, 0.72) 100%),
+      linear-gradient(90deg, rgba(17, 17, 17, 0.4), transparent 62%);
+  }
+
+  .svc-hero__copy {
+    position: relative;
+    z-index: 1;
+    box-sizing: border-box;
+    width: min(720px, calc(100% - 2 * var(--site-gutter)));
+    margin: 0 auto;
+    padding: 3.5rem var(--site-pad);
+  }
+
+  .svc-hero__eyebrow {
+    margin: 0 0 0.55rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--print-red) 70%, white);
+  }
+
+  .svc-hero h1 {
+    margin: 0;
+    max-width: 16ch;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.1rem);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.08;
+  }
+
+  .svc-hero__lede {
+    margin: 0.9rem 0 0;
+    max-width: 34rem;
+    font-size: 1.05rem;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  .svc-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.35rem;
+  }
+
+  .svc-hero__cta,
+  .svc-hero__ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 1.15rem;
+    border-radius: 999px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .svc-hero__cta {
+    background: var(--print-red);
+    color: #fff;
+  }
+
+  .svc-hero__ghost {
+    border: 1.5px solid rgba(255, 255, 255, 0.45);
+    color: #fff;
+  }
+
+  .svc-section {
+    padding: 4.25rem 0;
+  }
+
+  .svc-section--soft {
+    background: #fafafa;
+  }
+
+  .svc-narrow {
+    box-sizing: border-box;
+    width: min(720px, calc(100% - 2 * var(--site-gutter)));
+    margin-inline: auto;
+    padding-inline: var(--site-pad);
+  }
+
+  .svc-narrow--form {
+    width: min(640px, calc(100% - 2 * var(--site-gutter)));
+  }
+
+  .svc-kicker {
+    margin: 0 0 0.45rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--print-red);
+  }
+
+  .svc-section h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.55rem, 3vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .svc-copy {
+    margin: 0.75rem 0 0;
+    color: #6e6e73;
+    font-size: 1.02rem;
+    line-height: 1.55;
+  }
+
+  .svc-benefits {
+    list-style: none;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.15rem;
+  }
+
+  .svc-benefits li {
+    display: grid;
+    gap: 0.25rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid #e5e5ea;
+  }
+
+  .svc-benefits strong {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+  }
+
+  .svc-benefits span {
+    color: #6e6e73;
+    line-height: 1.5;
+  }
+
+  .svc-steps {
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .svc-steps li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.9rem;
+    align-items: start;
+  }
+
+  .svc-steps span {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--studio-mint);
+    color: var(--studio-green);
+    font-weight: 800;
+    font-size: 0.9rem;
+  }
+
+  .svc-steps strong {
+    display: block;
+    font-family: var(--font-display);
+    margin-bottom: 0.2rem;
+  }
+
+  .svc-steps p {
+    margin: 0;
+    color: #6e6e73;
+    line-height: 1.5;
+  }
+
+  .svc-more {
+    list-style: none;
+    margin: 1.35rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .svc-more a {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: baseline;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e5e5ea;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .svc-more strong {
+    font-family: var(--font-display);
+  }
+
+  .svc-more span {
+    color: #86868b;
+    font-size: 0.9rem;
+  }
+
+  .svc-more a:hover strong {
+    color: var(--print-red);
+  }
+
+  @media (max-width: 700px) {
+    .svc-hero {
+      min-height: 70vh;
+    }
+
+    .svc-more a {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+</style>

@@ -124,10 +124,10 @@ const favorites = [
 ];
 
 const methodCards = [
-  { label: 'Screen Printing', service: 'Screen Printing', image: '/images/screenprinting.jpg' },
-  { label: 'DTG', service: 'Direct to Garment', image: '/images/dtg.jpg' },
-  { label: 'DTF', service: 'Direct to Film', image: '/images/direct-to-film.jpg' },
-  { label: 'Embroidery', service: 'Embroidery', image: '/images/embroidery-hat.jpg' },
+  { label: 'Screen Printing', href: '/services/screen-printing/', image: '/images/screenprinting.jpg' },
+  { label: 'Direct To Garment', href: '/services/direct-to-garment/', image: '/images/dtg.jpg' },
+  { label: 'DTF and Heat Transfers', href: '/services/dtf-heat-transfers/', image: '/images/direct-to-film.jpg' },
+  { label: 'Embroidery', href: '/services/embroidery/', image: '/images/embroidery-hat.jpg' },
 ];
 
 const reviews = [
@@ -367,15 +367,10 @@ const faqPageLd = {
         <div class="studio-methods">
           {
             methodCards.map((method) => (
-              <button
-                type="button"
-                class="studio-method"
-                data-quote-trigger
-                data-quote-service={method.service}
-              >
+              <a class="studio-method" href={method.href}>
                 <img src={method.image} alt="" width="320" height="220" loading="lazy" decoding="async" />
                 <span>{method.label}</span>
-              </button>
+              </a>
             ))
           }
         </div>
@@ -1122,6 +1117,8 @@ const faqPageLd = {
     overflow: hidden;
     cursor: pointer;
     text-align: center;
+    text-decoration: none;
+    color: inherit;
     box-shadow: 0 10px 28px color-mix(in srgb, var(--ink) 6%, transparent);
     transition: transform 160ms var(--ease-out);
   }

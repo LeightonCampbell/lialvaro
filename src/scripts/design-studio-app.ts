@@ -603,19 +603,41 @@ export function initDesignStudio() {
     stage.style.transform = `scale(${zoom})`;
   }
 
-  function bindCanvas(restoreJson?: string) {
+  function persistActiveSide() {
+    if (!canvas || restoringSide) return;
+    sideCanvases[side] = JSON.stringify(canvas.toJSON());
+    markDesignedThumbs();
+  }
+
+  function bindCanvas() {
+    if (!printFrame.contains(canvasEl)) {
+      printFrame.replaceChildren(canvasEl);
+    }
     canvas?.dispose();
+    if (!canvasEl.isConnected) {
+      printFrame.appendChild(canvasEl);
+    }
     canvas = new Canvas(canvasEl, {
       preserveObjectStacking: true,
       selection: true,
       backgroundColor: 'rgba(255,255,255,0.001)',
     });
-    canvas.on('object:modified', () => pushHistory());
+    canvas.on('object:modified', () => {
+      pushHistory();
+      persistActiveSide();
+    });
     canvas.on('object:added', () => {
-      if (!applyingHistory) pushHistory();
+      if (!applyingHistory) {
+        pushHistory();
+        persistActiveSide();
+      }
       syncEmptyCtas();
     });
     canvas.on('object:removed', () => {
+      if (!applyingHistory && !restoringSide) {
+        pushHistory();
+        persistActiveSide();
+      }
       syncEmptyCtas();
       syncSelectionUi();
     });
@@ -636,33 +658,47 @@ export function initDesignStudio() {
           : 'Upload art or add text inside the print area.',
       );
     });
-    if (restoreJson) restoringSide = true;
     layoutCanvas();
     history = [];
     historyIndex = -1;
-    if (restoreJson) {
-      void (async () => {
-        try {
-          applyingHistory = true;
-          await canvas!.loadFromJSON(restoreJson);
-          canvas!.requestRenderAll();
-          pushHistory();
-        } finally {
-          applyingHistory = false;
-          restoringSide = false;
-          saveCurrentSide();
-          syncEmptyCtas();
-        }
-      })();
-    } else {
+    pushHistory();
+    syncEmptyCtas();
+  }
+
+  async function loadSideJson(json?: string) {
+    if (!canvas) return;
+    const expected = objectsInJson(json);
+    restoringSide = true;
+    applyingHistory = true;
+    try {
+      canvas.clear();
+      canvas.backgroundColor = 'rgba(255,255,255,0.001)';
+      layoutCanvas();
+      if (json && expected > 0) {
+        await canvas.loadFromJSON(json);
+        canvas.requestRenderAll();
+      }
+      history = [];
+      historyIndex = -1;
       pushHistory();
+    } finally {
+      applyingHistory = false;
+      restoringSide = false;
+      const actual = canvas?.getObjects().length ?? 0;
+      if (expected === 0 || actual >= expected) {
+        persistActiveSide();
+      } else if (json) {
+        // Keep the saved JSON when restore fails (e.g. stale blob image src).
+        sideCanvases[side] = json;
+      }
       syncEmptyCtas();
+      syncSelectionUi();
+      markDesignedThumbs();
     }
   }
 
   function saveCurrentSide() {
-    if (!canvas || restoringSide) return;
-    sideCanvases[side] = JSON.stringify(canvas.toJSON());
+    persistActiveSide();
   }
 
   function switchSide(next: string) {
@@ -674,9 +710,10 @@ export function initDesignStudio() {
       .map((key) => placementMap()[key].label);
     side = next;
     refreshSideButtons();
-    bindCanvas(sideCanvases[side]);
     const label = currentPlacement()?.label ?? side;
-    setStatus(kept.length ? `${product.label} · ${label}. ${kept.join(' and ')} kept.` : `${product.label} · ${label}`);
+    void loadSideJson(sideCanvases[side]).then(() => {
+      setStatus(kept.length ? `${product.label} · ${label}. ${kept.join(' and ')} kept.` : `${product.label} · ${label}`);
+    });
   }
 
   function refreshSideButtons() {
@@ -806,6 +843,15 @@ export function initDesignStudio() {
     setStatus('Drag to move. Drag a corner to resize. The red × or Delete removes it.');
   }
 
+  function fileToDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ''));
+      reader.onerror = () => reject(reader.error ?? new Error('Could not read file'));
+      reader.readAsDataURL(file);
+    });
+  }
+
   async function addUpload(file: File) {
     if (!canvas) return;
     const nextWarnings = [...warnings.filter((w) => !w.startsWith('Upload:'))];
@@ -819,8 +865,9 @@ export function initDesignStudio() {
       setWarnings(nextWarnings);
       return;
     }
-    const url = URL.createObjectURL(file);
     try {
+      // Data URLs survive side switches; blob: URLs were revoked and wiped the design on restore.
+      const url = await fileToDataUrl(file);
       const img = await FabricImage.fromURL(url, { crossOrigin: 'anonymous' });
       const placement = currentPlacement();
       img.set({ lockUniScaling: true });
@@ -828,6 +875,7 @@ export function initDesignStudio() {
       canvas.add(img);
       canvas.setActiveObject(img);
       canvas.requestRenderAll();
+      persistActiveSide();
       syncEmptyCtas();
       syncSelectionUi();
       setStatus('Centered in the print area. Drag to move, drag a corner to resize, or press Delete.');
@@ -841,8 +889,9 @@ export function initDesignStudio() {
         nextWarnings.push('Upload: JPG has no transparency — use PNG for knockouts.');
       }
       setWarnings(nextWarnings);
-    } finally {
-      URL.revokeObjectURL(url);
+    } catch {
+      nextWarnings.push('Upload: could not read that image. Try PNG or JPG.');
+      setWarnings(nextWarnings);
     }
   }
 
@@ -892,6 +941,24 @@ export function initDesignStudio() {
     pushHistory();
   }
 
+  /** API payload must stay small — full Fabric JSON embeds multi-MB data URLs. */
+  function sidesMetaForApi() {
+    saveCurrentSide();
+    const out: Record<string, { objects: Array<{ type: string }> }> = {};
+    for (const [key, json] of Object.entries(sideCanvases)) {
+      const count = objectsInJson(json);
+      if (count > 0) out[key] = { objects: Array.from({ length: count }, () => ({ type: 'design' })) };
+    }
+    return out;
+  }
+
+  function resetExportButton() {
+    const addBtn = $('btnExport') as HTMLButtonElement | null;
+    if (!addBtn) return;
+    delete addBtn.dataset.busy;
+    syncQtyTotals();
+  }
+
   async function exportAndCart() {
     if (!canvas) return;
     const attestation = $('ipAttest') as HTMLInputElement | null;
@@ -920,11 +987,28 @@ export function initDesignStudio() {
       return;
     }
 
+    const sidesMeta = sidesMetaForApi();
+    const positionKeys = designedSideKeys(sidesMeta);
     const artSide =
       canvas.getObjects().length > 0
         ? side
-        : (Object.keys(sideCanvases).find((key) => objectsInJson(sideCanvases[key]) > 0) ?? side);
-    const canvasJson = artSide === side ? canvas.toJSON() : JSON.parse(sideCanvases[artSide] || '{}');
+        : (positionKeys[0] ?? Object.keys(sideCanvases).find((key) => objectsInJson(sideCanvases[key]) > 0) ?? side);
+    const objectCount = Math.max(
+      positionKeys.reduce((sum, key) => sum + (sidesMeta[key]?.objects.length ?? 0), 0) > 0
+        ? sidesMeta[artSide]?.objects.length ?? 0
+        : 0,
+      artSide === side ? canvas.getObjects().length : objectsInJson(sideCanvases[artSide]),
+      1,
+    );
+    const canvasJson = {
+      version: 'studio-meta-1',
+      productId: product.id,
+      colorId,
+      side: artSide,
+      objectCount,
+      positions: positionKeys,
+      note: 'Full artwork stays on-device until print-file storage ships; cart uses design metadata.',
+    };
     const addBtn = $('btnExport') as HTMLButtonElement | null;
     if (addBtn) {
       addBtn.dataset.busy = '1';
@@ -932,66 +1016,84 @@ export function initDesignStudio() {
       addBtn.textContent = 'Adding to cart…';
     }
     setStatus('Saving design…');
-    const res = await fetch('/api/designs', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        productId: product.id,
-        colorId,
-        side: artSide,
-        canvasJson,
-        objectCount: Math.max(objectsInJson(JSON.stringify(canvasJson)), artSide === side ? canvas.getObjects().length : 0),
-        attestation: true,
-        guestId: guestId(),
-        preflightWarnings: localWarnings,
-        sizes,
-        sides: sideCanvases,
-      }),
-    });
-    const data = (await res.json()) as {
-      designId?: string;
-      variantId?: string;
-      unitPriceCents?: number;
-      printPositions?: number;
-      positions?: string[];
-      error?: string;
-      warnings?: string[];
-    };
-    if (!res.ok || !data.designId || !data.variantId) {
-      if (addBtn) delete addBtn.dataset.busy;
-      syncQtyTotals();
-      setStatus(data.error || 'Could not save design.');
-      return;
-    }
-    if (data.warnings?.length) setWarnings(data.warnings);
 
-    const print = printBoxPx(currentPlacement()!);
-    const multiplier = print.width / Math.max(1, canvas.getWidth());
-    const png = canvas.toDataURL({ format: 'png', multiplier, enableRetinaScaling: false });
-    const link = document.createElement('a');
-    link.href = png;
-    link.download = `${data.designId}-${side}.png`;
-    link.click();
-
-    const positionKeys = data.positions?.length ? data.positions : designedKeys();
-    const positionLabel = positionKeys.map((key) => placementMap()[key]?.label ?? key).join(', ');
-    const printPositions = Math.max(1, data.printPositions ?? positionKeys.length);
-    for (const [size, quantity] of Object.entries(sizes)) {
-      if (quantity > 0) {
-        addToCart(data.variantId, quantity, data.designId, size, {
-          studioPrice: isStudioTee(product) ? 'tee' : undefined,
-          printPositions,
-          positions: positionLabel,
-        });
+    try {
+      const res = await fetch('/api/designs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: product.id,
+          colorId,
+          side: artSide,
+          canvasJson,
+          objectCount,
+          attestation: true,
+          guestId: guestId(),
+          preflightWarnings: localWarnings,
+          sizes,
+          sides: sidesMeta,
+        }),
+      });
+      let data: {
+        designId?: string;
+        variantId?: string;
+        unitPriceCents?: number;
+        printPositions?: number;
+        positions?: string[];
+        error?: string;
+        warnings?: string[];
+      } = {};
+      try {
+        data = (await res.json()) as typeof data;
+      } catch {
+        resetExportButton();
+        setStatus('Could not save design. Please try again.');
+        return;
       }
+      if (!res.ok || !data.designId || !data.variantId) {
+        resetExportButton();
+        setStatus(data.error || 'Could not save design.');
+        return;
+      }
+      if (data.warnings?.length) setWarnings(data.warnings);
+
+      let downloaded = false;
+      try {
+        const print = printBoxPx(currentPlacement()!);
+        const multiplier = Math.min(4, print.width / Math.max(1, canvas.getWidth()));
+        const png = canvas.toDataURL({ format: 'png', multiplier, enableRetinaScaling: false });
+        const link = document.createElement('a');
+        link.href = png;
+        link.download = `${data.designId}-${side}.png`;
+        link.click();
+        downloaded = true;
+      } catch {
+        /* cart still proceeds if preview PNG export fails */
+      }
+
+      const savedPositions = data.positions?.length ? data.positions : positionKeys;
+      const positionLabel = savedPositions.map((key) => placementMap()[key]?.label ?? key).join(', ');
+      const printPositions = Math.max(1, data.printPositions ?? savedPositions.length);
+      for (const [size, quantity] of Object.entries(sizes)) {
+        if (quantity > 0) {
+          addToCart(data.variantId, quantity, data.designId, size, {
+            studioPrice: isStudioTee(product) ? 'tee' : undefined,
+            printPositions,
+            positions: positionLabel,
+          });
+        }
+      }
+      track('add_to_cart', { designId: data.designId, variantId: data.variantId });
+      setStatus(
+        savedPositions.length > 1
+          ? `Design saved and added to cart. ${positionLabel} kept.${downloaded ? ' Print-ready PNG downloaded.' : ''}`
+          : `Design saved and added to cart.${downloaded ? ' Print-ready PNG downloaded.' : ''}`,
+      );
+      window.location.href = '/cart/';
+    } catch {
+      resetExportButton();
+      setStatus('Network error while adding to cart. Check your connection and try again.');
     }
-    track('add_to_cart', { designId: data.designId, variantId: data.variantId });
-    setStatus(
-      positionKeys.length > 1
-        ? `Design saved and added to cart. ${positionLabel} kept. Print-ready PNG downloaded.`
-        : 'Design saved and added to cart. Print-ready PNG downloaded.',
-    );
-    window.location.href = '/cart/';
   }
 
   // Toolbar + drawers
@@ -1048,6 +1150,7 @@ export function initDesignStudio() {
       obj.set('fill', value);
       canvas?.requestRenderAll();
       pushHistory();
+      persistActiveSide();
     }
   });
 
