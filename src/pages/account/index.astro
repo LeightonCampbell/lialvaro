@@ -1,46 +1,419 @@
 ---
+export const prerender = false;
+
 import Layout from '../../layouts/Layout.astro';
 import Button from '../../components/ds/Button.astro';
+import {
+  SESSION_COOKIE,
+  consumeMagicToken,
+  createSessionToken,
+  getOrCreateUser,
+  readSession,
+  safeNextPath,
+} from '../../lib/auth';
+import { getDb } from '../../lib/db';
+import { getStudioProduct } from '../../lib/design-studio';
+import { readSecret } from '../../lib/env';
+import { formatUsd } from '../../lib/pricing';
+
+const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
+const token = Astro.url.searchParams.get('token');
+if (token) {
+  const email = await consumeMagicToken(token);
+  const sessionToken = email ? await createSessionToken(email) : null;
+  if (!email || !sessionToken) {
+    return Astro.redirect('/account/?error=link');
+  }
+  Astro.cookies.set(SESSION_COOKIE, sessionToken, {
+    httpOnly: true,
+    secure: import.meta.env.PROD,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 60 * 60 * 24 * 30,
+  });
+  return Astro.redirect(safeNextPath(Astro.url.searchParams.get('next')));
+}
+
+const session = await readSession(Astro.cookies.get(SESSION_COOKIE)?.value);
+const errorCode = Astro.url.searchParams.get('error');
+const nextPath = Astro.url.searchParams.get('next') ?? '';
+
+type OrderRow = {
+  id: string;
+  status: string;
+  total_cents: number;
+  tracking_code: string | null;
+  created_at: string;
+};
+type DesignRow = { id: string; status: string; meta_json: string | null; created_at: string };
+type AddressRow = {
+  id: string;
+  label: string | null;
+  line1: string;
+  line2: string | null;
+  city: string;
+  region: string;
+  postal: string;
+};
+
+const orders: OrderRow[] = [];
+const designs: Array<DesignRow & { label: string }> = [];
+const addresses: AddressRow[] = [];
+let databaseReady = false;
+
+if (session) {
+  const db = await getDb();
+  databaseReady = Boolean(db);
+  if (db) {
+    const userId = await getOrCreateUser(session.email);
+    const orderRows = await db
+      .prepare(
+        `SELECT id, status, total_cents, tracking_code, created_at
+         FROM orders WHERE lower(email) = ? ORDER BY created_at DESC LIMIT 30`,
+      )
+      .bind(session.email)
+      .all<OrderRow>();
+    orders.push(...(orderRows.results ?? []));
+
+    if (userId) {
+      const designRows = await db
+        .prepare(
+          `SELECT id, status, meta_json, created_at FROM designs
+           WHERE user_id = ? ORDER BY created_at DESC LIMIT 30`,
+        )
+        .bind(userId)
+        .all<DesignRow>();
+      for (const row of designRows.results ?? []) {
+        let productId = '';
+        if (row.meta_json) {
+          try {
+            productId = String((JSON.parse(row.meta_json) as { productId?: string }).productId ?? '');
+          } catch {
+            productId = '';
+          }
+        }
+        designs.push({ ...row, label: getStudioProduct(productId)?.name ?? 'Saved design' });
+      }
+      const addressRows = await db
+        .prepare(
+          `SELECT id, label, line1, line2, city, region, postal
+           FROM addresses WHERE user_id = ? ORDER BY created_at DESC LIMIT 10`,
+        )
+        .bind(userId)
+        .all<AddressRow>();
+      addresses.push(...(addressRows.results ?? []));
+    }
+  }
+}
 ---
 
 <Layout
   title="Account"
-  description="Account sign-in for LiAlvaro T-Shirt Printing. Magic-link login ships in a later stage."
+  description="Sign in to LiAlvaro T-Shirt Printing to see orders, saved designs, and addresses."
   noindex={true}
 >
-  <div class="page-shell">
-    <header class="page-hero">
-      <p class="eyebrow">Account</p>
-      <h1>Sign in</h1>
-      <p>Magic-link accounts ship in a later stage. For now, call or request a quote and we’ll help you reorder.</p>
-    </header>
-    <div class="actions">
-      <Button href="/contact/">Contact us</Button>
-      <button type="button" class="ds-btn ds-btn--secondary" data-quote-trigger>Get a quote</button>
-    </div>
+  <div class="page-shell account">
+    {
+      session ? (
+        <>
+          <header class="page-hero">
+            <p class="eyebrow">Account</p>
+            <h1>Your account</h1>
+            <p>Signed in as {session.email}. Card numbers are never stored here.</p>
+          </header>
+          <form method="post" action="/api/auth/logout">
+            <button type="submit" class="text-btn">Sign out</button>
+          </form>
+
+          <section class="block">
+            <h2>Orders</h2>
+            {
+              !databaseReady ? (
+                <p>Order history appears when the site database is connected.</p>
+              ) : orders.length ? (
+                <ul class="list">
+                  {orders.map((order) => (
+                    <li>
+                      <div>
+                        <strong>{order.tracking_code ?? order.id}</strong>
+                        <span>{order.status.replaceAll('_', ' ')}</span>
+                        <span>{formatUsd(order.total_cents)}</span>
+                      </div>
+                      <div class="row-actions">
+                        {order.tracking_code ? <a href={`/track/?code=${order.tracking_code}`}>Track</a> : null}
+                        <button type="button" class="text-btn" data-reorder={order.id}>
+                          Reorder
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No orders for this email yet.</p>
+              )
+            }
+            <p id="reorderMsg" class="ok" hidden></p>
+          </section>
+
+          <section class="block">
+            <h2>Saved designs</h2>
+            {
+              !databaseReady ? (
+                <p>Designs from this browser attach to your account once the site database is connected.</p>
+              ) : designs.length ? (
+                <ul class="list">
+                  {designs.map((design) => (
+                    <li>
+                      <div>
+                        <strong>{design.label}</strong>
+                        <span>{design.status}</span>
+                      </div>
+                      <a href="/design/">Open Design Studio</a>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No saved designs yet. Start one in Design Studio, then come back to this page.</p>
+              )
+            }
+          </section>
+
+          <section class="block">
+            <h2>Addresses</h2>
+            {
+              addresses.length ? (
+                <ul class="list">
+                  {addresses.map((address) => (
+                    <li>
+                      <div>
+                        {address.label ? <strong>{address.label}</strong> : null}
+                        <span>
+                          {address.line1}
+                          {address.line2 ? `, ${address.line2}` : ''}, {address.city}, {address.region} {address.postal}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>{databaseReady ? 'No saved addresses yet.' : 'Saved addresses need the site database.'}</p>
+              )
+            }
+            <form id="addressForm" class="form">
+              <label>Label <input name="label" autocomplete="off" /></label>
+              <label>Street <input name="line1" required autocomplete="address-line1" /></label>
+              <label>Apt / suite <input name="line2" autocomplete="address-line2" /></label>
+              <label>City <input name="city" required autocomplete="address-level2" /></label>
+              <label>State <input name="region" required autocomplete="address-level1" /></label>
+              <label>ZIP <input name="postal" required autocomplete="postal-code" /></label>
+              <Button type="submit">Save address</Button>
+              <p id="addressMsg" class="ok" hidden></p>
+            </form>
+          </section>
+        </>
+      ) : (
+        <>
+          <header class="page-hero">
+            <p class="eyebrow">Account</p>
+            <h1>Sign in</h1>
+            <p>We’ll email you a link. There is no password. The link expires in 20 minutes.</p>
+          </header>
+          {errorCode === 'link' ? <p class="error">That sign-in link is invalid or already used.</p> : null}
+          <form id="magicForm" class="form">
+            <label>
+              Email
+              <input type="email" name="email" required autocomplete="email" />
+            </label>
+            <input type="hidden" name="next" value={nextPath} />
+            {turnstileSiteKey ? <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div> : null}
+            <Button type="submit">Email me a sign-in link</Button>
+            {turnstileSiteKey ? <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script> : null}
+            <p id="magicMsg" class="ok" hidden></p>
+          </form>
+        </>
+      )
+    }
   </div>
 </Layout>
 
+<script>
+  import { addToCart } from '../../scripts/cart.ts';
+  import { getStudioConfig, isStudioTee } from '../../lib/design-studio.ts';
+
+  const magicForm = document.getElementById('magicForm');
+  magicForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!(magicForm instanceof HTMLFormElement)) return;
+    const data = new FormData(magicForm);
+    const msg = document.getElementById('magicMsg');
+    const res = await fetch('/api/auth/magic', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: data.get('email'),
+        next: data.get('next'),
+        turnstileToken: data.get('cf-turnstile-response'),
+      }),
+    });
+    const body = (await res.json()) as { error?: string; sent?: boolean; devLink?: string };
+    if (!msg) return;
+    msg.hidden = false;
+    if (!res.ok) {
+      msg.textContent = body.error ?? 'Could not send the link.';
+      return;
+    }
+    if (body.devLink) {
+      msg.innerHTML = `Email is not configured on this machine. <a href="${body.devLink}">Open the sign-in link</a>.`;
+      return;
+    }
+    msg.textContent = body.sent ? 'Check your email for the sign-in link.' : 'Could not send the email.';
+  });
+
+  const guestId = localStorage.getItem('lialvaro_design_guest');
+  if (guestId && document.getElementById('addressForm')) {
+    fetch('/api/account/attach', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ guestId }),
+    }).catch(() => undefined);
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-reorder]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const msg = document.getElementById('reorderMsg');
+      const res = await fetch(`/api/account/reorder?orderId=${encodeURIComponent(button.dataset.reorder ?? '')}`);
+      const body = (await res.json()) as {
+        error?: string;
+        lines?: Array<{
+          variantId: string;
+          quantity: number;
+          designId?: string;
+          size?: string;
+          printPositions?: number;
+          positions?: string;
+        }>;
+      };
+      if (!msg) return;
+      msg.hidden = false;
+      if (!res.ok || !body.lines?.length) {
+        msg.textContent = body.error ?? 'Nothing to reorder.';
+        return;
+      }
+      for (const line of body.lines) {
+        const studioProduct = getStudioConfig().products.find((product) => product.variantId === line.variantId);
+        addToCart(line.variantId, line.quantity, line.designId, line.size, {
+          studioPrice: isStudioTee(studioProduct) ? 'tee' : undefined,
+          printPositions: line.printPositions,
+          positions: line.positions,
+        });
+      }
+      window.location.href = '/cart/';
+    });
+  });
+
+  const addressForm = document.getElementById('addressForm');
+  addressForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!(addressForm instanceof HTMLFormElement)) return;
+    const data = new FormData(addressForm);
+    const msg = document.getElementById('addressMsg');
+    const res = await fetch('/api/account/address', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(Object.fromEntries(data.entries())),
+    });
+    const body = (await res.json()) as { error?: string };
+    if (!msg) return;
+    msg.hidden = false;
+    if (!res.ok) {
+      msg.textContent = body.error ?? 'Could not save the address.';
+      return;
+    }
+    window.location.reload();
+  });
+</script>
+
 <style>
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
+  .account h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1.25rem;
+    text-transform: uppercase;
+  }
+
+  .block {
+    margin-top: 2rem;
+  }
+
+  .list {
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+    display: grid;
     gap: 0.75rem;
   }
 
-  .ds-btn--secondary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 44px;
-    padding: 0.7rem 1.15rem;
-    border: 2px solid var(--ink);
-    border-radius: var(--radius-md);
+  .list li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    padding: 0.85rem 1rem;
     background: var(--white);
-    color: var(--ink);
-    font-family: var(--font-body);
-    font-size: var(--text-sm);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+  }
+
+  .list div {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .row-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .form {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 28rem;
+    margin-top: 1rem;
+  }
+
+  .form label {
+    display: grid;
+    gap: 0.3rem;
     font-weight: 700;
+    font-size: var(--text-sm);
+  }
+
+  .form input {
+    min-height: 44px;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-sm);
+    font: inherit;
+  }
+
+  .text-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--print-red);
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
     cursor: pointer;
+    min-height: 44px;
+  }
+
+  .error {
+    color: var(--print-red);
+    font-weight: 700;
+  }
+
+  .ok {
+    margin: 0;
   }
 </style>

@@ -1,59 +1,616 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import TodoBanner from '../components/TodoBanner.astro';
+import Button from '../components/ds/Button.astro';
+import { brand, claimText } from '../lib/claims';
+
+const effectiveDate = 'November 4, 2026';
+const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
+
+const toc = [
+  { id: 'agreement', label: '1. Agreement' },
+  { id: 'definitions', label: '2. Meaning of words and terms' },
+  { id: 'eligibility', label: '3. Who can order with LiAlvaro' },
+  { id: 'services', label: '4. What LiAlvaro provides' },
+  { id: 'ordering', label: '5. Orders, pricing, and payment' },
+  { id: 'artwork', label: '6. Artwork, proofs, and Design Studio' },
+  { id: 'production', label: '7. How we produce your order' },
+  { id: 'shipping', label: '8. Shipping, pickup, and delays' },
+  { id: 'returns', label: '9. Returns, refunds, and claims' },
+  { id: 'cancellations', label: '10. Canceling an order' },
+  { id: 'ip', label: '11. Your designs and rights' },
+  { id: 'our-ip', label: '12. LiAlvaro brand and materials' },
+  { id: 'conduct', label: '13. Rules for using the site' },
+  { id: 'disclaimers', label: '14. What we do and don’t promise' },
+  { id: 'liability', label: '15. Limits on our liability' },
+  { id: 'indemnification', label: '16. If a claim involves your content' },
+  { id: 'law', label: '17. California law' },
+  { id: 'changes', label: '18. When these terms change' },
+  { id: 'contact', label: '19. Reach LiAlvaro' },
+];
 ---
 
 <Layout
   title="Terms of Service"
-  description="Terms of Service for LiAlvaro T-Shirt Printing."
+  description={`Terms of Service for ${brand} — custom apparel printing in Los Angeles.`}
 >
-  <div class="page-shell">
-    <header class="page-hero">
-      <p class="eyebrow">Legal</p>
-      <h1>Terms of Service</h1>
-      <p>Terms that apply when you use this website or request services from LiAlvaro T-Shirt Printing.</p>
+  <div class="terms-page">
+    <header class="terms-hero">
+      <div class="terms-narrow">
+        <p class="terms-eyebrow">Legal</p>
+        <h1>Terms of Service</h1>
+        <p>
+          Terms for using our website, Design Studio, shop, and custom printing services from {brand}.
+        </p>
+        <p class="terms-dates">Effective Date: {effectiveDate} · Last Updated: {effectiveDate}</p>
+      </div>
     </header>
 
-    <TodoBanner title="Owner-supplied legal text required">
-      <p>
-        Replace this scaffold with the final Terms of Service before launch. Until then, contact
-        <a href="mailto:help@lialvaro.com">help@lialvaro.com</a> with questions.
-      </p>
-    </TodoBanner>
+    <section class="terms-main">
+      <div class="terms-narrow">
+        <p class="terms-lead">
+          These Terms of Service are a legal agreement between you and {brand} (“LiAlvaro,” “we,” “us,” or “our”), a Los
+          Angeles custom apparel printer. By using our website, Design Studio, approving artwork, placing an order,
+          requesting a quote, making payment, or otherwise using our services, you agree to these Terms and our
+          <a href="/privacy/">Privacy Policy</a>. If you do not agree, do not use our services or place an order.
+        </p>
 
-    <div class="prose">
-      <h2>Overview</h2>
-      <p>
-        By using this site or submitting a quote/design request, you agree to provide accurate contact information and
-        confirm you have rights to any artwork you upload.
-      </p>
-      <h2>Contact</h2>
-      <p>
-        Questions about these terms: <a href="mailto:help@lialvaro.com">help@lialvaro.com</a> or
-        <a href="tel:3109042655">(310) 904-2655</a>.
-      </p>
-    </div>
+        <nav class="terms-toc" aria-label="Agreement table of contents">
+          <div class="terms-toc__head">
+            <h2>Agreement — Table of Contents</h2>
+            <p>Jump to a section below.</p>
+          </div>
+          <ol>
+            {toc.map((item) => (
+              <li>
+                <a href={`#${item.id}`}>{item.label}</a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+
+        <div class="terms-body">
+      <section id="agreement">
+        <h2>1. Agreement</h2>
+        <p>
+          Welcome to {brand}. These Terms govern your access to and use of lialvaro.com (the “Website”), our online Design
+          Studio, shop listings, quote requests, and all printing, embroidery, and related services we provide.
+        </p>
+        <p class="plain">
+          Plain English: These are the rules that apply when you browse our site, design online, request a quote, or order
+          custom apparel from LiAlvaro.
+        </p>
+      </section>
+
+      <section id="definitions">
+        <h2>2. Meaning of words and terms</h2>
+        <ul>
+          <li>
+            <strong>“Customer,” “you,” or “your”</strong> means the person or business using our Website or purchasing our
+            services.
+          </li>
+          <li>
+            <strong>“Services”</strong> includes the Website, Design Studio, shop, quote tools, screen printing, DTG, DTF,
+            embroidery, design help, and fulfillment we provide.
+          </li>
+          <li>
+            <strong>“Order”</strong> means a purchase of products or services from LiAlvaro, including Design Studio
+            checkouts and accepted quotes.
+          </li>
+          <li>
+            <strong>“Custom Merchandise”</strong> means apparel or goods printed, embroidered, or otherwise decorated
+            specifically for you.
+          </li>
+          <li>
+            <strong>“Content”</strong> means artwork, text, logos, photos, files, instructions, or other materials you
+            provide or create in the Design Studio.
+          </li>
+          <li>
+            <strong>“Customer-Supplied Goods”</strong> means blanks or garments you provide for us to decorate.
+          </li>
+        </ul>
+      </section>
+
+      <section id="eligibility">
+        <h2>3. Who can order with LiAlvaro</h2>
+        <p>
+          You must be at least 18 years old and able to enter a binding agreement to place an Order. A person between 13
+          and 17 may use the Website only with a parent or guardian who accepts these Terms. Children under 13 may not
+          place Orders.
+        </p>
+      </section>
+
+      <section id="services">
+        <h2>4. What LiAlvaro provides</h2>
+        <p>{brand} provides Los Angeles–based custom apparel services, including:</p>
+        <ul>
+          <li>Screen printing</li>
+          <li>Direct-to-garment (DTG) printing</li>
+          <li>Direct-to-film (DTF) printing and transfers</li>
+          <li>Embroidery</li>
+          <li>Online Design Studio for selected blanks</li>
+          <li>Vendor design shop listings we print and fulfill</li>
+          <li>Custom and bulk quote jobs</li>
+        </ul>
+        <p>
+          Product availability depends on manufacturer and supplier inventory. We may add, change, or discontinue products
+          or Services from time to time.
+        </p>
+      </section>
+
+      <section id="ordering">
+        <h2>5. Orders, pricing, and payment</h2>
+        <h3>Placing an order</h3>
+        <p>
+          Orders may be placed through the Design Studio and cart, the shop, an accepted quote, phone, or our contact
+          form. All Orders are subject to acceptance by LiAlvaro. We may refuse or cancel an Order for inventory issues,
+          pricing or system errors, suspected fraud, payment problems, intellectual-property concerns, unlawful Content,
+          or other reasonable business or legal reasons.
+        </p>
+        <h3>Pricing</h3>
+        <p>
+          Prices are in U.S. dollars. Design Studio tees use quantity tiers shown in the studio; larger sizes and extra
+          print positions may add fees displayed before checkout. Shop and quote prices are as stated for that Order. We
+          may correct obvious pricing or calculation errors before production.
+        </p>
+        <h3>Payment</h3>
+        <p>
+          Payment is due in full before production unless we agree otherwise in writing. Online Orders are processed
+          through Stripe or another processor we designate. Same-day options, when offered, are subject to cutoff times,
+          piece limits, and Los Angeles ZIP eligibility confirmed after you provide an address.
+        </p>
+        <h3>Taxes</h3>
+        <p>
+          You are responsible for applicable sales tax and similar charges. California sales tax may apply unless valid
+          exemption documentation we recognize is on file before invoicing.
+        </p>
+        <p class="plain">
+          Plain English: Checkout prices are what you agree to pay for that Order. Quotes are estimates until we confirm
+          them and you accept.
+        </p>
+      </section>
+
+      <section id="artwork">
+        <h2>6. Artwork, proofs, and Design Studio</h2>
+        <h3>Your responsibility</h3>
+        <p>
+          You are responsible for reviewing spelling, names, numbers, colors, placement, garment style, sizes, and
+          quantities before approving artwork or completing checkout. Errors in Content you provide or approve generally
+          are not LiAlvaro production defects.
+        </p>
+        <h3>Design Studio mockups</h3>
+        <p>
+          Design Studio mockups are for visual reference. On-screen color and scale may differ from finished print. The
+          same design may look larger on smaller sizes and smaller on extended sizes unless we confirm different print
+          dimensions in writing.
+        </p>
+        <h3>Proofs and approvals</h3>
+        <p>
+          When we send a proof, mockup, or production spec for a quote job, your written approval (including reply by
+          email or text associated with the Order) authorizes production to those specs. Conflicting instructions are
+          resolved by the most recent written approval we confirm.
+        </p>
+        <h3>Color and print-method differences</h3>
+        <p>
+          Monitors, phones, and proofs can show color differently from ink, thread, and fabric. Reasonable differences
+          between a digital preview and the finished garment are not automatically defects. Screen printing, DTG, DTF, and
+          embroidery each have different looks and tolerances.
+        </p>
+      </section>
+
+      <section id="production">
+        <h2>7. How we produce your order</h2>
+        <h3>Timing</h3>
+        <p>
+          Production and turnaround estimates begin after payment is received and any required artwork approval is
+          complete. Late Content, incomplete information, Customer changes, or payment delays may extend the schedule.
+          Rush or same-day production, when available, depends on capacity, inventory, and artwork readiness.
+        </p>
+        <h3>Normal production variations</h3>
+        <p>
+          Custom decoration involves mechanical and hand processes. Reasonable variation in placement, ink or thread
+          color, garment shade, and sizing across manufacturing lots is expected and is not automatically a defect.
+        </p>
+        <h3>Customer-supplied blanks</h3>
+        <p>
+          If we decorate Customer-Supplied Goods, our decoration price does not insure the value of those blanks. You
+          accept the risk of fabric suitability, pre-existing condition, and normal spoilage from heat, pressure, ink, or
+          embroidery. We may refuse goods we believe are unsuitable. Supply extras when possible.
+        </p>
+        <h3>Product substitutions</h3>
+        <p>
+          If a blank, color, size, or method becomes unavailable, we may propose a comparable alternative and disclose
+          material price differences. We will not make a materially different substitution to an approved Order without
+          your approval.
+        </p>
+      </section>
+
+      <section id="shipping">
+        <h2>8. Shipping, pickup, and delays</h2>
+        <p>
+          You must provide a complete, accurate delivery address for shipped Orders. Local pickup, when offered, is your
+          responsibility after we notify you the Order is ready. We use third-party carriers and suppliers; delays outside
+          our reasonable control (carrier issues, inventory shortages, weather, emergencies) may affect timing. We will
+          make reasonable efforts to minimize impact.
+        </p>
+        <p>
+          Completed Orders left uncollected or undeliverable for more than 30 days after we notify you may be treated as
+          abandoned. We may recycle or dispose of abandoned merchandise without refund, because the goods were custom
+          produced.
+        </p>
+        <p class="plain">
+          Plain English: Once your Order is ready, pick it up or give us what we need to ship it. We cannot store finished
+          custom jobs forever.
+        </p>
+      </section>
+
+      <section id="returns">
+        <h2>9. Returns, refunds, and claims</h2>
+        <p>
+          Custom Merchandise generally cannot be returned for change of mind, event changes, wrong sizes you selected,
+          dissatisfaction with artwork you approved, or similar reasons unrelated to a verified LiAlvaro production error.
+        </p>
+        <p>
+          If we make a verified production error (material misprint, wrong item, production damage, or failure to match
+          approved specs), contact us within 7 business days of delivery or pickup with your Order details and photos. We
+          may correct, reprint, replace affected items, or offer credit or a partial refund for affected items only.
+        </p>
+        <p>
+          Inspect Orders before distributing or using them. Merchandise that has been worn, washed, altered, or given away
+          is generally not eligible for a monetary refund. If a refund is approved for delivered goods, those goods must
+          be returned before the refund is issued unless we agree otherwise in writing or law requires otherwise.
+        </p>
+        <p>Nothing in these Terms limits rights that cannot lawfully be waived.</p>
+      </section>
+
+      <section id="cancellations">
+        <h2>10. Canceling an order</h2>
+        <p>
+          Before production starts, you may ask us to cancel; we will confirm whether cancellation is still possible.
+          After blanks are ordered, screens or files are prepared, or decoration has begun, cancellations may be refused
+          or subject to charges for work already performed. Design Studio Orders paid online are custom jobs and are
+          generally non-cancelable once production begins.
+        </p>
+      </section>
+
+      <section id="ip">
+        <h2>11. Your designs and rights</h2>
+        <p>
+          You represent that you own or have all rights needed to use the Content you upload, create in the Design Studio,
+          or ask us to print—including logos, photos, names, and trademarks—and that the Content does not infringe others’
+          rights or violate law.
+        </p>
+        <p>
+          You grant LiAlvaro a limited license to use your Content solely to produce, fulfill, and support your Order
+          (including proofs, previews, and quality checks). You remain responsible for claims arising from Content you
+          provide.
+        </p>
+      </section>
+
+      <section id="our-ip">
+        <h2>12. LiAlvaro brand and materials</h2>
+        <p>
+          The Website, brand name, logos, Design Studio tools, layouts, and our original copy and graphics are owned by
+          LiAlvaro or our licensors. You may not copy, scrape, or reuse them except as needed to use our Services.
+          Production files, screens, and tooling we create for an Order remain our property unless we agree otherwise in
+          writing.
+        </p>
+      </section>
+
+      <section id="conduct">
+        <h2>13. Rules for using the site</h2>
+        <p>You agree not to use the Services to:</p>
+        <ul>
+          <li>Upload unlawful, infringing, hateful, or fraudulent Content</li>
+          <li>Interfere with the Website, Design Studio, or other users</li>
+          <li>Attempt unauthorized access to accounts, systems, or data</li>
+          <li>Misrepresent your identity or rights to artwork</li>
+        </ul>
+        <p>We may suspend or terminate access for violations of these Terms or activity that creates legal or security risk.</p>
+      </section>
+
+      <section id="disclaimers">
+        <h2>14. What we do and don’t promise</h2>
+        <p>
+          Except as expressly stated in these Terms or required by law, the Services and Custom Merchandise are provided
+          “as is.” We do not warrant uninterrupted Website availability or that digital mockups will match physical
+          results exactly. Care instructions on garments should be followed; improper washing or wear is outside our
+          control.
+        </p>
+      </section>
+
+      <section id="liability">
+        <h2>15. Limits on our liability</h2>
+        <p>
+          To the maximum extent permitted by law, LiAlvaro is not liable for indirect, incidental, special, consequential,
+          or punitive damages, or for lost profits, arising from the Services or an Order. Our total liability for any
+          claim related to an Order is limited to the amount you paid us for the affected items in that Order.
+        </p>
+      </section>
+
+      <section id="indemnification">
+        <h2>16. If a claim involves your content</h2>
+        <p>
+          You agree to defend and hold harmless LiAlvaro and our team from claims, damages, and expenses (including
+          reasonable attorneys’ fees) arising from your Content, your misuse of the Services, or your breach of these
+          Terms.
+        </p>
+      </section>
+
+      <section id="law">
+        <h2>17. California law</h2>
+        <p>
+          These Terms are governed by the laws of the State of California, without regard to conflict-of-law rules. Courts
+          in Los Angeles County, California, are the exclusive venue for disputes that are not resolved informally, except
+          where applicable law requires otherwise.
+        </p>
+      </section>
+
+      <section id="changes">
+        <h2>18. When these terms change</h2>
+        <p>
+          We may update these Terms from time to time. The “Last Updated” date above will change when we do. Continued use
+          of the Services after an update means you accept the revised Terms. Material changes for existing open Orders
+          will not apply retroactively to those Orders unless required by law.
+        </p>
+      </section>
+
+      <section id="contact">
+        <h2>19. Reach LiAlvaro</h2>
+        <p>Questions about these Terms:</p>
+        <ul>
+          <li>
+            <a href="/contact/">Contact form</a>
+          </li>
+          <li>
+            Phone: <a href="tel:3109042655">(310) 904-2655</a>
+          </li>
+          <li>{brand} · Los Angeles, CA</li>
+        </ul>
+      </section>
+        </div>
+
+        <section class="terms-cta">
+          <h2>Questions about an order or these terms?</h2>
+          <p>Share the project details with us — or call if you need something clarified.</p>
+          <div class="terms-cta__actions">
+            <button type="button" class="ds-btn ds-btn--primary" data-quote-trigger>Get a Fast, Free Quote</button>
+            <Button variant="secondary" href="tel:3109042655">{phone}</Button>
+          </div>
+        </section>
+      </div>
+    </section>
   </div>
 </Layout>
 
 <style>
-  .prose {
-    max-width: 42rem;
-    display: grid;
-    gap: 0.75rem;
+  .terms-page {
+    background: var(--white);
   }
 
-  .prose h2 {
-    margin: 1rem 0 0;
-    font-size: var(--text-xl);
+  .terms-narrow {
+    box-sizing: border-box;
+    width: min(640px, calc(100% - 2 * var(--site-gutter)));
+    margin-inline: auto;
+    padding-inline: var(--site-pad);
   }
 
-  .prose p {
-    margin: 0;
-    color: color-mix(in srgb, var(--ink) 85%, var(--mesh-grey));
+  .terms-hero {
+    padding: 4.5rem 0 3.25rem;
+    text-align: center;
   }
 
-  .prose a {
+  .terms-eyebrow {
+    margin: 0 0 0.65rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     color: var(--print-red);
+  }
+
+  .terms-hero h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+
+  .terms-hero p:not(.terms-eyebrow):not(.terms-dates) {
+    margin: 0.85rem auto 0;
+    max-width: 36rem;
+    color: #6e6e73;
+    font-size: 1.05rem;
+    line-height: 1.55;
+  }
+
+  .terms-dates {
+    margin: 0.75rem auto 0;
+    font-size: 0.875rem;
+    color: #86868b;
+  }
+
+  .terms-main {
+    padding: 4.5rem 0 5.5rem;
+    background: #fafafa;
+  }
+
+  .terms-lead {
+    margin: 0 0 2.5rem;
+    color: #6e6e73;
+    font-size: 0.9875rem;
+    line-height: 1.6;
+  }
+
+  .terms-lead a {
+    color: var(--print-red);
+  }
+
+  .terms-toc {
+    margin: 0 0 3.5rem;
+    padding: 1.5rem 1.35rem;
+    border-radius: 20px;
+    background: var(--white);
+    border: 1px solid #e5e5ea;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  }
+
+  .terms-toc__head h2 {
+    margin: 0 0 0.35rem;
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .terms-toc__head p {
+    margin: 0 0 1.15rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: #6e6e73;
+  }
+
+  .terms-toc ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.4rem;
+    columns: 2;
+    column-gap: 1.5rem;
+  }
+
+  .terms-toc li {
+    break-inside: avoid;
+  }
+
+  .terms-toc a {
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+
+  .terms-toc a:hover {
+    color: var(--print-red);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .terms-body {
+    display: grid;
+    gap: 2.75rem;
+  }
+
+  .terms-body section {
+    scroll-margin-top: 5rem;
+  }
+
+  .terms-body h2 {
+    margin: 0 0 0.65rem;
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .terms-body h3 {
+    margin: 1.15rem 0 0.4rem;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .terms-body p,
+  .terms-body li {
+    margin: 0;
+    color: #6e6e73;
+    font-size: 0.9875rem;
+    line-height: 1.6;
+  }
+
+  .terms-body p + p,
+  .terms-body p + ul,
+  .terms-body ul + p {
+    margin-top: 0.75rem;
+  }
+
+  .terms-body ul {
+    margin: 0.55rem 0 0;
+    padding-left: 1.2rem;
+    display: grid;
+    gap: 0.45rem;
+  }
+
+  .terms-body a {
+    color: var(--print-red);
+  }
+
+  .plain {
+    margin-top: 0.85rem !important;
+    padding: 0.85rem 1rem;
+    border-radius: 12px;
+    background: var(--white);
+    border: 1px solid #e5e5ea;
+    font-size: 0.9375rem;
+  }
+
+  .terms-cta {
+    margin-top: 3.5rem;
+    padding: 2rem 1.5rem;
+    border-radius: 20px;
+    background: var(--white);
+    border: 1px solid #e5e5ea;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    text-align: center;
+  }
+
+  .terms-cta h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .terms-cta p {
+    margin: 0.55rem 0 0;
+    color: #6e6e73;
+    font-size: 0.95rem;
+  }
+
+  .terms-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-top: 1.15rem;
+  }
+
+  .ds-btn--primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.7rem 1.15rem;
+    border: 0;
+    border-radius: 8px;
+    background: var(--print-red);
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  @media (max-width: 700px) {
+    .terms-toc ol {
+      columns: 1;
+    }
   }
 </style>

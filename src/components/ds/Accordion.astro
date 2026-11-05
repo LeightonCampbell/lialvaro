@@ -8,9 +8,11 @@ interface Item {
 interface Props {
   items: Item[];
   class?: string;
+  /** When true, the first item starts expanded. */
+  openFirst?: boolean;
 }
 
-const { items, class: className = '' } = Astro.props;
+const { items, class: className = '', openFirst = false } = Astro.props;
 ---
 
 <div class:list={['ds-accordion', className]}>
@@ -19,10 +21,10 @@ const { items, class: className = '' } = Astro.props;
       <p class="ds-accordion__empty">No questions yet.</p>
     ) : (
       items.map((item, index) => (
-        <details class="ds-accordion__item" open={index === 0}>
+        <details class="ds-accordion__item" open={openFirst && index === 0}>
           <summary class="ds-accordion__summary">
-            <span>{item.question}</span>
-            <span class="ds-accordion__icon" aria-hidden="true">+</span>
+            <span class="ds-accordion__q">{item.question}</span>
+            <span class="ds-accordion__chevron" aria-hidden="true"></span>
           </summary>
           <div class="ds-accordion__panel">
             <p>{item.answer}</p>
@@ -35,26 +37,36 @@ const { items, class: className = '' } = Astro.props;
 
 <style>
   .ds-accordion {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 0;
-    border-top: var(--cutline);
+    border-radius: 20px;
+    border: 1px solid #e5e5ea;
+    background: var(--white);
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
   }
 
   .ds-accordion__item {
-    border-bottom: var(--cutline);
+    border-bottom: 1px solid #f0f0f5;
+  }
+
+  .ds-accordion__item:last-child {
+    border-bottom: none;
   }
 
   .ds-accordion__summary {
+    list-style: none;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-3);
-    min-height: 52px;
-    padding: var(--space-3) 0;
-    cursor: pointer;
-    list-style: none;
-    font-weight: 700;
+    gap: 16px;
+    padding: 18px 22px;
+    font-size: 15px;
+    font-weight: 600;
     color: var(--ink);
+    transition: background 0.15s ease;
   }
 
   .ds-accordion__summary::-webkit-details-marker {
@@ -62,36 +74,49 @@ const { items, class: className = '' } = Astro.props;
   }
 
   .ds-accordion__summary:hover {
-    color: var(--print-red);
+    background: #fafafa;
   }
 
   .ds-accordion__summary:focus-visible {
     outline: 3px solid var(--color-focus);
-    outline-offset: 2px;
+    outline-offset: -3px;
   }
 
-  .ds-accordion__icon {
-    font-family: var(--font-mono);
-    color: var(--mesh-text);
+  .ds-accordion__q {
+    text-align: left;
+    line-height: 1.4;
   }
 
-  .ds-accordion__item[open] .ds-accordion__icon {
+  .ds-accordion__chevron {
+    flex-shrink: 0;
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid var(--print-red);
+    border-bottom: 2px solid var(--print-red);
     transform: rotate(45deg);
+    margin-top: -4px;
+    transition: transform 0.22s ease;
+  }
+
+  .ds-accordion__item[open] .ds-accordion__chevron {
+    transform: rotate(225deg);
+    margin-top: 4px;
   }
 
   .ds-accordion__panel {
-    padding: 0 0 var(--space-4);
+    padding: 0 22px 18px;
   }
 
   .ds-accordion__panel p {
     margin: 0;
-    max-width: 60ch;
-    color: color-mix(in srgb, var(--ink) 85%, var(--mesh-grey));
-    line-height: var(--leading-normal);
+    font-size: 15px;
+    line-height: 1.65;
+    color: #6e6e73;
   }
 
   .ds-accordion__empty {
     margin: 0;
+    padding: 1.25rem 1.35rem;
     color: var(--mesh-text);
     font-style: italic;
   }

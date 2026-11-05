@@ -32,6 +32,8 @@ export type CatalogProduct = {
   vendorCutBps: number;
   blankCostCents: number;
   imageUrl?: string | null;
+  hoverImageUrl?: string | null;
+  galleryUrls?: string[];
   variants: CatalogVariant[];
 };
 
@@ -58,6 +60,10 @@ function mapSeed(): { vendors: Vendor[]; products: CatalogProduct[] } {
       vendorCutBps: p.vendorCutBps,
       blankCostCents: p.blankCostCents,
       imageUrl: p.imageUrl,
+      hoverImageUrl: (p as { hoverImageUrl?: string | null }).hoverImageUrl ?? null,
+      galleryUrls:
+        (p as { galleryUrls?: string[] }).galleryUrls ??
+        (p.imageUrl ? [p.imageUrl] : []),
       variants: p.variants.map((v) => ({
         id: v.id,
         sku: v.sku,

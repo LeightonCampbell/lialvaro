@@ -7,6 +7,8 @@ interface Props {
   loading?: boolean;
   state?: 'default' | 'error';
   class?: string;
+  'data-quote-trigger'?: string | boolean;
+  'data-quote-service'?: string;
 }
 
 const {
@@ -17,6 +19,7 @@ const {
   loading = false,
   state = 'default',
   class: className = '',
+  ...rest
 } = Astro.props;
 
 const classes = ['ds-btn', `ds-btn--${variant}`, state === 'error' ? 'is-error' : '', loading ? 'is-loading' : '', className]
@@ -28,12 +31,19 @@ const isDisabled = disabled || loading;
 
 {
   href && !isDisabled ? (
-    <a class={classes} href={href} data-state={state} aria-busy={loading ? 'true' : undefined}>
+    <a class={classes} href={href} data-state={state} aria-busy={loading ? 'true' : undefined} {...rest}>
       {loading ? <span class="ds-btn__spinner" aria-hidden="true" /> : null}
       <span class="ds-btn__label"><slot /></span>
     </a>
   ) : (
-    <button class={classes} type={type} disabled={isDisabled} data-state={state} aria-busy={loading ? 'true' : undefined}>
+    <button
+      class={classes}
+      type={type}
+      disabled={isDisabled}
+      data-state={state}
+      aria-busy={loading ? 'true' : undefined}
+      {...rest}
+    >
       {loading ? <span class="ds-btn__spinner" aria-hidden="true" /> : null}
       <span class="ds-btn__label"><slot /></span>
     </button>
@@ -50,9 +60,9 @@ const isDisabled = disabled || loading;
     justify-content: center;
     gap: var(--space-2);
     min-height: 44px;
-    padding: 0.7rem 1.15rem;
-    border: 2px solid var(--btn-border);
-    border-radius: var(--radius-md);
+    padding: 0.75rem 1.35rem;
+    border: 0;
+    border-radius: var(--radius-pill);
     background: var(--btn-bg);
     color: var(--btn-ink);
     font-family: var(--font-body);
@@ -70,9 +80,9 @@ const isDisabled = disabled || loading;
   }
 
   .ds-btn--secondary {
-    --btn-bg: var(--white);
+    --btn-bg: color-mix(in srgb, var(--ink) 6%, var(--white));
     --btn-ink: var(--ink);
-    --btn-border: var(--ink);
+    --btn-border: transparent;
   }
 
   .ds-btn--ghost {
@@ -84,7 +94,7 @@ const isDisabled = disabled || loading;
   }
 
   .ds-btn:hover:not(:disabled) {
-    transform: translateY(-1px);
+    filter: brightness(0.96);
   }
 
   .ds-btn--primary:hover:not(:disabled) {

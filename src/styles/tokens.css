@@ -6,13 +6,19 @@
 @import './fonts.css';
 
 :root {
-  /* Brand palette (BUILD_PLAN) */
-  --canvas: #efebe1;
-  --ink: #1b2233;
-  --print-red: #c8102e;
+  /* Brand palette (BUILD_PLAN) + TeeSpace-inspired studio system */
+  --canvas: #ffffff;
+  --ink: #111111;
+  --print-red: #ff6b2b;
+  --studio-green: #22856c;
+  --studio-green-dark: #1c6e5a;
+  --studio-soft: #f5f5f5;
+  --studio-mint: #e7f6f1;
+  --studio-lilac: #c9b6e4;
+  --studio-lilac-deep: #7b5ea7;
   --gold: #b8912a;
-  --mesh-grey: #8b8b85;
-  --white: #fffdf9;
+  --mesh-grey: #86868b;
+  --white: #ffffff;
 
   /* Text-safe companions (AA on canvas/white; brand gold/mesh kept for fills) */
   --gold-text: #6a5214;
@@ -25,8 +31,8 @@
   --color-muted: var(--mesh-text);
   --color-accent: var(--print-red);
   --color-accent-secondary: var(--gold-text);
-  --color-border: color-mix(in srgb, var(--ink) 18%, transparent);
-  --color-border-strong: color-mix(in srgb, var(--ink) 40%, transparent);
+  --color-border: color-mix(in srgb, var(--ink) 8%, transparent);
+  --color-border-strong: color-mix(in srgb, var(--ink) 14%, transparent);
   --color-focus: var(--print-red);
   --color-danger: #9f1239;
   --color-success: #166534;
@@ -61,14 +67,21 @@
   --space-7: 3rem;
   --space-8: 4rem;
 
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --radius-lg: 8px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 28px;
+  --radius-xl: 32px;
+  --radius-pill: 999px;
 
-  --shadow-soft: 0 1px 0 color-mix(in srgb, var(--ink) 8%, transparent);
+  /* Header pill and page column share one content width. */
+  --site-gutter: 16px;
+  --site-pad: 1.35rem;
+  --site-max: 1440px;
+
+  --shadow-soft: 0 12px 40px color-mix(in srgb, var(--ink) 8%, transparent);
 
   /* Motifs */
-  --cutline: 1px dashed color-mix(in srgb, var(--mesh-grey) 80%, var(--ink));
+  --cutline: 1px solid var(--color-border-strong);
   --reg-mark-size: 14px;
 
   /* Motion */

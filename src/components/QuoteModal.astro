@@ -1,21 +1,25 @@
 ---
+import { readSecret } from '../lib/env';
+
+const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
 ---
 <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal" id="modal">
     <div id="modalForm">
       <div class="modal-header">
         <div class="modal-header-text">
-          <div class="modal-eyebrow">Free Quote</div>
           <div class="modal-title" id="modalTitle">Let's get you a quote</div>
           <div class="modal-sub">We'll respond within 1 business hour.</div>
         </div>
-        <button type="button" class="modal-close" id="modalClose" aria-label="Close">✕</button>
+        <button type="button" class="modal-close" id="modalClose" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
       </div>
 
       <form
         id="quoteForm"
         class="modal-body"
-        action="https://formspree.io/f/xnjoaoyw"
+        action="/api/quotes"
         method="POST"
         novalidate
       >
@@ -27,38 +31,15 @@
         <input type="text" name="_gotcha" style="display:none" />
         <input type="hidden" name="service" id="quoteServiceInput" value="" />
 
+        <ol class="quote-progress" id="quoteProgress" aria-label="Quote steps">
+          <li data-step="1" class="is-active"><span>1</span> Design</li>
+          <li data-step="2"><span>2</span> Files</li>
+          <li data-step="3"><span>3</span> Contact</li>
+        </ol>
+
         <div class="quote-error" id="quoteError" aria-live="polite" hidden></div>
         <div class="quote-step" id="quoteStep1">
-          <div class="step-label">
-            Step 1: Select a service <span class="quote-optional">(optional)</span>
-          </div>
-
-          <div class="service-picker" id="servicePicker">
-            <div class="service-opt" data-service="Screen Printing">
-              <span class="service-opt-icon">🖨️</span>
-              <span class="service-opt-name">Screen Printing</span>
-            </div>
-            <div class="service-opt" data-service="Direct to Garment">
-              <span class="service-opt-icon">🎨</span>
-              <span class="service-opt-name">DTG Printing</span>
-            </div>
-            <div class="service-opt" data-service="Direct to Film">
-              <span class="service-opt-icon">🎞️</span>
-              <span class="service-opt-name">Direct to Film</span>
-            </div>
-            <div class="service-opt" data-service="Embroidery">
-              <span class="service-opt-icon">🪡</span>
-              <span class="service-opt-name">Embroidery</span>
-            </div>
-          </div>
-
-          <div class="modal-nav modal-nav-single">
-            <button type="button" class="modal-submit modal-nav-btn" id="step1Next">Next →</button>
-          </div>
-        </div>
-
-        <div class="quote-step" id="quoteStep2" hidden>
-          <div class="step-label">Step 2: What would you like to design?* </div>
+          <div class="step-label">Step 1: What would you like to design?* </div>
 
           <div class="choice-grid" role="group" aria-label="What would you like to design?">
             <label class="choice">
@@ -114,14 +95,13 @@
             />
           </div>
 
-          <div class="modal-nav">
-            <button type="button" class="modal-back modal-nav-btn" id="step2Back">Back</button>
-            <button type="button" class="modal-submit modal-nav-btn" id="step2Next">Next →</button>
+          <div class="modal-nav modal-nav-single">
+            <button type="button" class="modal-submit modal-nav-btn" id="step1Next">Next →</button>
           </div>
         </div>
 
-        <div class="quote-step" id="quoteStep3" hidden>
-          <div class="step-label">Step 3: Blanks &amp; design upload</div>
+        <div class="quote-step" id="quoteStep2" hidden>
+          <div class="step-label">Step 2: Blanks &amp; design upload</div>
 
           <div class="form-group" style="margin-bottom:22px;">
             <div class="form-label" style="margin-bottom:10px; text-transform:none;">Will you be providing the blank(s)?*</div>
@@ -153,11 +133,12 @@
           <div class="form-divider">Upload your design(s) (optional)</div>
 
           <div class="upload-dropzone" id="uploadDropzone" role="button" tabindex="0" aria-label="Upload your design files (optional)">
-            <input type="file" id="quote-files" name="design_files" multiple hidden />
-            <div class="upload-icon" aria-hidden="true">⬆️</div>
-            <div class="upload-title">Upload File(s)</div>
-            <div class="upload-sub">Drag and drop files here</div>
+            <input type="file" id="quote-files" name="design_files" multiple accept=".png,.jpg,.jpeg,.gif,.webp,.svg,.pdf,.ai,.eps,.zip,image/*,application/pdf,application/zip" hidden />
+            <div class="upload-icon" aria-hidden="true"></div>
+            <div class="upload-title">Upload file(s)</div>
+            <div class="upload-sub">PNG, JPG, PDF, AI, EPS, or ZIP — drag and drop or browse</div>
             <button type="button" class="upload-browse" id="uploadBrowse">Browse</button>
+            <div class="upload-list" id="uploadList" hidden></div>
           </div>
 
           <div class="form-group">
@@ -171,13 +152,13 @@
           </div>
 
           <div class="modal-nav">
-            <button type="button" class="modal-back modal-nav-btn" id="step3Back">Back</button>
-            <button type="button" class="modal-submit modal-nav-btn" id="step3Next">Next →</button>
+            <button type="button" class="modal-back modal-nav-btn" id="step2Back">Back</button>
+            <button type="button" class="modal-submit modal-nav-btn" id="step2Next">Next →</button>
           </div>
         </div>
 
-        <div class="quote-step" id="quoteStep4" hidden>
-          <div class="step-label">Step 4: Your details</div>
+        <div class="quote-step" id="quoteStep3" hidden>
+          <div class="step-label">Step 3: Your details</div>
 
           <div class="form-row">
             <div class="form-group">
@@ -229,19 +210,31 @@
             </div>
           </div>
 
+          {
+            turnstileSiteKey ? (
+              <div class="quote-turnstile">
+                <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>
+              </div>
+            ) : null
+          }
           <div class="modal-nav">
-            <button type="button" class="modal-back modal-nav-btn" id="step4Back">Back</button>
-            <button type="submit" class="modal-submit modal-nav-btn" id="step4Submit">Get My Free Quote →</button>
+            <button type="button" class="modal-back modal-nav-btn" id="step3Back">Back</button>
+            <button type="submit" class="modal-submit modal-nav-btn" id="step3Submit">Get My Free Quote →</button>
           </div>
+          {
+            turnstileSiteKey ? (
+              <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+            ) : null
+          }
 
-          <div class="modal-guarantee">🔒 &nbsp;No spam. No hidden fees. Just a fast, honest quote.</div>
+          <div class="modal-guarantee">No spam. No hidden fees. Just a fast, honest quote.</div>
         </div>
       </form>
     </div>
 
     <div class="modal-success" id="modalSuccess">
-      <div class="success-icon">🎉</div>
-      <div class="success-title">Quote request received!</div>
+      <div class="success-icon" aria-hidden="true"></div>
+      <div class="success-title">Quote request received</div>
       <div class="success-sub">
         We'll reach out within 1 business hour. For urgent orders, call us at
         <a href="tel:3109042655" class="success-phone">(310) 904-2655</a>.
@@ -259,24 +252,20 @@
     const step1 = document.getElementById('quoteStep1');
     const step2 = document.getElementById('quoteStep2');
     const step3 = document.getElementById('quoteStep3');
-    const step4 = document.getElementById('quoteStep4');
     const errorEl = document.getElementById('quoteError');
     const modalClose = document.getElementById('modalClose');
     const successClose = document.getElementById('successClose');
-    const servicePicker = document.getElementById('servicePicker');
     const blankMaterialWrap = document.getElementById('blankMaterialWrap');
 
     const step1Next = document.getElementById('step1Next');
     const step2Back = document.getElementById('step2Back');
     const step2Next = document.getElementById('step2Next');
     const step3Back = document.getElementById('step3Back');
-    const step3Next = document.getElementById('step3Next');
-    const step4Back = document.getElementById('step4Back');
-    const step4Submit = document.getElementById('step4Submit');
+    const step3Submit = document.getElementById('step3Submit');
 
     const quoteForm = document.getElementById('quoteForm');
     const quoteServiceInput = document.getElementById('quoteServiceInput');
-    const submitBtn = step4Submit;
+    const submitBtn = step3Submit;
 
     const designTypeInputs = document.querySelectorAll('input[name="quote-design-type"]');
     const colorsSelect = document.getElementById('quote-colors');
@@ -301,8 +290,8 @@
 
     function updateColorsVisibility() {
       if (!quoteColorsWrap || !colorsSelect) return;
-      const selectedServices = Array.from(document.querySelectorAll('.service-opt.selected')).map((o) => o.dataset.service);
-      const wantsColors = selectedServices.includes('Screen Printing') || selectedServices.includes('Embroidery');
+      const service = quoteServiceInput ? quoteServiceInput.value : '';
+      const wantsColors = service === 'Screen Printing' || service === 'Embroidery';
       quoteColorsWrap.hidden = !wantsColors;
       if (!wantsColors) colorsSelect.value = '';
     }
@@ -320,20 +309,23 @@
 
     function setStep(step) {
       currentStep = step;
-      [step1, step2, step3, step4].forEach((el, idx) => {
+      [step1, step2, step3].forEach((el, idx) => {
         if (!el) return;
         el.hidden = idx !== (step - 1);
       });
+      document.querySelectorAll('#quoteProgress [data-step]').forEach((el) => {
+        const n = Number(el.getAttribute('data-step'));
+        el.classList.toggle('is-active', n === step);
+        el.classList.toggle('is-done', n < step);
+      });
       setError('');
-      if (step === 2) updateColorsVisibility();
+      if (step === 1) updateColorsVisibility();
       window.dispatchEvent(new CustomEvent('lialvaro:quote-step', { detail: { step } }));
     }
 
     function resetForm() {
       setError('');
 
-      // Service selection is optional.
-      document.querySelectorAll('.service-opt').forEach((o) => o.classList.remove('selected'));
       if (quoteServiceInput) quoteServiceInput.value = '';
 
       designTypeInputs.forEach((i) => (i.checked = false));
@@ -357,13 +349,7 @@
     function openModal(service) {
       resetForm();
 
-      if (service) {
-        document.querySelectorAll('.service-opt').forEach(function (o) {
-          o.classList.toggle('selected', o.dataset.service === service);
-        });
-      }
-      const selectedService = document.querySelector('.service-opt.selected');
-      if (quoteServiceInput) quoteServiceInput.value = selectedService ? selectedService.dataset.service : '';
+      if (quoteServiceInput) quoteServiceInput.value = service || '';
 
       formView.style.display = '';
       successView.style.display = 'none';
@@ -418,28 +404,7 @@
       if (e.key === 'Escape' && overlay.classList.contains('active')) closeModal();
     });
 
-    servicePicker?.addEventListener('click', function (e) {
-      var opt = e.target.closest('.service-opt');
-      if (!opt) return;
-      document.querySelectorAll('.service-opt').forEach(function (o) {
-        o.classList.remove('selected');
-      });
-      opt.classList.add('selected');
-      if (currentStep === 2) updateColorsVisibility();
-
-      const selectedService = document.querySelector('.service-opt.selected');
-      if (quoteServiceInput) quoteServiceInput.value = selectedService ? selectedService.dataset.service : '';
-    });
-
     step1Next?.addEventListener('click', function () {
-      setStep(2);
-    });
-
-    step2Back?.addEventListener('click', function () {
-      setStep(1);
-    });
-
-    step2Next?.addEventListener('click', function () {
       var designSelected = Array.from(designTypeInputs).some((i) => i.checked);
       var colorsSelected = colorsSelect && colorsSelect.value;
       var pieces = piecesInput ? piecesInput.value : '';
@@ -462,14 +427,14 @@
         return;
       }
 
-      setStep(3);
-    });
-
-    step3Back?.addEventListener('click', function () {
       setStep(2);
     });
 
-    step3Next?.addEventListener('click', function () {
+    step2Back?.addEventListener('click', function () {
+      setStep(1);
+    });
+
+    step2Next?.addEventListener('click', function () {
       var blanksSelected = Array.from(blanksProvidingInputs).find((i) => i.checked);
       if (!blanksSelected) {
         setError('Please select whether you will provide the blanks.');
@@ -485,16 +450,16 @@
         }
       }
 
-      setStep(4);
+      setStep(3);
     });
 
-    step4Back?.addEventListener('click', function () {
-      setStep(3);
+    step3Back?.addEventListener('click', function () {
+      setStep(2);
     });
 
     quoteForm.addEventListener('submit', async function (e) {
       e.preventDefault();
-      if (currentStep !== 4) return;
+      if (currentStep !== 3) return;
 
       var fname = fnameInput ? fnameInput.value.trim() : '';
       var lname = lnameInput ? lnameInput.value.trim() : '';
@@ -531,8 +496,7 @@
 
       try {
         var formData = new FormData(quoteForm);
-        var endpoint = quoteForm.getAttribute('action') || 'https://formspree.io/f/xnjoaoyw';
-        var res = await fetch(endpoint, { method: 'POST', body: formData });
+        var res = await fetch('/api/quotes', { method: 'POST', body: formData, headers: { Accept: 'application/json' } });
 
         if (res && res.ok) {
           formView.style.display = 'none';
@@ -542,7 +506,14 @@
           return;
         }
 
-        setError('Submission failed. Please try again.');
+        var message = 'Submission failed. Please try again.';
+        try {
+          var body = await res.json();
+          if (body && body.error) message = body.error;
+        } catch (_parse) {
+          /* keep the fallback */
+        }
+        setError(message);
       } catch (_err) {
         setError('Network error. Please check your connection and try again.');
       } finally {
@@ -561,10 +532,44 @@
       });
     });
 
+    const uploadList = document.getElementById('uploadList');
+
+    function syncUploadList() {
+      if (!uploadList || !filesInput) return;
+      const names = Array.from(filesInput.files || []).map((file) => file.name);
+      if (!names.length) {
+        uploadList.hidden = true;
+        uploadList.textContent = '';
+        return;
+      }
+      uploadList.hidden = false;
+      uploadList.textContent =
+        names.length === 1 ? `Selected: ${names[0]}` : `Selected (${names.length}): ${names.join(', ')}`;
+    }
+
+    function assignFiles(list) {
+      if (!filesInput || !list || !list.length) return;
+      try {
+        const transfer = new DataTransfer();
+        Array.from(list).forEach((file) => transfer.items.add(file));
+        filesInput.files = transfer.files;
+      } catch (_err) {
+        try {
+          filesInput.files = list;
+        } catch (_assign) {
+          /* ignore */
+        }
+      }
+      syncUploadList();
+    }
+
     // Upload (optional): clicking anywhere in the upload section opens the file picker.
-    uploadDropzone?.addEventListener('click', function () {
+    uploadDropzone?.addEventListener('click', function (e) {
+      if (e.target && e.target.closest && e.target.closest('.upload-browse')) return;
       filesInput?.click?.();
     });
+
+    filesInput?.addEventListener('change', syncUploadList);
 
     // Support drop + keyboard open.
     if (uploadDropzone) {
@@ -599,13 +604,7 @@
       uploadDropzone.addEventListener('drop', function (e) {
         const dt = e.dataTransfer;
         if (!dt || !dt.files || !dt.files.length) return;
-        if (filesInput) {
-          try {
-            filesInput.files = dt.files;
-          } catch (_err) {
-            // Some browsers may not allow assignment to input.files.
-          }
-        }
+        assignFiles(dt.files);
       });
     }
   })();
@@ -613,18 +612,70 @@
 
 <style is:global>
   :root {
-    --orange: #ff6b2b;
-    --orange-deep: #e8521a;
-    --orange-soft: #fff0e8;
-    --orange-mid: #ffd9c4;
+    --orange: #c8102e;
+    --orange-deep: #a50d25;
+    --orange-soft: #fdecef;
+    --orange-mid: #f5b4be;
     --surface: #f5f5f7;
     --border: #e5e5ea;
-    --text-primary: #1d1d1f;
+    --text-primary: #1b2233;
     --text-secondary: #6e6e73;
     --text-tertiary: #8e8e93;
     --shadow-xl: 0 32px 80px rgba(0, 0, 0, 0.14), 0 8px 24px rgba(0, 0, 0, 0.07);
     --radius-sm: 10px;
-    --radius-xl: 32px;
+    --radius-xl: 20px;
+    --quote-font: var(--font-body, 'Inter', system-ui, sans-serif);
+  }
+
+  .quote-progress {
+    list-style: none;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.4rem;
+  }
+
+  .quote-progress li {
+    display: grid;
+    justify-items: center;
+    gap: 0.35rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+
+  .quote-progress li span {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    font-size: 0.75rem;
+  }
+
+  .quote-progress li.is-active {
+    color: var(--orange);
+  }
+
+  .quote-progress li.is-done {
+    color: var(--studio-green, #22856c);
+  }
+
+  .quote-progress li.is-active span {
+    border-color: var(--orange);
+    background: var(--orange);
+    color: #fff;
+  }
+
+  .quote-progress li.is-done span {
+    border-color: var(--studio-green, #22856c);
+    background: var(--studio-mint, #e7f6f1);
+    color: var(--studio-green, #22856c);
   }
 
   .modal-overlay {
@@ -670,19 +721,11 @@
     align-items: flex-start;
   }
 
-  .modal-eyebrow {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--orange);
-    margin-bottom: 6px;
-  }
-
   .modal-title {
     font-size: 24px;
     font-weight: 800;
     letter-spacing: -0.025em;
+    color: var(--orange);
   }
 
   .modal-sub {
@@ -752,10 +795,20 @@
     border-radius: var(--radius-sm);
   }
 
+  .quote-turnstile {
+    margin-top: 18px;
+    display: flex;
+    justify-content: center;
+  }
+
   .modal-nav {
     display: flex;
     gap: 12px;
     margin-top: 18px;
+  }
+
+  .quote-turnstile + .modal-nav {
+    margin-top: 12px;
   }
 
   .modal-nav-single {
@@ -782,7 +835,7 @@
     padding: 15px;
     border-radius: var(--radius-sm);
     cursor: pointer;
-    font-family: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--quote-font);
     font-size: 15px;
     font-weight: 700;
     letter-spacing: -0.01em;
@@ -875,14 +928,20 @@
   }
 
   .upload-dropzone.dragover {
-    border-color: rgba(255, 107, 43, 1);
+    border-color: var(--orange);
     background: white;
   }
 
   .upload-icon {
-    font-size: 28px;
-    margin-bottom: 10px;
-    color: var(--orange);
+    width: 36px;
+    height: 36px;
+    margin: 0 auto 10px;
+    border-radius: 10px;
+    border: 1.5px dashed var(--orange-mid);
+    background:
+      linear-gradient(var(--orange), var(--orange)) center 11px / 14px 2px no-repeat,
+      linear-gradient(var(--orange), var(--orange)) center / 2px 14px no-repeat,
+      var(--orange-soft);
   }
 
   .upload-title {
@@ -906,7 +965,7 @@
     padding: 10px 16px;
     border-radius: 100px;
     cursor: pointer;
-    font-family: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--quote-font);
     font-size: 13.5px;
     font-weight: 700;
     transition: background 0.18s, border-color 0.18s, transform 0.15s;
@@ -918,43 +977,13 @@
     transform: translateY(-1px);
   }
 
-  .service-picker {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin-bottom: 24px;
-  }
-
-  .service-opt {
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: border-color 0.18s, background 0.18s;
-    background: white;
-  }
-
-  .service-opt:hover {
-    border-color: var(--orange-mid);
-    background: var(--orange-soft);
-  }
-
-  .service-opt.selected {
-    border-color: var(--orange);
-    background: var(--orange-soft);
-  }
-
-  .service-opt-icon {
-    font-size: 20px;
-  }
-
-  .service-opt-name {
-    font-size: 13.5px;
-    font-weight: 700;
+  .upload-list {
+    margin-top: 12px;
+    font-size: 12.5px;
+    font-weight: 600;
     color: var(--text-primary);
+    line-height: 1.4;
+    word-break: break-word;
   }
 
   .form-row {
@@ -986,7 +1015,7 @@
     color: var(--text-primary);
     border: 1.5px solid var(--border);
     border-radius: var(--radius-sm);
-    font-family: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--quote-font);
     font-size: 14.5px;
     outline: none;
     transition: border-color 0.18s, box-shadow 0.18s;
@@ -997,7 +1026,7 @@
   .form-select:focus,
   .form-textarea:focus {
     border-color: var(--orange);
-    box-shadow: 0 0 0 3px rgba(255, 107, 43, 0.12);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--orange) 18%, transparent);
     background: white;
   }
 
@@ -1033,20 +1062,20 @@
     color: white;
     border: none;
     padding: 15px;
-    font-family: Manrope, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--quote-font);
     font-size: 15px;
     font-weight: 700;
     border-radius: var(--radius-sm);
     cursor: pointer;
     letter-spacing: -0.01em;
     transition: background 0.18s, transform 0.15s, box-shadow 0.18s;
-    box-shadow: 0 4px 18px rgba(255, 107, 43, 0.3);
+    box-shadow: 0 4px 18px color-mix(in srgb, var(--orange) 28%, transparent);
     margin-top: 8px;
   }
 
   .modal-submit:hover {
     background: var(--orange-deep);
-    box-shadow: 0 6px 24px rgba(255, 107, 43, 0.4);
+    box-shadow: 0 6px 24px color-mix(in srgb, var(--orange) 36%, transparent);
     transform: translateY(-1px);
   }
 
@@ -1067,8 +1096,15 @@
   }
 
   .success-icon {
-    font-size: 52px;
-    margin-bottom: 16px;
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background:
+      linear-gradient(#fff, #fff) center 18px / 18px 2.5px no-repeat,
+      linear-gradient(#fff, #fff) 22px 26px / 2.5px 12px no-repeat,
+      var(--orange);
+    transform: rotate(45deg);
   }
 
   .success-title {
@@ -1126,10 +1162,6 @@
 
     .form-row {
       grid-template-columns: 1fr;
-    }
-
-    .service-picker {
-      grid-template-columns: 1fr 1fr;
     }
   }
 </style>

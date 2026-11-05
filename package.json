@@ -11,14 +11,23 @@
     "preview": "npm run build && wrangler dev",
     "astro": "astro",
     "generate-types": "wrangler types",
-    "deploy": "npm run build && wrangler deploy"
+    "deploy": "npm run build && node scripts/patch-deploy-wrangler.mjs && wrangler deploy",
+    "check:content": "node scripts/check-content.mjs",
+    "test:e2e": "playwright test",
+    "test:load": "node scripts/checkout-load.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.1.4",
     "astro": "^6.0.4",
+    "fabric": "^6.6.1",
     "stripe": "^23.0.1"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@axe-core/playwright": "^4.11.0",
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^26.6.5",
+    "typescript": "^5.9.3",
     "wrangler": "^4.78.0"
   }
 }

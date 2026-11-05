@@ -41,6 +41,8 @@ const products = listProducts(category === 'all' ? undefined : category);
               title={product.name}
               href={`/shop/${product.slug}/`}
               price={productCardPrice(product)}
+              image={product.imageUrl ?? undefined}
+              hoverImage={product.hoverImageUrl ?? undefined}
               badge={product.category}
             />
           ))
@@ -113,8 +115,8 @@ const products = listProducts(category === 'all' ? undefined : category);
     justify-content: center;
     min-height: 44px;
     padding: 0.7rem 1.15rem;
-    border: 2px solid var(--print-red);
-    border-radius: var(--radius-md);
+    border: 0;
+    border-radius: var(--radius-pill);
     background: var(--print-red);
     color: var(--white);
     font-family: var(--font-body);

@@ -1,0 +1,700 @@
+---
+import { readSecret } from '../lib/env';
+import type { StudioService } from '../data/services';
+
+interface Props {
+  service: StudioService;
+}
+
+const { service } = Astro.props;
+const turnstileSiteKey = (await readSecret('TURNSTILE_SITE_KEY')) ?? '';
+const uid = `svc-${service.slug}`;
+---
+
+<section class="svc-form" id="quote" aria-labelledby={`${uid}-title`}>
+  <div class="svc-form__intro">
+    <p class="svc-form__eyebrow">Quote for {service.shortLabel}</p>
+    <h2 id={`${uid}-title`}>Let’s price your {service.label.toLowerCase()} job</h2>
+    <p>{service.formIntro}</p>
+    <p class="svc-form__hint">{service.minPiecesHint}</p>
+  </div>
+
+  <form
+    class="svc-form__panel"
+    id={`${uid}-form`}
+    action="/api/quotes"
+    method="POST"
+    novalidate
+    data-service-form
+    data-ask-colors={service.askColors ? '1' : '0'}
+  >
+    <input type="hidden" name="_subject" value={`New ${service.label} Quote — LiAlvaro`} />
+    <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
+    <input type="hidden" name="service" value={service.serviceValue} />
+
+    <ol class="svc-progress" aria-label="Quote steps">
+      <li data-step="1" class="is-active"><span>1</span> Design</li>
+      <li data-step="2"><span>2</span> Files</li>
+      <li data-step="3"><span>3</span> Contact</li>
+    </ol>
+
+    <div class="svc-error" data-error aria-live="polite" hidden></div>
+
+    <div class="svc-step" data-step-panel="1">
+      <p class="svc-step__label">What would you like decorated?*</p>
+      <div class="svc-choices" role="group" aria-label="What would you like decorated?">
+        {
+          [
+            ['Tops', 'Tops (t-shirts, tanks, etc.)'],
+            ['Bottoms', 'Bottoms (pants, shorts, etc.)'],
+            ['Hats', 'Hats'],
+            ['Bags', 'Bags'],
+            ['Something Else', 'Something Else'],
+          ].map(([value, label], index) => (
+            <label class:list={['svc-choice', index === 4 ? 'svc-choice--wide' : null]}>
+              <input type="checkbox" name="quote-design-type" value={value} />
+              <span>{label}</span>
+            </label>
+          ))
+        }
+      </div>
+
+      {
+        service.askColors ? (
+          <div class="svc-field">
+            <label for={`${uid}-colors`}>How many colors are in your design?*</label>
+            <select id={`${uid}-colors`} name="colors" data-colors>
+              <option value="" disabled selected>
+                Please select
+              </option>
+              <option value="1">1 Color</option>
+              <option value="2">2 Colors</option>
+              <option value="3">3 Colors</option>
+              <option value="4">4 Colors</option>
+              <option value="5">5 Colors</option>
+              <option value="6+">More than 5 colors</option>
+            </select>
+          </div>
+        ) : null
+      }
+
+      <div class="svc-field">
+        <label for={`${uid}-pieces`}>How many pieces do you need?*</label>
+        <input id={`${uid}-pieces`} name="pieces" type="number" min="1" step="1" placeholder="e.g. 50" data-pieces />
+      </div>
+
+      <div class="svc-nav svc-nav--end">
+        <button type="button" class="svc-btn svc-btn--primary" data-next="1">Next →</button>
+      </div>
+    </div>
+
+    <div class="svc-step" data-step-panel="2" hidden>
+      <p class="svc-step__label">Blanks &amp; design upload</p>
+      <div class="svc-field">
+        <span class="svc-field__legend">Will you be providing the blank(s)?*</span>
+        <div class="svc-choices svc-choices--pair">
+          <label class="svc-choice">
+            <input type="radio" name="quote-providing-blanks" value="yes" data-blanks />
+            <span>Yes</span>
+          </label>
+          <label class="svc-choice">
+            <input type="radio" name="quote-providing-blanks" value="no" data-blanks />
+            <span>No</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="svc-field" data-material-wrap hidden>
+        <label for={`${uid}-material`}>What type of material is your blanks?*</label>
+        <input id={`${uid}-material`} name="blank_material" type="text" placeholder="eg. 100% cotton, polyester, etc." data-material />
+      </div>
+
+      <p class="svc-divider">Upload your design(s) (optional)</p>
+      <div class="svc-upload" data-dropzone role="button" tabindex="0" aria-label="Upload design files">
+        <input type="file" name="design_files" multiple hidden data-files accept=".png,.jpg,.jpeg,.gif,.webp,.svg,.pdf,.ai,.eps,.zip,image/*,application/pdf,application/zip" />
+        <strong>Upload file(s)</strong>
+        <span>PNG, JPG, PDF, AI, EPS, or ZIP</span>
+        <button type="button" class="svc-browse" data-browse>Browse</button>
+        <p class="svc-upload__list" data-file-list hidden></p>
+      </div>
+
+      <div class="svc-field">
+        <label for={`${uid}-notes`}>More design details / notes (optional)</label>
+        <textarea id={`${uid}-notes`} name="design_notes" rows="3" placeholder="Placement, deadlines, garment brand, or special requirements"></textarea>
+      </div>
+
+      <div class="svc-nav">
+        <button type="button" class="svc-btn svc-btn--ghost" data-back="2">Back</button>
+        <button type="button" class="svc-btn svc-btn--primary" data-next="2">Next →</button>
+      </div>
+    </div>
+
+    <div class="svc-step" data-step-panel="3" hidden>
+      <p class="svc-step__label">Your details</p>
+      <div class="svc-row">
+        <div class="svc-field">
+          <label for={`${uid}-fname`}>First name*</label>
+          <input id={`${uid}-fname`} name="first_name" type="text" autocomplete="given-name" data-fname />
+        </div>
+        <div class="svc-field">
+          <label for={`${uid}-lname`}>Last name*</label>
+          <input id={`${uid}-lname`} name="last_name" type="text" autocomplete="family-name" data-lname />
+        </div>
+      </div>
+      <div class="svc-row">
+        <div class="svc-field">
+          <label for={`${uid}-phone`}>Phone number*</label>
+          <input id={`${uid}-phone`} name="phone" type="tel" autocomplete="tel" data-phone />
+        </div>
+        <div class="svc-field">
+          <label for={`${uid}-email`}>Email*</label>
+          <input id={`${uid}-email`} name="email" type="email" autocomplete="email" data-email />
+        </div>
+      </div>
+
+      {
+        turnstileSiteKey ? (
+          <div class="svc-turnstile">
+            <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>
+          </div>
+        ) : null
+      }
+
+      <div class="svc-nav">
+        <button type="button" class="svc-btn svc-btn--ghost" data-back="3">Back</button>
+        <button type="submit" class="svc-btn svc-btn--primary" data-submit>Get my free quote →</button>
+      </div>
+      <p class="svc-guarantee">No spam. No hidden fees. Just a fast, honest {service.shortLabel.toLowerCase()} quote.</p>
+    </div>
+  </form>
+
+  <div class="svc-success" data-success hidden>
+    <h3>Quote request received</h3>
+    <p>
+      We’ll reach out within 1 business hour about your {service.label.toLowerCase()} project. Urgent?
+      Call <a href="tel:3109042655">(310) 904-2655</a>.
+    </p>
+  </div>
+</section>
+
+{
+  turnstileSiteKey ? (
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  ) : null
+}
+
+<script>
+  document.querySelectorAll('[data-service-form]').forEach((form) => {
+    if (!(form instanceof HTMLFormElement)) return;
+    const root = form.closest('.svc-form');
+    if (!root) return;
+
+    const askColors = form.dataset.askColors === '1';
+    const errorEl = root.querySelector('[data-error]');
+    const success = root.querySelector('[data-success]');
+    const progress = root.querySelectorAll('.svc-progress [data-step]');
+    const panels = root.querySelectorAll('[data-step-panel]');
+    const materialWrap = root.querySelector('[data-material-wrap]');
+    const dropzone = root.querySelector('[data-dropzone]');
+    const filesInput = root.querySelector('[data-files]');
+    const fileList = root.querySelector('[data-file-list]');
+    const browse = root.querySelector('[data-browse]');
+    let step = 1;
+
+    function setError(text: string) {
+      if (!(errorEl instanceof HTMLElement)) return;
+      if (text) {
+        errorEl.textContent = text;
+        errorEl.hidden = false;
+      } else {
+        errorEl.textContent = '';
+        errorEl.hidden = true;
+      }
+    }
+
+    function setStep(next: number) {
+      step = next;
+      panels.forEach((panel) => {
+        if (!(panel instanceof HTMLElement)) return;
+        panel.hidden = Number(panel.getAttribute('data-step-panel')) !== step;
+      });
+      progress.forEach((item) => {
+        const n = Number(item.getAttribute('data-step'));
+        item.classList.toggle('is-active', n === step);
+        item.classList.toggle('is-done', n < step);
+      });
+      setError('');
+    }
+
+    function syncFiles() {
+      if (!(filesInput instanceof HTMLInputElement) || !(fileList instanceof HTMLElement)) return;
+      const names = Array.from(filesInput.files || []).map((file) => file.name);
+      if (!names.length) {
+        fileList.hidden = true;
+        fileList.textContent = '';
+        return;
+      }
+      fileList.hidden = false;
+      fileList.textContent = names.length === 1 ? `Selected: ${names[0]}` : `Selected (${names.length}): ${names.join(', ')}`;
+    }
+
+    function assignFiles(list: FileList | null | undefined) {
+      if (!(filesInput instanceof HTMLInputElement) || !list?.length) return;
+      try {
+        const transfer = new DataTransfer();
+        Array.from(list).forEach((file) => transfer.items.add(file));
+        filesInput.files = transfer.files;
+      } catch {
+        /* ignore browsers that block programmatic FileList assignment */
+      }
+      syncFiles();
+    }
+
+    root.querySelector('[data-next="1"]')?.addEventListener('click', () => {
+      const types = form.querySelectorAll('input[name="quote-design-type"]:checked');
+      const pieces = root.querySelector('[data-pieces]');
+      const colors = root.querySelector('[data-colors]');
+      if (!types.length) {
+        setError('Please select what you would like decorated.');
+        return;
+      }
+      if (askColors && colors instanceof HTMLSelectElement && !colors.value) {
+        setError('Please select how many colors are in your design.');
+        colors.focus();
+        return;
+      }
+      if (!(pieces instanceof HTMLInputElement) || !pieces.value || Number(pieces.value) < 1) {
+        setError('Please enter how many pieces you need.');
+        pieces instanceof HTMLInputElement && pieces.focus();
+        return;
+      }
+      setStep(2);
+    });
+
+    root.querySelector('[data-next="2"]')?.addEventListener('click', () => {
+      const blanks = form.querySelector('input[name="quote-providing-blanks"]:checked');
+      const material = root.querySelector('[data-material]');
+      if (!(blanks instanceof HTMLInputElement)) {
+        setError('Please select whether you will provide the blanks.');
+        return;
+      }
+      if (blanks.value === 'yes' && material instanceof HTMLInputElement && !material.value.trim()) {
+        setError('Please enter the type of material for your blanks.');
+        material.focus();
+        return;
+      }
+      setStep(3);
+    });
+
+    root.querySelectorAll('[data-back]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const from = Number(btn.getAttribute('data-back'));
+        setStep(Math.max(1, from - 1));
+      });
+    });
+
+    form.querySelectorAll('[data-blanks]').forEach((input) => {
+      input.addEventListener('change', () => {
+        const checked = form.querySelector('input[name="quote-providing-blanks"]:checked');
+        if (materialWrap instanceof HTMLElement) {
+          materialWrap.hidden = !(checked instanceof HTMLInputElement && checked.value === 'yes');
+        }
+      });
+    });
+
+    dropzone?.addEventListener('click', (event) => {
+      const target = event.target;
+      if (target instanceof Element && target.closest('[data-browse]')) return;
+      if (filesInput instanceof HTMLInputElement) filesInput.click();
+    });
+    browse?.addEventListener('click', (event) => {
+      event.stopPropagation();
+      if (filesInput instanceof HTMLInputElement) filesInput.click();
+    });
+    filesInput?.addEventListener('change', syncFiles);
+    dropzone?.addEventListener('keydown', (event) => {
+      if (!(event instanceof KeyboardEvent)) return;
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        if (filesInput instanceof HTMLInputElement) filesInput.click();
+      }
+    });
+    ['dragenter', 'dragover'].forEach((name) => {
+      dropzone?.addEventListener(name, (event) => {
+        event.preventDefault();
+        dropzone.classList.add('is-drag');
+      });
+    });
+    ['dragleave', 'drop'].forEach((name) => {
+      dropzone?.addEventListener(name, (event) => {
+        event.preventDefault();
+        dropzone.classList.remove('is-drag');
+      });
+    });
+    dropzone?.addEventListener('drop', (event) => {
+      if (!(event instanceof DragEvent)) return;
+      assignFiles(event.dataTransfer?.files);
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (step !== 3) return;
+      const fname = root.querySelector('[data-fname]');
+      const lname = root.querySelector('[data-lname]');
+      const phone = root.querySelector('[data-phone]');
+      const email = root.querySelector('[data-email]');
+      const submit = root.querySelector('[data-submit]');
+      if (!(fname instanceof HTMLInputElement) || !fname.value.trim()) {
+        setError('Please enter your first name.');
+        fname instanceof HTMLInputElement && fname.focus();
+        return;
+      }
+      if (!(lname instanceof HTMLInputElement) || !lname.value.trim()) {
+        setError('Please enter your last name.');
+        lname instanceof HTMLInputElement && lname.focus();
+        return;
+      }
+      if (!(phone instanceof HTMLInputElement) || !phone.value.trim()) {
+        setError('Please enter your phone number.');
+        phone instanceof HTMLInputElement && phone.focus();
+        return;
+      }
+      if (!(email instanceof HTMLInputElement) || !email.value.includes('@')) {
+        setError('Please enter your email address.');
+        email instanceof HTMLInputElement && email.focus();
+        return;
+      }
+
+      if (submit instanceof HTMLButtonElement) {
+        submit.disabled = true;
+        submit.textContent = 'Sending…';
+      }
+      setError('');
+      try {
+        const res = await fetch('/api/quotes', {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' },
+        });
+        if (res.ok) {
+          form.hidden = true;
+          if (success instanceof HTMLElement) success.hidden = false;
+          window.dispatchEvent(new CustomEvent('lialvaro:quote-submitted'));
+          return;
+        }
+        let message = 'Submission failed. Please try again.';
+        try {
+          const body = await res.json();
+          if (body?.error) message = body.error;
+        } catch {
+          /* keep fallback */
+        }
+        setError(message);
+      } catch {
+        setError('Network error. Please check your connection and try again.');
+      } finally {
+        if (submit instanceof HTMLButtonElement) {
+          submit.disabled = false;
+          submit.textContent = 'Get my free quote →';
+        }
+      }
+    });
+  });
+</script>
+
+<style>
+  .svc-form {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .svc-form__eyebrow {
+    margin: 0 0 0.45rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--print-red);
+  }
+
+  .svc-form__intro h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.45rem, 2.5vw, 1.85rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .svc-form__intro p {
+    margin: 0.65rem 0 0;
+    color: #6e6e73;
+    line-height: 1.55;
+  }
+
+  .svc-form__hint {
+    font-size: 0.92rem !important;
+  }
+
+  .svc-form__panel,
+  .svc-success {
+    padding: 1.35rem 1.25rem 1.5rem;
+    border-radius: 20px;
+    background: var(--white);
+    border: 1px solid #e5e5ea;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  }
+
+  .svc-progress {
+    list-style: none;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.4rem;
+  }
+
+  .svc-progress li {
+    display: grid;
+    justify-items: center;
+    gap: 0.3rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #8e8e93;
+  }
+
+  .svc-progress span {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    border: 1.5px solid #e5e5ea;
+    background: #fff;
+  }
+
+  .svc-progress li.is-active,
+  .svc-progress li.is-done {
+    color: var(--studio-green);
+  }
+
+  .svc-progress li.is-active span {
+    border-color: var(--print-red);
+    background: var(--print-red);
+    color: #fff;
+  }
+
+  .svc-progress li.is-done span {
+    border-color: var(--studio-green);
+    background: var(--studio-mint);
+    color: var(--studio-green);
+  }
+
+  .svc-error {
+    margin-bottom: 1rem;
+    padding: 0.75rem 0.9rem;
+    border-radius: 10px;
+    background: #fff1f2;
+    color: #9f1239;
+    font-size: 0.92rem;
+    font-weight: 600;
+  }
+
+  .svc-step__label,
+  .svc-field__legend,
+  .svc-field label {
+    display: block;
+    margin: 0 0 0.55rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6e6e73;
+  }
+
+  .svc-choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.55rem;
+    margin-bottom: 1rem;
+  }
+
+  .svc-choices--pair {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .svc-choice {
+    display: flex;
+    gap: 0.55rem;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0.75rem 0.85rem;
+    border: 1.5px solid #e5e5ea;
+    border-radius: 12px;
+    background: #fafafa;
+    cursor: pointer;
+    font-size: 0.92rem;
+    line-height: 1.35;
+  }
+
+  .svc-choice--wide {
+    grid-column: 1 / -1;
+  }
+
+  .svc-choice:has(input:checked) {
+    border-color: var(--print-red);
+    background: color-mix(in srgb, var(--print-red) 8%, white);
+  }
+
+  .svc-field {
+    margin-bottom: 0.95rem;
+  }
+
+  .svc-field input,
+  .svc-field select,
+  .svc-field textarea {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0.75rem 0.9rem;
+    border: 1.5px solid #e5e5ea;
+    border-radius: 10px;
+    background: #f5f5f7;
+    font: inherit;
+    color: var(--ink);
+  }
+
+  .svc-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .svc-divider {
+    margin: 0.35rem 0 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .svc-upload {
+    display: grid;
+    gap: 0.35rem;
+    justify-items: start;
+    margin-bottom: 1rem;
+    padding: 1.1rem;
+    border: 1.5px dashed color-mix(in srgb, var(--print-red) 35%, #e5e5ea);
+    border-radius: 14px;
+    background: color-mix(in srgb, var(--print-red) 5%, white);
+    cursor: pointer;
+  }
+
+  .svc-upload.is-drag {
+    border-color: var(--print-red);
+  }
+
+  .svc-upload strong {
+    font-size: 0.95rem;
+  }
+
+  .svc-upload span {
+    font-size: 0.85rem;
+    color: #6e6e73;
+  }
+
+  .svc-browse {
+    margin-top: 0.35rem;
+    padding: 0.45rem 0.85rem;
+    border: 1.5px solid color-mix(in srgb, var(--print-red) 35%, #e5e5ea);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .svc-upload__list {
+    margin: 0.35rem 0 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink);
+    word-break: break-word;
+  }
+
+  .svc-nav {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  .svc-nav--end {
+    justify-content: stretch;
+  }
+
+  .svc-nav--end .svc-btn {
+    flex: 1;
+  }
+
+  .svc-btn {
+    flex: 1;
+    min-height: 46px;
+    border-radius: 999px;
+    border: 0;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .svc-btn--primary {
+    background: var(--print-red);
+    color: #fff;
+  }
+
+  .svc-btn--ghost {
+    background: #f5f5f7;
+    color: var(--ink);
+  }
+
+  .svc-turnstile {
+    display: flex;
+    justify-content: center;
+    margin: 0.5rem 0 0.25rem;
+  }
+
+  .svc-guarantee {
+    margin: 0.9rem 0 0;
+    text-align: center;
+    font-size: 0.85rem;
+    color: #8e8e93;
+  }
+
+  .svc-success h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+  }
+
+  .svc-success p {
+    margin: 0.65rem 0 0;
+    color: #6e6e73;
+    line-height: 1.55;
+  }
+
+  .svc-success a {
+    color: var(--print-red);
+    font-weight: 700;
+  }
+
+  @media (max-width: 640px) {
+    .svc-row,
+    .svc-choices {
+      grid-template-columns: 1fr;
+    }
+
+    .svc-choice--wide {
+      grid-column: auto;
+    }
+  }
+</style>

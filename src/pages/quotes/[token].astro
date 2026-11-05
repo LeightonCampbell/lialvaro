@@ -1,0 +1,177 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getDb } from '../../lib/db';
+import { claimText } from '../../lib/claims';
+import { formatUsd } from '../../lib/pricing';
+import { amountDueCents, customerStatusLabel } from '../../lib/quotes';
+
+export const prerender = false;
+
+const token = Astro.params.token ?? '';
+const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
+const valid = /^[a-f0-9]{36}$/.test(token);
+const db = valid ? await getDb() : null;
+
+type QuoteRow = {
+  id: string;
+  name: string | null;
+  status: string;
+  total_cents: number;
+  deposit_cents: number;
+  tracking_code: string | null;
+};
+
+let quote: QuoteRow | null = null;
+let lines: Array<{ label: string; quantity: number; unit_cents: number }> = [];
+if (db && valid) {
+  quote = await db
+    .prepare(
+      `SELECT id, name, status, total_cents, deposit_cents, tracking_code FROM quotes WHERE public_token = ?`,
+    )
+    .bind(token)
+    .first<QuoteRow>();
+  if (quote) {
+    const rows = await db
+      .prepare('SELECT label, quantity, unit_cents FROM quote_items WHERE quote_id = ?')
+      .bind(quote.id)
+      .all<{ label: string; quantity: number; unit_cents: number }>();
+    lines = rows.results ?? [];
+  }
+}
+
+const due = quote ? amountDueCents(quote.total_cents, quote.deposit_cents) : 0;
+const balance = quote && quote.deposit_cents > 0 ? Math.max(0, quote.total_cents - quote.deposit_cents) : 0;
+const payable = quote?.status === 'quoted' && due >= 50;
+---
+
+<Layout title="Your quote" description="Review your LiAlvaro quote." noindex={true}>
+  <div class="page-shell quote-page">
+    {
+      !valid || !quote ? (
+        <header class="page-hero">
+          <h1>Quote not found</h1>
+          <p>Check the link in your email, or {phone}</p>
+        </header>
+      ) : (
+        <>
+          <header class="page-hero">
+            <p class="eyebrow">Quote</p>
+            <h1>{customerStatusLabel(quote.status)}</h1>
+            {quote.name ? <p>{quote.name}</p> : null}
+          </header>
+
+          {
+            lines.length ? (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {lines.map((line) => (
+                    <tr>
+                      <td>{line.label}</td>
+                      <td>{line.quantity}</td>
+                      <td>{formatUsd(line.unit_cents * line.quantity)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p>We have your request and will send pricing here.</p>
+            )
+          }
+
+          {
+            quote.status !== 'open' ? (
+              <p class="due">
+                {quote.deposit_cents > 0 ? 'Due now' : 'Total'} {formatUsd(due)}
+                {balance > 0 && (quote.status === 'paid' || quote.status === 'tracked' || quote.status === 'delivered')
+                  ? ` · Balance remaining ${formatUsd(balance)}`
+                  : ''}
+              </p>
+            ) : null
+          }
+
+          {
+            payable ? (
+              <form id="payForm">
+                <input type="hidden" name="token" value={token} />
+                <button type="submit" class="ds-btn">Pay {formatUsd(due)}</button>
+                <p id="payError" hidden></p>
+              </form>
+            ) : null
+          }
+
+          {
+            quote.tracking_code && quote.status !== 'open' && quote.status !== 'quoted' ? (
+              <p>
+                Tracking code <strong>{quote.tracking_code}</strong> · <a href={`/track/?code=${quote.tracking_code}`}>Track this order</a>
+              </p>
+            ) : null
+          }
+        </>
+      )
+    }
+  </div>
+</Layout>
+
+<script>
+  const form = document.getElementById('payForm');
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const error = document.getElementById('payError');
+    const data = new FormData(form as HTMLFormElement);
+    const res = await fetch('/api/quotes/pay', { method: 'POST', body: data });
+    const body = (await res.json()) as { url?: string; error?: string };
+    if (res.ok && body.url) {
+      window.location.href = body.url;
+      return;
+    }
+    if (error) {
+      error.hidden = false;
+      error.textContent = body.error || 'Payment could not start.';
+    }
+  });
+</script>
+
+<style>
+  .quote-page table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    margin: 1rem 0;
+  }
+
+  .quote-page th,
+  .quote-page td {
+    text-align: left;
+    padding: 0.7rem 0.8rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .due {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .quote-page .ds-btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.7rem 1.25rem;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--print-red);
+    color: var(--white);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  #payError {
+    color: var(--print-red);
+  }
+</style>

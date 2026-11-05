@@ -1,0 +1,48 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { listPublicStores } from '../../lib/stores';
+
+const stores = listPublicStores();
+---
+
+<Layout title="Client stores" description="Shops from LiAlvaro design partners.">
+  <div class="page-shell">
+    <header class="page-hero">
+      <p class="eyebrow">Stores</p>
+      <h1>Client stores</h1>
+      <p>Designs from our partners. LiAlvaro prints and fulfills every order.</p>
+    </header>
+    <ul class="list">
+      {
+        stores.map((store) => (
+          <li>
+            <a href={`/stores/${store.slug}/`}>{store.name}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Layout>
+
+<style>
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .list a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.85rem 1rem;
+    background: var(--white);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    color: inherit;
+    font-weight: 700;
+    text-decoration: none;
+  }
+</style>

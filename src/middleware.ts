@@ -1,4 +1,5 @@
 import { defineMiddleware } from 'astro:middleware';
+import { withSecurityHeaders } from './lib/security-headers';
 
 const CANONICAL_HOST = 'www.lialvaro.com';
 
@@ -22,7 +23,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		if (url.hostname === 'lialvaro.com') {
 			redirectUrl.hostname = CANONICAL_HOST;
 		}
-		return Response.redirect(redirectUrl.toString(), 301);
+		return withSecurityHeaders(Response.redirect(redirectUrl.toString(), 301));
 	}
 
 	// Owner lock (docs/OWNER_LOCKS.md): kill `/custom-printing/` → home + open quote modal.
@@ -32,7 +33,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		if (url.hostname === 'lialvaro.com') {
 			redirectUrl.hostname = CANONICAL_HOST;
 		}
-		return Response.redirect(redirectUrl.toString(), 301);
+		return withSecurityHeaders(Response.redirect(redirectUrl.toString(), 301));
 	}
 
 	const shouldRedirectHost = url.hostname === 'lialvaro.com';
@@ -52,9 +53,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		if (shouldRedirectSlash) {
 			redirectUrl.pathname = `${redirectUrl.pathname}/`;
 		}
-		return Response.redirect(redirectUrl.toString(), 301);
+		return withSecurityHeaders(Response.redirect(redirectUrl.toString(), 301));
 	}
 
-	return next();
+	return withSecurityHeaders(await next());
 });
 

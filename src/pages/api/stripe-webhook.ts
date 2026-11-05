@@ -3,7 +3,9 @@ import type Stripe from 'stripe';
 import { getDb } from '../../lib/db';
 import { getAppEnv } from '../../lib/env';
 import { createPaidOrderFromStripe } from '../../lib/orders';
+import { markQuotePaid } from '../../lib/quotes';
 import { sendCustomerEmail, sendOwnerEmail } from '../../lib/email';
+import { redactEmails } from '../../lib/security-headers';
 import { getStripe, webhookCryptoProvider } from '../../lib/stripe-client';
 
 export const prerender = false;
@@ -60,7 +62,7 @@ export const POST: APIRoute = async ({ request }) => {
     );
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Invalid signature.';
-    return new Response(`Webhook signature verification failed: ${message}`, { status: 400 });
+    return new Response(`Webhook signature verification failed: ${redactEmails(message)}`, { status: 400 });
   }
 
   if (event.type === 'checkout.session.completed') {
@@ -70,6 +72,32 @@ export const POST: APIRoute = async ({ request }) => {
       lines = JSON.parse(session.metadata?.cart ?? '[]') as Array<{ variantId: string; quantity: number }>;
     } catch {
       lines = [];
+    }
+
+    if (session.metadata?.kind === 'quote' && session.metadata.quote_id) {
+      const db = await getDb();
+      if (!db) return json({ error: 'Database is not connected.' }, 503);
+      const paid = await markQuotePaid({
+        db,
+        quoteId: session.metadata.quote_id,
+        stripeSessionId: session.id,
+        paymentIntent: typeof session.payment_intent === 'string' ? session.payment_intent : null,
+        amountTotal: session.amount_total,
+        email: session.customer_details?.email,
+      });
+      const email = session.customer_details?.email;
+      if (email) {
+        await sendCustomerEmail({
+          to: email,
+          subject: 'Your LiAlvaro quote payment is confirmed',
+          text: `Thanks for your payment.\nTrack anytime: https://www.lialvaro.com/track/?code=${paid.trackingCode}\n`,
+        });
+      }
+      await sendOwnerEmail({
+        subject: `Quote paid — ${paid.orderId}`,
+        text: `Quote ${session.metadata.quote_id} is paid.\nCustomer: ${email ?? 'unknown'}\nTracking: ${paid.trackingCode}`,
+      });
+      return json({ received: true, quote: true });
     }
 
     if (!lines.length) {

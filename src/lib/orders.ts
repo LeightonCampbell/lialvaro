@@ -5,6 +5,11 @@ import { canRequestSameDay } from './same-day';
 export type CheckoutLine = {
   variantId: string;
   quantity: number;
+  unitPriceCents?: number;
+  designId?: string;
+  size?: string;
+  printPositions?: number;
+  positions?: string;
 };
 
 export function buildTrackingCode(): string {
@@ -33,7 +38,10 @@ export async function createPaidOrderFromStripe(opts: {
     return { line, variant };
   });
 
-  const subtotal = items.reduce((sum, i) => sum + i.variant.retailPriceCents * i.line.quantity, 0);
+  const subtotal = items.reduce(
+    (sum, i) => sum + (i.line.unitPriceCents ?? i.variant.retailPriceCents) * i.line.quantity,
+    0,
+  );
   const pieceCount = items.reduce((sum, i) => sum + i.line.quantity, 0);
   const shippingJson = opts.shipping ? JSON.stringify(opts.shipping) : null;
   const zip =
@@ -77,7 +85,8 @@ export async function createPaidOrderFromStripe(opts: {
       .run();
 
     for (const item of items) {
-      const retailLine = item.variant.retailPriceCents * item.line.quantity;
+      const unit = item.line.unitPriceCents ?? item.variant.retailPriceCents;
+      const retailLine = unit * item.line.quantity;
       const cut = lineVendorCutCents(item.variant.product, retailLine);
       const sameDayOk =
         opts.sameDayRequested &&
@@ -102,13 +111,17 @@ export async function createPaidOrderFromStripe(opts: {
           item.variant.product.name,
           item.variant.name,
           item.line.quantity,
-          item.variant.retailPriceCents,
+          unit,
           item.variant.product.vendorId,
           cut,
           JSON.stringify({
             sameDayRequested: Boolean(sameDayOk),
             vendorName: item.variant.product.vendor.name,
             vendorCutBps: item.variant.product.vendorCutBps,
+            designId: item.line.designId,
+            size: item.line.size,
+            printPositions: item.line.printPositions,
+            positions: item.line.positions,
           }),
         )
         .run();

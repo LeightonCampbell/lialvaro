@@ -116,83 +116,147 @@ const faqLd = {
   description="Answers about custom T-shirt printing, quotes, garments, turnaround, and delivery — LiAlvaro T-Shirt Printing, Los Angeles."
   jsonLd={faqLd}
 >
-  <div class="page-shell">
-    <header class="page-hero">
-      <p class="eyebrow">Support</p>
-      <h1>Questions, answered.</h1>
-      <p>
-        Everything you need to know about ordering custom apparel with LiAlvaro — organized by topic so you can find
-        answers fast.
-      </p>
+  <div class="faq-page">
+    <header class="faq-hero">
+      <div class="faq-narrow">
+        <p class="faq-eyebrow">Support</p>
+        <h1>Questions, answered.</h1>
+        <p>
+          Everything you need to know about ordering custom apparel with LiAlvaro — organized by topic so you can find
+          answers fast.
+        </p>
+      </div>
     </header>
 
-    {
-      categories.map((cat) => (
-        <section class="faq-cat" id={cat.id}>
-          <h2>{cat.title}</h2>
-          {cat.lede ? <p class="faq-cat__lede">{cat.lede}</p> : null}
-          <Accordion items={cat.items} />
-        </section>
-      ))
-    }
+    <section class="faq-body">
+      <div class="faq-narrow">
+        {
+          categories.map((cat) => (
+            <article class="faq-cat" id={cat.id}>
+              <div class="faq-cat__head">
+                <h2>{cat.title}</h2>
+                {cat.lede ? <p>{cat.lede}</p> : null}
+              </div>
+              <Accordion items={cat.items} />
+            </article>
+          ))
+        }
 
-    <section class="faq-cta">
-      <h2>Ready to start?</h2>
-      <p>Share the project details with us — get a no-obligation quote.</p>
-      <div class="actions">
-        <button type="button" class="ds-btn ds-btn--primary" data-quote-trigger>Get a free quote</button>
-        <Button variant="secondary" href="tel:3109042655">{phone}</Button>
+        <section class="faq-cta">
+          <h2>Ready to start your high-quality print project?</h2>
+          <p>Share the project details with us — get a no-obligation quote.</p>
+          <div class="faq-cta__actions">
+            <button type="button" class="ds-btn ds-btn--primary" data-quote-trigger>Get a Fast, Free Quote</button>
+            <Button variant="secondary" href="tel:3109042655">{phone}</Button>
+          </div>
+        </section>
       </div>
     </section>
   </div>
 </Layout>
 
 <style>
-  .faq-cat {
-    margin: 2rem 0;
+  .faq-page {
+    background: var(--white);
   }
 
-  .faq-cat h2 {
-    margin: 0 0 0.35rem;
-    font-family: var(--font-display);
-    font-size: var(--text-2xl);
+  .faq-narrow {
+    box-sizing: border-box;
+    width: min(640px, calc(100% - 2 * var(--site-gutter)));
+    margin-inline: auto;
+    padding-inline: var(--site-pad);
+  }
+
+  .faq-hero {
+    padding: 4.5rem 0 3.25rem;
+    text-align: center;
+  }
+
+  .faq-eyebrow {
+    margin: 0 0 0.65rem;
+    font-size: 0.75rem;
     font-weight: 600;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
+    color: var(--print-red);
   }
 
-  .faq-cat__lede {
-    margin: 0 0 0.75rem;
-    color: color-mix(in srgb, var(--ink) 80%, var(--mesh-grey));
-    max-width: 40rem;
+  .faq-hero h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+  }
+
+  .faq-hero p:not(.faq-eyebrow) {
+    margin: 0.85rem auto 0;
+    max-width: 36rem;
+    color: #6e6e73;
+    font-size: 1.05rem;
+    line-height: 1.55;
+  }
+
+  .faq-body {
+    padding: 4.5rem 0 5.5rem;
+    background: #fafafa;
+  }
+
+  .faq-cat {
+    margin-bottom: 3.5rem;
+  }
+
+  .faq-cat:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .faq-cat__head h2 {
+    margin: 0 0 0.5rem;
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .faq-cat__head p {
+    margin: 0 0 1.25rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: #6e6e73;
   }
 
   .faq-cta {
-    margin-top: 3rem;
-    padding: 1.75rem;
+    margin-top: 3.5rem;
+    padding: 2rem 1.5rem;
+    border-radius: 20px;
     background: var(--white);
-    border: 1px solid var(--color-border-strong);
-    border-radius: var(--radius-lg);
+    border: 1px solid #e5e5ea;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
     text-align: center;
   }
 
   .faq-cta h2 {
     margin: 0;
     font-family: var(--font-display);
-    text-transform: uppercase;
-    font-weight: 600;
+    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
   }
 
   .faq-cta p {
-    margin: 0.5rem 0 0;
-    color: color-mix(in srgb, var(--ink) 80%, var(--mesh-grey));
+    margin: 0.55rem 0 0;
+    color: #6e6e73;
+    font-size: 0.95rem;
   }
 
-  .actions {
+  .faq-cta__actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
     justify-content: center;
-    margin-top: 1rem;
+    margin-top: 1.15rem;
   }
 
   .ds-btn--primary {
@@ -201,13 +265,13 @@ const faqLd = {
     justify-content: center;
     min-height: 44px;
     padding: 0.7rem 1.15rem;
-    border: 2px solid var(--print-red);
-    border-radius: var(--radius-md);
+    border: 0;
+    border-radius: 8px;
     background: var(--print-red);
     color: var(--white);
     font-family: var(--font-body);
     font-size: var(--text-sm);
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
   }
 </style>

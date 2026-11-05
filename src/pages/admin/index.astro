@@ -1,0 +1,529 @@
+---
+export const prerender = false;
+
+import Layout from '../../layouts/Layout.astro';
+import { isOwnerEmail, readSession, SESSION_COOKIE } from '../../lib/auth';
+import { listProducts } from '../../lib/catalog';
+import { getDb } from '../../lib/db';
+import { formatUsd, ownerMarginCents } from '../../lib/pricing';
+import { listPublicStores } from '../../lib/stores';
+
+const session = await readSession(Astro.cookies.get(SESSION_COOKIE)?.value);
+if (!session) {
+  Astro.response.status = 401;
+}
+const owner = session ? await isOwnerEmail(session.email) : false;
+if (session && !owner) {
+  Astro.response.status = 403;
+}
+
+type OrderRow = {
+  id: string;
+  email: string | null;
+  status: string;
+  total_cents: number;
+  tracking_code: string | null;
+  same_day_requested: number;
+  created_at: string;
+};
+
+type QuoteRow = {
+  id: string;
+  email: string | null;
+  name: string | null;
+  status: string;
+  payload_json: string;
+  partner_cost_cents: number;
+  markup_cents: number;
+  deposit_cents: number;
+  total_cents: number;
+  public_token: string | null;
+  tracking_code: string | null;
+};
+
+type QuoteLineRow = {
+  quote_id: string;
+  label: string;
+  quantity: number;
+  unit_cents: number;
+};
+
+type EventRow = { kind: string; payload_json: string | null; created_at: string };
+
+const orders: OrderRow[] = [];
+const quotes: QuoteRow[] = [];
+const quoteLines = new Map<string, QuoteLineRow[]>();
+const quoteEvents: EventRow[] = [];
+let databaseReady = false;
+if (owner) {
+  const db = await getDb();
+  databaseReady = Boolean(db);
+  if (db) {
+    const rows = await db
+      .prepare(
+        `SELECT id, email, status, total_cents, tracking_code, same_day_requested, created_at
+         FROM orders ORDER BY created_at DESC LIMIT 50`,
+      )
+      .all<OrderRow>();
+    orders.push(...(rows.results ?? []));
+    try {
+      const quoteRows = await db
+        .prepare(
+          `SELECT id, email, name, status, payload_json, partner_cost_cents, markup_cents, deposit_cents, total_cents, public_token, tracking_code
+           FROM quotes ORDER BY created_at DESC LIMIT 20`,
+        )
+        .all<QuoteRow>();
+      quotes.push(...(quoteRows.results ?? []));
+      const lineRows = await db
+        .prepare('SELECT quote_id, label, quantity, unit_cents FROM quote_items ORDER BY rowid')
+        .all<QuoteLineRow>();
+      for (const line of lineRows.results ?? []) {
+        const existing = quoteLines.get(line.quote_id) ?? [];
+        existing.push(line);
+        quoteLines.set(line.quote_id, existing);
+      }
+      const eventRows = await db
+        .prepare(
+          `SELECT kind, payload_json, created_at FROM events
+           WHERE kind IN ('quote_started', 'quote_step_N', 'quote_submitted', 'quote_sent', 'quote_paid', 'quote_status')
+           ORDER BY created_at DESC LIMIT 20`,
+        )
+        .all<EventRow>();
+      quoteEvents.push(...(eventRows.results ?? []));
+    } catch {
+      /* Stage 8 columns are missing until 0003 is applied. */
+    }
+  }
+}
+
+const production = orders.filter((order) => order.status === 'in_production' || order.status === 'paid');
+const sameDay = orders.filter((order) => order.same_day_requested === 1 && order.status !== 'fulfilled' && order.status !== 'canceled');
+const attention = orders.filter((order) => order.status === 'needs_attention');
+const margins = listProducts().map((product) => {
+  const variant = product.variants[0];
+  const retail = variant?.retailPriceCents ?? 0;
+  return {
+    name: product.name,
+    retail,
+    margin: ownerMarginCents({
+      retailLineCents: retail,
+      blankCostCents: variant?.blankCostCents ?? product.blankCostCents,
+      quantity: 1,
+      vendorCutBps: product.vendorCutBps,
+    }),
+  };
+});
+---
+
+<Layout title="Admin" description="Owner order queue." noindex={true}>
+  <div class="page-shell">
+    {
+      !session ? (
+        <header class="page-hero">
+          <h1>Sign in required</h1>
+          <p>The owner queue is only available after you sign in.</p>
+          <p><a href="/account/?next=/admin/">Sign in</a></p>
+        </header>
+      ) : !owner ? (
+        <header class="page-hero">
+          <h1>Not available</h1>
+          <p>This page is only for the store owner.</p>
+        </header>
+      ) : (
+        <>
+          <header class="page-hero">
+            <p class="eyebrow">Owner</p>
+            <h1>Production queue</h1>
+            <p>Signed in as {session.email}. Catalog edits stay in the data files until the database is the catalog source.</p>
+          </header>
+
+          <section class="block">
+            <h2>Needs attention</h2>
+            {attention.length ? <ul class="list">{attention.map((order) => <li>{order.tracking_code ?? order.id} · {order.email}</li>)}</ul> : <p>None.</p>}
+          </section>
+
+          <section class="block">
+            <h2>Same-day</h2>
+            {sameDay.length ? <ul class="list">{sameDay.map((order) => <li>{order.tracking_code ?? order.id} · {order.status}</li>)}</ul> : <p>None waiting.</p>}
+          </section>
+
+          <section class="block">
+            <h2>In production</h2>
+            {
+              !databaseReady ? (
+                <p>Orders appear here when the site database is connected.</p>
+              ) : production.length ? (
+                <ul class="list">
+                  {production.map((order) => (
+                    <li>
+                      <div>
+                        <strong>{order.tracking_code ?? order.id}</strong>
+                        <span>{order.email}</span>
+                        <span>{formatUsd(order.total_cents)}</span>
+                      </div>
+                      <form class="status-form" data-order={order.id}>
+                        <label>
+                          Status
+                          <select name="status">
+                            <option value="in_production" selected={order.status === 'in_production'}>In production</option>
+                            <option value="needs_attention">Needs attention</option>
+                            <option value="fulfilled">Fulfilled</option>
+                            <option value="canceled">Canceled</option>
+                          </select>
+                        </label>
+                        <button type="submit">Save</button>
+                      </form>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No orders in production.</p>
+              )
+            }
+          </section>
+
+          <section class="block">
+            <h2>Quotes</h2>
+            {
+              quotes.length ? (
+                <ul class="list">
+                  {quotes.map((quote) => {
+                    let summary = quote.email ?? '';
+                    let fileNote = '';
+                    try {
+                      const payload = JSON.parse(quote.payload_json) as {
+                        service?: string;
+                        pieces?: number;
+                        files?: { name?: string; emailed?: boolean }[];
+                        filesEmailed?: string[];
+                      };
+                      summary = [quote.name, quote.email, payload.service, payload.pieces ? `${payload.pieces} pcs` : '']
+                        .filter(Boolean)
+                        .join(' · ');
+                      const names =
+                        payload.filesEmailed?.length
+                          ? payload.filesEmailed
+                          : (payload.files ?? []).map((file) => file.name).filter(Boolean);
+                      if (names.length) {
+                        fileNote = `Files: ${names.join(', ')}${
+                          payload.filesEmailed?.length ? ' (emailed to owner inbox)' : ' (name only — ask customer to resend)'
+                        }`;
+                      }
+                    } catch {
+                      summary = quote.email ?? quote.id;
+                    }
+                    return (
+                      <li>
+                        <div>
+                          <strong>{summary}</strong>
+                          <span>{quote.status}{quote.total_cents ? ` · ${formatUsd(quote.total_cents)}` : ''}</span>
+                          {fileNote ? <span>{fileNote}</span> : null}
+                          {quote.public_token ? <a href={`/quotes/${quote.public_token}/`}>Customer page</a> : null}
+                        </div>
+                        <form class="quote-form" data-quote={quote.id}>
+                          <div class="quote-lines" data-quote-lines>
+                            {(quoteLines.get(quote.id)?.length
+                              ? quoteLines.get(quote.id)!
+                              : [{ quote_id: quote.id, label: '', quantity: 1, unit_cents: 0 }]
+                            ).map((line) => (
+                              <div class="quote-line" data-quote-line>
+                                <label>
+                                  Line
+                                  <input name="label" placeholder="Screen print, 2 colors" value={line.label} />
+                                </label>
+                                <label>
+                                  Qty
+                                  <input name="quantity" inputmode="numeric" value={line.quantity} />
+                                </label>
+                                <label>
+                                  Unit $
+                                  <input
+                                    name="unit"
+                                    inputmode="decimal"
+                                    placeholder="0.00"
+                                    value={line.unit_cents ? (line.unit_cents / 100).toFixed(2) : ''}
+                                  />
+                                </label>
+                                <button type="button" class="quote-line-remove" data-remove-line>
+                                  Remove
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                          <button type="button" data-add-line>Add line</button>
+                          <label>Partner $ <input name="partnerCost" inputmode="decimal" value={(quote.partner_cost_cents / 100).toFixed(2)} /></label>
+                          <label>Markup $ <input name="markup" inputmode="decimal" value={(quote.markup_cents / 100).toFixed(2)} /></label>
+                          <label>Deposit $ <input name="deposit" inputmode="decimal" value={(quote.deposit_cents / 100).toFixed(2)} /></label>
+                          <button type="button" data-quote-action="save">Save</button>
+                          <button type="button" data-quote-action="send">Email quote</button>
+                          <button type="button" data-quote-action="record-payment">Record payment</button>
+                          <label>
+                            Next
+                            <select name="status">
+                              <option value="tracked">On the way</option>
+                              <option value="delivered">Delivered</option>
+                              <option value="canceled">Canceled</option>
+                            </select>
+                          </label>
+                          <input name="trackingCode" placeholder="Tracking code" value={quote.tracking_code ?? ''} />
+                          <button type="button" data-quote-action="status">Update status</button>
+                          <p class="quote-note" hidden></p>
+                        </form>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <p>No quote requests yet.</p>
+              )
+            }
+          </section>
+
+          <section class="block">
+            <h2>Quote activity</h2>
+            {
+              quoteEvents.length ? (
+                <ul class="list">
+                  {quoteEvents.map((event) => (
+                    <li>
+                      <strong>{event.kind}</strong>
+                      <span>{event.created_at}</span>
+                      {event.payload_json ? <span>{event.payload_json}</span> : null}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>Quote steps show up here after someone opens the quote form.</p>
+              )
+            }
+          </section>
+
+          <section class="block">
+            <h2>Client stores</h2>
+            <ul class="list">
+              {listPublicStores().map((store) => (
+                <li>
+                  <a href={`/stores/${store.slug}/`}>{store.name}</a>
+                  <span>{store.markupBps ? `${store.markupBps / 100}% markup` : 'No markup'}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section class="block">
+            <h2>Margin, one piece</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Design</th>
+                  <th>Retail</th>
+                  <th>After blank and vendor cut</th>
+                </tr>
+              </thead>
+              <tbody>
+                {margins.map((row) => (
+                  <tr>
+                    <td>{row.name}</td>
+                    <td>{formatUsd(row.retail)}</td>
+                    <td>{formatUsd(row.margin)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        </>
+      )
+    }
+  </div>
+</Layout>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('.status-form').forEach((form) => {
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const status = new FormData(form).get('status');
+      const res = await fetch('/api/admin/order-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId: form.dataset.order, status }),
+      });
+      if (res.ok) window.location.reload();
+    });
+  });
+
+  function bindQuoteLine(line: HTMLElement) {
+    line.querySelector<HTMLButtonElement>('[data-remove-line]')?.addEventListener('click', () => {
+      const host = line.parentElement;
+      if (!host) return;
+      if (host.querySelectorAll('[data-quote-line]').length <= 1) {
+        line.querySelectorAll('input').forEach((input) => {
+          if (input.name === 'quantity') input.value = '1';
+          else input.value = '';
+        });
+        return;
+      }
+      line.remove();
+    });
+  }
+
+  document.querySelectorAll<HTMLFormElement>('.quote-form').forEach((form) => {
+    form.querySelectorAll<HTMLElement>('[data-quote-line]').forEach(bindQuoteLine);
+
+    form.querySelector<HTMLButtonElement>('[data-add-line]')?.addEventListener('click', () => {
+      const host = form.querySelector<HTMLElement>('[data-quote-lines]');
+      const template = host?.querySelector<HTMLElement>('[data-quote-line]');
+      if (!host || !template) return;
+      const clone = template.cloneNode(true) as HTMLElement;
+      clone.querySelectorAll('input').forEach((input) => {
+        if (input.name === 'quantity') input.value = '1';
+        else input.value = '';
+      });
+      host.appendChild(clone);
+      bindQuoteLine(clone);
+    });
+
+    form.querySelectorAll<HTMLButtonElement>('[data-quote-action]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const data = new FormData(form);
+        const note = form.querySelector<HTMLElement>('.quote-note');
+        const lines = Array.from(form.querySelectorAll<HTMLElement>('[data-quote-line]')).map((row) => ({
+          label: row.querySelector<HTMLInputElement>('input[name="label"]')?.value ?? '',
+          quantity: row.querySelector<HTMLInputElement>('input[name="quantity"]')?.value ?? '1',
+          unit: row.querySelector<HTMLInputElement>('input[name="unit"]')?.value ?? '',
+        }));
+        const res = await fetch('/api/admin/quote', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: button.dataset.quoteAction,
+            quoteId: form.dataset.quote,
+            status: data.get('status'),
+            trackingCode: data.get('trackingCode'),
+            partnerCost: data.get('partnerCost'),
+            markup: data.get('markup'),
+            deposit: data.get('deposit'),
+            lines,
+          }),
+        });
+        const body = (await res.json()) as { error?: string };
+        if (!res.ok) {
+          if (note) {
+            note.hidden = false;
+            note.textContent = body.error || 'Could not update the quote.';
+          }
+          return;
+        }
+        window.location.reload();
+      });
+    });
+  });
+</script>
+
+<style>
+  .block {
+    margin-top: 2rem;
+  }
+
+  .block h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1.25rem;
+    text-transform: uppercase;
+  }
+
+  .list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .list li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    background: var(--white);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+  }
+
+  .list div {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .status-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 0.5rem;
+  }
+
+  .status-form label {
+    display: grid;
+    gap: 0.25rem;
+    font-size: var(--text-sm);
+    font-weight: 700;
+  }
+
+  .status-form select,
+  .status-form button,
+  .quote-form input,
+  .quote-form select,
+  .quote-form button {
+    min-height: 44px;
+    font: inherit;
+  }
+
+  .quote-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: end;
+  }
+
+  .quote-form label {
+    display: grid;
+    gap: 0.2rem;
+    font-size: var(--text-sm);
+    font-weight: 700;
+  }
+
+  .quote-lines {
+    flex-basis: 100%;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .quote-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: end;
+    padding: 0.55rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--white) 70%, var(--canvas));
+  }
+
+  .quote-note {
+    flex-basis: 100%;
+    margin: 0;
+    color: var(--print-red);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+  }
+
+  th,
+  td {
+    text-align: left;
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid var(--color-border-strong);
+  }
+</style>

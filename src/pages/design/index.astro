@@ -1,310 +1,1227 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import Button from '../../components/ds/Button.astro';
-import Section from '../../components/ds/Section.astro';
-import StepList from '../../components/ds/StepList.astro';
-import Field from '../../components/ds/Field.astro';
 import { claimText } from '../../lib/claims';
+import { getStudioConfig, studioUnitPriceCents } from '../../lib/design-studio';
 
 const phone = claimText('phone-310-904-2655') ?? 'Call (310) 904-2655.';
-const sameDay = claimText('same-day-printing');
-
-const products = [
-  { id: 't-shirts', label: 'T-Shirts', blurb: 'Everyday tees for teams, events, and brands.' },
-  { id: 'hoodies', label: 'Hoodies & sweatshirts', blurb: 'Warm layers with room for bold art.' },
-  { id: 'polos', label: 'Polos', blurb: 'Clean looks for staff and uniforms.' },
-  { id: 'hats', label: 'Hats', blurb: 'Caps and headwear for logos that last.' },
-  { id: 'bags', label: 'Bags', blurb: 'Totes and bags that carry your brand.' },
-  { id: 'other', label: 'Other apparel', blurb: 'Tell us the garment — we’ll help you order.' },
-];
-
-const steps = [
-  { title: 'Choose a product', body: 'Pick the garment you want to order.' },
-  { title: 'Add your design', body: 'Upload artwork or describe what you need printed.' },
-  { title: 'Place your order', body: 'Share sizes and contact details — we confirm pricing and print.' },
-];
+const studio = getStudioConfig();
+const priceMap = Object.fromEntries(studio.products.map((p) => [p.id, studioUnitPriceCents(p.id)]));
 ---
 
 <Layout
   title="Design Studio"
-  description="Design Studio at LiAlvaro T-Shirt Printing. Choose a product, add your design, and place your order."
+  description="Design Studio at LiAlvaro T-Shirt Printing. Design on a blank, export print-ready art, and checkout."
 >
-  <div class="page-shell">
-    <header class="page-hero studio-hero">
-      <p class="eyebrow">Design Studio</p>
-      <h1>Design Studio</h1>
-      <p>
-        Ready to order? Choose a product, add your design, and we’ll get your apparel printed.
-        {sameDay ? ` ${sameDay}` : ''}
-      </p>
-      <div class="hero-actions">
-        <Button href="#products">Start Designing</Button>
-        <button type="button" class="ghost" data-quote-trigger>Need a custom quote instead?</button>
-      </div>
-    </header>
+  <div
+    class="studio-app"
+    id="designStudioRoot"
+    data-studio
+    data-price-map={JSON.stringify(priceMap)}
+  >
+    <div class="studio-toolbar" role="toolbar" aria-label="Design tools">
+      <a class="tb-item" href="/" title="Back to site">
+        <span class="tb-ico" aria-hidden="true">←</span>
+        <span>Back</span>
+      </a>
+      <button type="button" class="tb-item" id="btnAddText" title="Add text">
+        <span class="tb-ico" aria-hidden="true">T</span>
+        <span>Add text</span>
+      </button>
+      <button type="button" class="tb-item" id="btnUpload" title="Add design">
+        <span class="tb-ico" aria-hidden="true">▢+</span>
+        <span>Add design</span>
+      </button>
+      <button type="button" class="tb-item" id="btnQtySize" title="Quantity & size" aria-expanded="false" aria-controls="pricingPanel">
+        <span class="tb-ico" aria-hidden="true">▣</span>
+        <span>Quantity &amp; size</span>
+      </button>
+      <button type="button" class="tb-item" id="btnSaveShare" title="Save design">
+        <span class="tb-ico" aria-hidden="true">⇅</span>
+        <span>Save | Share</span>
+      </button>
+      <a class="tb-item" href="/cart/" title="Cart">
+        <span class="tb-ico" aria-hidden="true">◉</span>
+        <span>My cart</span>
+        <span class="cart-badge" id="studioCartBadge" hidden>0</span>
+      </a>
+      <button type="button" class="tb-pricing" id="btnSeePricing" disabled title="Add a design to see pricing">
+        See Pricing
+        <span aria-hidden="true">→</span>
+      </button>
+      <input id="fileInput" type="file" accept="image/png,image/jpeg,image/svg+xml,.png,.jpg,.jpeg,.svg" aria-label="Upload artwork" hidden />
+    </div>
 
-    <Section eyebrow="3 easy steps" title="From idea to order.">
-      <StepList steps={steps} />
-    </Section>
-
-    <Section eyebrow="Choose a product" title="Start your order by selecting a product." id="products">
-      <p slot="lede">Tap a product to start designing. Full canvas editing ships in a later stage — your order still starts here.</p>
-      <div class="product-grid">
-        {
-          products.map((product) => (
-            <button type="button" class="product-tile" data-product={product.id} data-product-label={product.label}>
-              <span class="product-tile__name">{product.label}</span>
-              <span class="product-tile__blurb">{product.blurb}</span>
-              <span class="product-tile__cta">Start Designing →</span>
-            </button>
-          ))
-        }
-      </div>
-    </Section>
-
-    <section class="order-panel" id="order-form" aria-labelledby="order-heading">
-      <h2 id="order-heading">Place your Design Studio order</h2>
-      <p class="lede">
-        You’re on the order path — not a broker quote. Share art and quantities; we’ll confirm price and production next.
-      </p>
-
-      <form id="designStudioForm" class="form" action="https://formspree.io/f/xnjoaoyw" method="POST">
-        <input type="hidden" name="_subject" value="New Design Studio Order — LiAlvaro T-Shirt Printing" />
-        <input type="hidden" name="product" id="orderProduct" value="" />
-        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
-
-        <p class="selected-product" id="selectedProductLabel" hidden></p>
-
-        <div class="row">
-          <Field id="studio-name" name="name" label="Full name" required />
-          <Field id="studio-email" name="email" type="email" label="Email" required />
-        </div>
-        <div class="row">
-          <Field id="studio-phone" name="phone" type="tel" label="Phone" placeholder="(310) 000-0000" />
-          <Field
-            id="studio-qty"
-            name="quantity"
-            label="Quantity"
-            as="select"
-            placeholder="Select one"
-            required
-            options={[
-              { value: '1-11 pieces', label: '1-11 pieces' },
-              { value: '12-24 pieces', label: '12-24 pieces' },
-              { value: '25-49 pieces', label: '25-49 pieces' },
-              { value: '50-99 pieces', label: '50-99 pieces' },
-              { value: '100+ pieces', label: '100+ pieces' },
-            ]}
-          />
+    <div class="studio-body">
+      <aside class="studio-left" aria-label="Product">
+        <h2>Product</h2>
+        <div class="product-card">
+          <div class="product-thumb" id="productThumb" aria-hidden="true"></div>
+          <p class="product-name" id="productName">Classic Tee</p>
+          <p class="product-blurb" id="productBlurb">Soft everyday tee — front and back print areas.</p>
+          <button type="button" class="btn-outline" id="btnChangeProduct">Change Product</button>
+          <button type="button" class="text-link" id="btnProductDesc">Product description</button>
         </div>
 
-        <Field
-          id="studio-details"
-          name="details"
-          label="Design & order details"
-          as="textarea"
-          required
-          placeholder="Artwork notes, colors, placements, sizes, and deadline."
-        />
+        <div class="color-block">
+          <p class="color-label">Selected Color: <strong id="selectedColorLabel">Black</strong></p>
+          <div id="colorButtons" class="swatches"></div>
+          <p class="preview-note" id="previewNote" hidden></p>
+        </div>
 
-        <Button type="submit">Submit order request</Button>
-        <p class="success" id="successMsg" hidden>Thanks — your Design Studio order is in. We’ll confirm pricing and next steps shortly.</p>
-        <p class="error" id="errorMsg" hidden>Submission failed. Please try again or {phone}</p>
+        <div class="help-box">
+          <strong>Need help?</strong>
+          <p>
+            <a href="/contact/">Contact us</a> or call {phone.replace(/^Call\s+/i, '')}
+          </p>
+          <button type="button" class="text-link" data-quote-trigger>Need a custom quote instead?</button>
+        </div>
+      </aside>
+
+      <section class="studio-center" aria-label="Design canvas">
+        <div class="stage-tools">
+          <button type="button" class="icon-btn" id="btnZoomOut" title="Zoom out">−</button>
+          <span class="zoom-label">Zoom</span>
+          <button type="button" class="icon-btn" id="btnZoomIn" title="Zoom in">+</button>
+          <button type="button" class="icon-btn" id="btnToggleGrid" title="Toggle grid" aria-pressed="false">Grid</button>
+          <button type="button" class="icon-btn" id="btnForward" title="Bring forward">Layers ↑</button>
+          <button type="button" class="icon-btn" id="btnBack" title="Send backward">Layers ↓</button>
+          <button type="button" class="icon-btn" id="btnUndo" title="Undo">Undo</button>
+          <button type="button" class="icon-btn" id="btnRedo" title="Redo">Redo</button>
+          <button type="button" class="icon-btn" id="btnDelete" title="Delete selected">Delete</button>
+          <label class="text-color-mini" title="Text / fill color">
+            <input id="textColor" type="color" value="#ff6b2b" aria-label="Text color" />
+          </label>
+        </div>
+
+        <div class="method-toggle" role="group" aria-label="Decoration method">
+          <button type="button" class="method is-active" id="methodPrint" aria-pressed="true">Printing</button>
+          <button type="button" class="method is-disabled" id="methodEmbroidery" aria-pressed="false" disabled title="Embroidery coming later">Embroidery</button>
+        </div>
+
+        <div class="studio-stage" id="studioStage">
+          <div class="mockup-frame" id="mockupFrame">
+            <img class="studio-photo" id="studioPhoto" alt="" hidden />
+            <div class="studio-mockup" id="studioMockup" data-shape="tee" aria-hidden="true">
+              <svg class="garment-svg" viewBox="0 0 200 240" preserveAspectRatio="xMidYMid meet">
+                <path
+                  id="garmentPath"
+                  d="M40 42 L70 28 L85 48 L115 48 L130 28 L160 42 L175 70 L155 82 L148 70 L148 210 L52 210 L52 70 L45 82 L25 70 Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </div>
+            <div class="print-frame" id="printFrame">
+              <canvas id="studioCanvas" width="360" height="480"></canvas>
+              <div class="empty-ctas" id="emptyCtas">
+                <button type="button" class="empty-cta" data-action="upload">
+                  <span aria-hidden="true">↑</span> Upload image
+                </button>
+                <button type="button" class="empty-cta" data-action="text">
+                  <span aria-hidden="true">T</span> Add text
+                </button>
+                <button type="button" class="empty-cta" data-action="note" id="btnDesignNote">
+                  <span aria-hidden="true">✎</span> Add design note
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="studio-status" id="studioStatus" role="status"></p>
+        <p class="edit-hint" id="editHint" hidden>Drag to move · drag a corner to resize · red × or Delete to remove</p>
+        <ul class="studio-warnings" id="studioWarnings" hidden></ul>
+      </section>
+
+      <aside class="studio-right" aria-label="Print areas">
+        <div class="right-utils">
+          <a class="util" href="/contact/">Need help?</a>
+          <a class="util" href="/faq/">Delivery Info</a>
+          <button type="button" class="util" id="btnPreview">Preview</button>
+        </div>
+        <h2>Print area</h2>
+        <div id="sideButtons" class="print-thumbs"></div>
+      </aside>
+    </div>
+
+    <div class="product-modal" id="productDrawer" hidden>
+      <div class="product-modal__backdrop" data-close-drawer></div>
+      <div class="product-modal__panel" role="dialog" aria-labelledby="productDrawerTitle">
+        <header>
+          <h2 id="productDrawerTitle">Change your product</h2>
+          <button type="button" class="icon-btn" data-close-drawer aria-label="Close">×</button>
+        </header>
+        <div class="product-modal__body">
+          <div id="productCats" class="product-cats"></div>
+          <div id="productButtons" class="product-picks"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="qty-modal" id="pricingPanel" hidden>
+      <div class="qty-modal__backdrop" data-close-pricing></div>
+      <div class="qty-modal__panel" role="dialog" aria-labelledby="pricingTitle" aria-modal="true">
+        <header>
+          <h2 id="pricingTitle">How Many Do You Need?</h2>
+          <button type="button" class="icon-btn" data-close-pricing aria-label="Close">×</button>
+        </header>
+        <p class="qty-modal__label" id="sizeQtyHeading">Adult sizes</p>
+        <div id="sizeQtyGrid" class="size-qty"></div>
+        <p class="qty-note" id="qtyPriceNote" hidden></p>
+        <div class="qty-totals">
+          <div>
+            <span>Total pieces</span>
+            <strong id="qtyTotal">0</strong>
+          </div>
+          <div>
+            <span>Price each</span>
+            <strong class="price" id="studioPrice" data-cents={priceMap.studio_tee ?? 0}>—</strong>
+          </div>
+          <div>
+            <span>Subtotal</span>
+            <strong id="qtySubtotal">—</strong>
+          </div>
+        </div>
+        <p class="qty-note" id="qtyDelivery">
+          Same-day printing can be requested at checkout for up to 12 pieces, before 11:00am Pacific, in select Los Angeles ZIPs.
+        </p>
+        <label class="attest">
+          <input id="ipAttest" type="checkbox" />
+          <span>
+            I confirm I own or have rights to this artwork, and I accept the
+            <a href="/terms/">Terms</a>.
+          </span>
+        </label>
+        <button type="button" class="btn-pricing-solid" id="btnExport">Add to cart</button>
+      </div>
+    </div>
+
+    <dialog id="descDialog" class="desc-dialog">
+      <form method="dialog">
+        <header>
+          <h2>Product Info</h2>
+          <button type="submit" class="icon-btn" aria-label="Close">×</button>
+        </header>
+        <h3 id="descTitle"></h3>
+        <p id="descBody"></p>
+        <button type="button" class="text-link" id="descMore">read more</button>
+        <p class="desc-label">Color</p>
+        <div id="descColors" class="desc-colors"></div>
+        <h3 id="descSizeHeading">Size Guide</h3>
+        <div id="descSizes"></div>
       </form>
-    </section>
+    </dialog>
   </div>
 </Layout>
 
 <script>
-  import { track } from '../../scripts/analytics.ts';
-
-  const form = document.getElementById('designStudioForm');
-  const successMsg = document.getElementById('successMsg');
-  const errorMsg = document.getElementById('errorMsg');
-  const submitBtn = form?.querySelector('button[type="submit"]');
-  const productInput = document.getElementById('orderProduct');
-  const selectedLabel = document.getElementById('selectedProductLabel');
-  const orderForm = document.getElementById('order-form');
-
-  track('design_started', { source: 'design_studio' });
-
-  document.querySelectorAll('[data-product]').forEach((tile) => {
-    tile.addEventListener('click', () => {
-      if (!(tile instanceof HTMLElement)) return;
-      const id = tile.dataset.product ?? '';
-      const label = tile.dataset.productLabel ?? id;
-      if (productInput instanceof HTMLInputElement) productInput.value = label;
-      if (selectedLabel) {
-        selectedLabel.hidden = false;
-        selectedLabel.textContent = `Selected product: ${label}`;
-      }
-      document.querySelectorAll('.product-tile').forEach((el) => el.classList.remove('is-selected'));
-      tile.classList.add('is-selected');
-      orderForm?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      track('design_started', { source: 'product_tile', product: id });
-    });
-  });
-
-  form?.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    successMsg?.setAttribute('hidden', '');
-    errorMsg?.setAttribute('hidden', '');
-    if (submitBtn instanceof HTMLButtonElement) {
-      submitBtn.disabled = true;
-      submitBtn.dataset.originalText = submitBtn.dataset.originalText || submitBtn.textContent || '';
-      submitBtn.textContent = 'Sending...';
-    }
-    try {
-      const formData = new FormData(form);
-      const response = await fetch(form.action, { method: 'POST', body: formData });
-      if (!response.ok) throw new Error('Request failed');
-      successMsg?.removeAttribute('hidden');
-      form.reset();
-      if (productInput instanceof HTMLInputElement) productInput.value = '';
-      if (selectedLabel) {
-        selectedLabel.hidden = true;
-        selectedLabel.textContent = '';
-      }
-      document.querySelectorAll('.product-tile').forEach((el) => el.classList.remove('is-selected'));
-    } catch {
-      errorMsg?.removeAttribute('hidden');
-    } finally {
-      if (submitBtn instanceof HTMLButtonElement) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = submitBtn.dataset.originalText || 'Submit order request';
-      }
-    }
-  });
+  import { initDesignStudio } from '../../scripts/design-studio-app.ts';
+  initDesignStudio();
 </script>
 
-<style>
-  .studio-hero .hero-actions {
+<style is:global>
+  /* Full-bleed studio under site chrome */
+  main:has(.studio-app) {
+    padding: 0;
+    max-width: none;
+  }
+
+  main:has(.studio-app) > .studio-app {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .studio-app {
+    --studio-navy: #1b2233;
+    --studio-stage: #eceef2;
+    --studio-blue: #2563eb;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 120px);
+    background: var(--white);
+    font-family: var(--font-body);
+  }
+
+  .studio-toolbar {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 1rem;
+    align-items: stretch;
+    gap: 0;
+    background: var(--studio-navy);
+    color: var(--white);
+    border-bottom: 1px solid color-mix(in srgb, var(--white) 12%, transparent);
   }
 
-  .ghost {
-    background: none;
+  .tb-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    min-width: 4.5rem;
+    padding: 0.55rem 0.75rem;
+    color: var(--white);
+    text-decoration: none;
+    background: transparent;
     border: none;
-    color: var(--print-red);
+    border-right: 1px solid color-mix(in srgb, var(--white) 12%, transparent);
+    font: inherit;
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .tb-item:hover,
+  .tb-item:focus-visible {
+    background: color-mix(in srgb, var(--white) 10%, transparent);
+  }
+
+  .tb-ico {
+    font-size: 1.05rem;
+    line-height: 1;
+    font-family: var(--font-display);
+  }
+
+  .cart-badge {
+    position: absolute;
+    top: 0.35rem;
+    right: 0.45rem;
+    min-width: 1.1rem;
+    height: 1.1rem;
+    padding: 0 0.25rem;
+    border-radius: 999px;
+    background: var(--print-red);
+    color: var(--white);
+    font-size: 0.65rem;
+    line-height: 1.1rem;
+    text-align: center;
+  }
+
+  .tb-pricing {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0 1.25rem;
+    background: var(--studio-blue);
+    color: var(--white);
+    border: none;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    min-height: 3.25rem;
+  }
+
+  .tb-pricing:hover:not(:disabled) {
+    filter: brightness(1.05);
+  }
+
+  .tb-pricing:disabled {
+    background: #9aa3b2;
+    cursor: not-allowed;
+  }
+
+  .studio-body {
+    display: grid;
+    grid-template-columns: 1fr;
+    flex: 1;
+    min-height: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .studio-body {
+      grid-template-columns: 260px minmax(0, 1fr) 150px;
+    }
+  }
+
+  .studio-left,
+  .studio-right {
+    background: var(--white);
+    border-bottom: 1px solid var(--color-border);
+    padding: 1rem;
+  }
+
+  @media (min-width: 1024px) {
+    .studio-left {
+      border-bottom: none;
+      border-right: 1px solid var(--color-border);
+    }
+    .studio-right {
+      border-bottom: none;
+      border-left: 1px solid var(--color-border);
+    }
+  }
+
+  .studio-left h2,
+  .studio-right h2 {
+    margin: 0 0 0.75rem;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .product-card {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .product-thumb {
+    width: 72px;
+    height: 72px;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+    background: var(--ink);
+  }
+
+  .product-name {
+    margin: 0;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .product-blurb {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--color-muted);
+  }
+
+  .btn-outline,
+  .btn-pricing-solid {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    padding: 0.5rem 0.85rem;
+    border-radius: 4px;
     font: inherit;
     font-weight: 700;
-    text-decoration: underline;
     cursor: pointer;
-    min-height: 44px;
   }
 
-  .product-grid {
-    display: grid;
-    gap: 1rem;
-  }
-
-  @media (min-width: 640px) {
-    .product-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 960px) {
-    .product-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .product-tile {
-    display: grid;
-    gap: 0.35rem;
-    text-align: left;
-    padding: 1.25rem 1rem;
-    border: 2px solid var(--ink);
-    border-radius: var(--radius-md);
+  .btn-outline {
     background: var(--white);
-    cursor: pointer;
+    border: 1px solid var(--studio-navy);
+    color: var(--studio-navy);
+  }
+
+  .btn-pricing-solid {
+    width: 100%;
+    background: var(--studio-blue);
+    border: none;
+    color: var(--white);
+  }
+
+  .text-link {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--studio-blue);
     font: inherit;
-    color: inherit;
-    min-height: 44px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    text-decoration: underline;
   }
 
-  .product-tile:hover,
-  .product-tile.is-selected {
-    border-color: var(--print-red);
-    background: color-mix(in srgb, var(--print-red) 6%, var(--white));
+  .color-block {
+    margin-top: 1.25rem;
   }
 
-  .product-tile:focus-visible {
-    outline: 3px solid var(--color-focus);
+  .color-label {
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 0.4rem;
+  }
+
+  .swatch {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--ink) 35%, transparent);
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .swatch.is-active {
+    outline: 2px solid var(--studio-blue);
     outline-offset: 2px;
   }
 
-  .product-tile__name {
-    font-weight: 800;
-    font-size: var(--text-lg);
+  .help-box {
+    margin-top: 1.5rem;
+    padding: 0.85rem;
+    background: color-mix(in srgb, var(--studio-blue) 8%, var(--white));
+    border-radius: 6px;
+    font-size: 0.85rem;
   }
 
-  .product-tile__blurb {
-    font-size: var(--text-sm);
-    color: color-mix(in srgb, var(--ink) 80%, var(--mesh-grey));
+  .help-box p {
+    margin: 0.35rem 0 0.5rem;
   }
 
-  .product-tile__cta {
-    margin-top: 0.5rem;
-    font-weight: 700;
-    color: var(--print-red);
-    font-size: var(--text-sm);
+  .studio-center {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 0.75rem 1rem 1.25rem;
+    background: var(--studio-stage);
+    min-height: 520px;
   }
 
-  .order-panel {
-    margin: 2.5rem 0 1rem;
-    padding: 1.5rem;
-    background: var(--white);
+  .stage-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: center;
+  }
+
+  .icon-btn {
+    min-height: 2rem;
+    padding: 0.25rem 0.55rem;
     border: 1px solid var(--color-border-strong);
-    border-radius: var(--radius-lg);
+    border-radius: 4px;
+    background: var(--white);
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
   }
 
-  .order-panel h2 {
-    margin: 0 0 0.5rem;
-    font-family: var(--font-display);
-    font-size: var(--text-3xl);
+  .zoom-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0 0.15rem;
+  }
+
+  .icon-btn[aria-pressed='true'] {
+    border-color: var(--studio-blue);
+    color: var(--studio-blue);
+  }
+
+  .icon-btn.is-ready {
+    background: var(--print-red);
+    border-color: var(--print-red);
+    color: var(--white);
+  }
+
+  .text-color-mini input {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .method-toggle {
+    display: inline-flex;
+    align-self: center;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 999px;
+    overflow: hidden;
+    background: var(--white);
+  }
+
+  .method {
+    border: none;
+    background: transparent;
+    padding: 0.4rem 1rem;
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .method.is-active {
+    background: var(--studio-blue);
+    color: var(--white);
+  }
+
+  .method.is-disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .studio-stage {
+    position: relative;
+    flex: 1;
+    margin: 0 auto;
+    width: min(100%, 560px);
+    transform-origin: center top;
+    transition: transform var(--duration-med) var(--ease-out);
+  }
+
+  .mockup-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    min-height: 420px;
+  }
+
+  .mockup-frame.has-photo {
+    aspect-ratio: 1;
+    min-height: 0;
+    background: #fff;
+  }
+
+  .studio-photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .studio-photo[hidden],
+  .studio-mockup[hidden] {
+    display: none !important;
+  }
+
+  .preview-note {
+    margin: 0.65rem 0 0;
+    font-size: 0.75rem;
+    color: var(--color-muted);
+  }
+
+  .mockup-frame.is-grid::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(37, 99, 235, 0.35) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(37, 99, 235, 0.35) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .studio-mockup {
+    position: absolute;
+    inset: 0;
+    color: #1b2233;
+    display: grid;
+    place-items: center;
+  }
+
+  .garment-svg {
+    width: 88%;
+    height: 92%;
+    filter: drop-shadow(0 8px 18px color-mix(in srgb, var(--ink) 18%, transparent));
+  }
+
+  .print-frame {
+    position: absolute;
+    z-index: 2;
+    border: 1.5px dashed color-mix(in srgb, var(--studio-blue) 80%, var(--white));
+    background: color-mix(in srgb, var(--white) 42%, transparent);
+    touch-action: none;
+    overflow: visible;
+  }
+
+  .mockup-frame.has-photo .print-frame {
+    border: 1.5px dashed rgba(255, 255, 255, 0.95);
+    background: transparent;
+  }
+
+  .print-frame .canvas-container,
+  .print-frame canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .empty-ctas {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: grid;
+    place-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    pointer-events: none;
+  }
+
+  .empty-ctas[hidden] {
+    display: none;
+  }
+
+  .empty-cta {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    min-width: 10rem;
+    min-height: 2.4rem;
+    padding: 0.45rem 0.85rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 4px;
+    background: var(--white);
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--ink) 12%, transparent);
+  }
+
+  .empty-ctas.is-cap {
+    gap: 0.4rem;
+    padding: 0;
+    justify-items: center;
+    overflow: visible;
+  }
+
+  .empty-ctas.is-cap .empty-cta {
+    min-width: 9.5rem;
+    min-height: 2.35rem;
+    padding: 0.45rem 0.8rem;
+    font-size: 1.05rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    color: var(--ink);
+  }
+
+  .studio-status,
+  .edit-hint {
+    margin: 0;
+    text-align: center;
+    font-size: 0.85rem;
     font-weight: 600;
+  }
+
+  .edit-hint {
+    color: var(--studio-navy);
+  }
+
+  .studio-warnings {
+    margin: 0 auto;
+    max-width: 36rem;
+    padding-left: 1.1rem;
+    color: var(--color-danger);
+    font-size: 0.85rem;
+  }
+
+  .right-utils {
+    display: grid;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+  }
+
+  .util {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--studio-navy);
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .print-thumbs {
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .print-thumb {
+    display: grid;
+    gap: 0.25rem;
+    padding: 0;
+    border: 2px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+    text-align: center;
+  }
+
+  .print-thumb.is-active {
+    border-color: var(--studio-blue);
+  }
+
+  .print-thumb.is-designed .print-thumb__preview::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 2;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #15803d;
+    box-shadow: 0 0 0 2px #fff;
+  }
+
+  .print-thumb.is-disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .print-thumb__preview {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: #e7ebf0;
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+  }
+
+  .print-thumb__preview svg,
+  .print-thumb__preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .print-thumb__preview span {
+    position: absolute;
+    border: 2px solid #f5c518;
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+
+  .print-thumb__label {
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .sleeve-note {
+    margin: 0.75rem 0 0;
+    font-size: 0.7rem;
+    color: var(--color-muted);
+  }
+
+  .drawer[hidden] {
+    display: none;
+  }
+
+  .drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+  }
+
+  .drawer__backdrop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--ink) 45%, transparent);
+  }
+
+  .drawer__panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: min(100%, 360px);
+    background: var(--white);
+    padding: 1rem;
+    display: grid;
+    gap: 0.75rem;
+    align-content: start;
+    box-shadow: 8px 0 24px color-mix(in srgb, var(--ink) 20%, transparent);
+  }
+
+  .drawer--right .drawer__panel {
+    left: auto;
+    right: 0;
+    box-shadow: -8px 0 24px color-mix(in srgb, var(--ink) 20%, transparent);
+  }
+
+  .drawer__panel header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .drawer__panel h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+  }
+
+  .product-modal[hidden] {
+    display: none;
+  }
+
+  .product-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+  }
+
+  .product-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--ink) 45%, transparent);
+  }
+
+  .product-modal__panel {
+    position: relative;
+    width: min(860px, calc(100% - 2rem));
+    max-height: min(78vh, 640px);
+    margin: 8vh auto 0;
+    background: var(--white);
+    border-radius: 10px;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    overflow: hidden;
+    box-shadow: 0 18px 50px color-mix(in srgb, var(--ink) 28%, transparent);
+  }
+
+  .product-modal__panel header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .product-modal__panel h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
   }
 
-  .lede {
-    margin: 0 0 1rem;
-    color: color-mix(in srgb, var(--ink) 80%, var(--mesh-grey));
+  .product-modal__body {
+    display: grid;
+    grid-template-columns: 180px minmax(0, 1fr);
+    min-height: 0;
   }
 
-  .selected-product {
-    margin: 0 0 0.5rem;
+  .product-cats {
+    display: grid;
+    align-content: start;
+    border-right: 1px solid var(--color-border);
+    overflow: auto;
+  }
+
+  .product-cat {
+    text-align: left;
+    border: none;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--white);
+    padding: 0.85rem 1rem;
+    font: inherit;
     font-weight: 700;
-    color: var(--print-red);
+    cursor: pointer;
   }
 
-  .form {
+  .product-cat.is-active {
+    background: color-mix(in srgb, var(--studio-blue) 10%, var(--white));
+    color: var(--studio-blue);
+  }
+
+  .product-picks {
     display: grid;
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.75rem;
+    align-content: start;
+    padding: 1rem;
+    overflow: auto;
   }
 
-  .row {
+  .product-chip {
     display: grid;
-    gap: 1rem;
+    gap: 0.35rem;
+    justify-items: center;
+    text-align: center;
+    border: 2px solid var(--color-border-strong);
+    border-radius: 8px;
+    background: var(--white);
+    padding: 0.65rem;
+    font: inherit;
+    cursor: pointer;
   }
 
-  @media (min-width: 640px) {
-    .row {
-      grid-template-columns: 1fr 1fr;
-    }
+  .product-chip.is-active {
+    border-color: var(--studio-blue);
   }
 
-  .success {
-    color: var(--color-success);
+  .product-chip strong {
+    font-weight: 700;
+  }
+
+  .product-chip span {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+  }
+
+  .field {
+    display: grid;
+    gap: 0.35rem;
+    font-size: 0.85rem;
     font-weight: 600;
   }
 
-  .error {
-    color: var(--color-danger);
-    font-weight: 600;
+  .field select,
+  .field input {
+    min-height: 2.5rem;
+    padding: 0.4rem 0.55rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 4px;
+    font: inherit;
+  }
+
+  .price {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .fine {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--color-muted);
+  }
+
+  .attest {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.55rem;
+    font-size: 0.85rem;
+  }
+
+  .pick-preview {
+    width: 100%;
+    height: 120px;
+    display: grid;
+    place-items: center;
+    background: #eef1f5;
+    border-radius: 4px;
+  }
+
+  .pick-preview svg,
+  .pick-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .qty-modal[hidden] {
+    display: none;
+  }
+
+  .qty-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+  }
+
+  .qty-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--ink) 45%, transparent);
+  }
+
+  .qty-modal__panel {
+    position: relative;
+    z-index: 1;
+    width: min(720px, calc(100% - 2rem));
+    margin: 8vh auto 0;
+    background: var(--white);
+    border-radius: 12px;
+    padding: 1.15rem 1.25rem 1.25rem;
+    display: grid;
+    gap: 0.9rem;
+    box-shadow: 0 18px 50px color-mix(in srgb, var(--ink) 28%, transparent);
+  }
+
+  .qty-modal__panel header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .qty-modal__panel h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .qty-modal__label {
+    margin: 0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .size-qty {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(3.4rem, 1fr));
+    gap: 0.45rem;
+  }
+
+  .size-qty.is-wide {
+    grid-template-columns: repeat(auto-fit, minmax(4.6rem, 1fr));
+  }
+
+  .size-step {
+    display: grid;
+    justify-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .size-step__ctrl {
+    display: grid;
+    grid-template-columns: 1.4rem 1fr 1.4rem;
+    align-items: center;
+    width: 100%;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .size-step__ctrl button {
+    border: none;
+    background: #f4f6f8;
+    min-height: 2rem;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .size-step__ctrl input {
+    width: 100%;
+    min-height: 2rem;
+    border: none;
+    text-align: center;
+    font: inherit;
+    font-weight: 700;
+    padding: 0;
+  }
+
+  .qty-totals {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .qty-totals div {
+    display: grid;
+    gap: 0.2rem;
+    justify-items: center;
+    padding: 0.75rem 0.4rem;
+    border-right: 1px solid var(--color-border);
+  }
+
+  .qty-totals div:last-child {
+    border-right: none;
+  }
+
+  .qty-totals span {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .qty-totals strong {
+    font-size: 1.15rem;
+  }
+
+  .qty-note {
+    margin: 0;
+    padding: 0.7rem 0.8rem;
+    border-radius: 8px;
+    background: #f4f7fb;
+    font-size: 0.8rem;
+  }
+
+  .desc-dialog {
+    border: none;
+    border-radius: 10px;
+    padding: 0;
+    width: min(640px, calc(100% - 2rem));
+    max-height: min(80vh, 720px);
+  }
+
+  .desc-dialog form {
+    display: grid;
+    gap: 0.75rem;
+    padding: 1rem 1.15rem 1.25rem;
+    overflow: auto;
+    max-height: min(80vh, 720px);
+  }
+
+  .desc-dialog header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .desc-dialog h2,
+  .desc-dialog h3 {
+    margin: 0;
+    font-family: var(--font-display);
+  }
+
+  .desc-dialog p {
+    margin: 0;
+  }
+
+  .desc-label {
+    font-weight: 700;
+  }
+
+  .desc-colors {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+  }
+
+  .desc-colors span {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--ink) 30%, transparent);
+  }
+
+  .size-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+
+  .size-table th,
+  .size-table td {
+    border: 1px solid var(--color-border);
+    padding: 0.4rem 0.35rem;
+    text-align: center;
+  }
+
+  .size-table th {
+    background: #f3f6fb;
+  }
+
+  .size-table td:first-child {
+    text-align: left;
+    font-weight: 700;
+  }
+
+  .desc-dialog::backdrop {
+    background: color-mix(in srgb, var(--ink) 45%, transparent);
   }
 </style>
